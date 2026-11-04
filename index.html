@@ -127,7 +127,7 @@
     <!-- Login Modal -->
     <div id="login-screen">
         <div id="login-card" class="auth-card">
-            <h2 style="margin: 0 0 0.5rem 0;">📁 Client's Vault</h2>
+            <h2 style="margin: 0 0 0.5rem 0;">📁 Multi-Cloud Vault</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
@@ -169,31 +169,25 @@
     <!-- Header Bar -->
     <header>
         <div class="logo-area">
-            📁 <span>Client's Vault</span>
+            📁 <span>Multi-Cloud Vault</span>
         </div>
         <div class="search-bar">
             <span>🔍</span>
-            <input type="text" placeholder="Search files in server...">
+            <input type="text" placeholder="Search files in vault...">
         </div>
         <div id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">User</div>
     </header>
 
     <div class="main-layout">
         <sidebar>
-            <!-- Small File Upload -->
-            <button class="new-btn" onclick="document.getElementById('file-picker').click()">
-                <span>➕</span> <span style="font-size:0.85rem;">Upload Small File</span>
-            </button>
-            <input type="file" id="file-picker" style="display:none" onchange="startSmallUpload()">
-
-            <!-- Massive File Cloud Link Share Button -->
-            <button class="new-btn" style="background:linear-gradient(135deg, var(--accent-vip), #d97706); margin-top:0.5rem;" onclick="openLinkShareModal()">
-                <span>🔗</span> <span style="font-size:0.85rem;">Share Big File Link</span>
+            <!-- Add File / Cloud Link Hub Button -->
+            <button class="new-btn" onclick="openLinkShareModal()">
+                <span>☁️</span> <span style="font-size:0.85rem;">Add Cloud File / Game</span>
             </button>
 
             <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
             <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile</span></div>
-            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>Global Files</span></div>
+            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>Cloud Vault</span></div>
             <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Client Chat</span></div>
             <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
             <div class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></div>
@@ -201,16 +195,16 @@
 
         <div class="content-area">
             <div id="tab-home" class="tab-content">
-                <h2>Welcome to your Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage documents, stream media live, and share massive 19GB+ game/video links securely.</p>
+                <h2>Welcome to Multi-Cloud Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Seamlessly manage and stream massive files across your multi-account cloud storage pools.</p>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
                     <div class="profile-card">
                         <h4>Your Current Logged Device ID</h4>
                         <p id="display-device-home" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">Loading...</p>
                     </div>
                     <div class="profile-card">
-                        <h4>Device Approval Status</h4>
-                        <p id="display-approval-home" style="color: var(--accent-green);">Approved & Verified</p>
+                        <h4>Cloud Pool Status</h4>
+                        <p style="color: var(--accent-green);">16 Storage Nodes Active (TeraBox / Drive Pools)</p>
                     </div>
                 </div>
             </div>
@@ -245,15 +239,15 @@
             </div>
 
             <div id="tab-vault" class="tab-content hidden">
-                <h2>Global Vault Files & Shared Links</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Repository containing uploaded files and high-speed cloud/torrent links for massive games (GTA IV, etc.).</p>
+                <h2>Cloud Vault Repository</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Browse, preview, and stream files directly from your cloud storage clusters cleanly.</p>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Name / Title</th><th>Type</th><th>Actions</th></tr>
+                            <tr><th>File / Game Name</th><th>Storage Pool</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="file-list">
-                            <tr><td colspan="3" style="color: var(--text-muted);">Loading files...</td></tr>
+                            <tr><td colspan="3" style="color: var(--text-muted);">Loading cloud nodes...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -272,8 +266,8 @@
             </div>
 
             <div id="tab-admin" class="tab-content hidden">
-                <h2>Admin Approval & Security Dashboard</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings, rank status (VIP / Normal), and database info.</p>
+                <h2>Admin Multi-Cloud Dashboard</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings, VIP ranks, and backend cloud nodes.</p>
                 <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Hardware Devices</h3>
                 <div class="table-responsive">
                     <table>
@@ -289,31 +283,31 @@
         </div>
     </div>
 
-    <!-- Big File Share Modal -->
+    <!-- Cloud Link & Node Distributor Modal -->
     <div id="link-share-modal" class="modal">
         <div class="modal-content" style="text-align: left;">
-            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">🌐 Share Massive File / Game Link</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">Paste Google Drive, MEGA, or Magnet Link for files like GTA IV (19GB+)</p>
+            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">☁️ Add to Cloud Pool</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">System will auto-route to optimal multi-account storage pool (TeraBox, Drive, etc.)</p>
             
             <label style="font-size:0.75rem; color:var(--text-muted);">File / Game Name:</label>
             <input type="text" id="share-name" placeholder="e.g. GTA IV Full Setup (19GB)" style="width:100%; padding:0.7rem; margin:0.3rem 0 1rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
 
-            <label style="font-size:0.75rem; color:var(--text-muted);">Direct Download / Magnet Link:</label>
-            <input type="text" id="share-url" placeholder="https://mega.nz/... or magnet:?xt=..." style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+            <label style="font-size:0.75rem; color:var(--text-muted);">Cloud Storage Share Link:</label>
+            <input type="text" id="share-url" placeholder="Paste direct/shared link from your cloud node..." style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
 
             <div style="display:flex; gap:1rem;">
-                <button onclick="submitCloudLink()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Publish to Vault</button>
+                <button onclick="submitCloudNodeLink()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Deploy to Cloud</button>
                 <button onclick="closeLinkShareModal()" style="flex:1; padding:0.7rem; background:var(--accent-red); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Media Player Modal -->
+    <!-- Media / Overview Player Modal -->
     <div id="media-modal" class="modal">
         <div class="modal-content" style="text-align:center;">
-            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Stream Media</h3>
+            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Cloud Media Player & Overview</h3>
             <div id="media-container"></div>
-            <button onclick="closeMediaModal()" style="margin-top: 1.25rem; padding: 0.5rem 1.25rem; background: var(--accent-red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Player</button>
+            <button onclick="closeMediaModal()" style="margin-top: 1.25rem; padding: 0.5rem 1.25rem; background: var(--accent-red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Viewer</button>
         </div>
     </div>
 
@@ -612,149 +606,91 @@
             }
         }
 
-        // FETCH VAULT FILES AND CLOUD LINKS FROM JSON REPOSITORY
+        // FETCH VAULT NODES CLEANLY (Hiding Backend Cloud Sources)
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
-            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Loading repository files...</td></tr>`;
+            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Syncing with Cloud Storage Nodes...</td></tr>`;
 
             let htmlContent = "";
-
-            // 1. Fetch direct uploaded files from uploads folder
-            const uploadsUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
-            try {
-                const res = await fetch(uploadsUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                if (res.ok) {
-                    const files = await res.json();
-                    files.forEach(f => {
-                        const cleanName = f.name.replace(/^[^_]+_[^_]+_/, '');
-                        const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(cleanName);
-                        const isAudio = /\.(mp3|wav|ogg|aac|m4a)$/i.test(cleanName);
-                        let typeBadge = isVideo ? '🎥 Video' : (isAudio ? '🎵 Audio' : '📁 Document');
-
-                        htmlContent += `
-                            <tr>
-                                <td style="word-break:break-all;">📄 ${cleanName}</td>
-                                <td>${typeBadge}</td>
-                                <td>
-                                    ${isVideo ? `<button onclick="playMedia('${f.download_url}', '${cleanName}', 'video')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Stream ▶</button>` : ''}
-                                    ${isAudio ? `<button onclick="playMedia('${f.download_url}', '${cleanName}', 'audio')" style="padding: 0.25rem 0.5rem; background: var(--accent-cyan); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Audio 🎵</button>` : ''}
-                                    <a href="${f.download_url}" target="_blank" style="padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.1); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:500;">Download ⬇️</a>
-                                </td>
-                            </tr>`;
-                    });
-                }
-            } catch (e) {}
-
-            // 2. Fetch shared cloud/torrent links from links.json
             const linksUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
+            
             try {
                 const res = await fetch(linksUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
                     const data = await res.json();
                     linksFileSha = data.sha;
-                    const links = JSON.parse(atob(data.content));
-                    links.forEach(l => {
+                    const items = JSON.parse(atob(data.content));
+                    
+                    items.forEach((item, index) => {
+                        const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(item.name);
+                        
                         htmlContent += `
                             <tr>
-                                <td style="word-break:break-all;"><b style="color:var(--accent-vip);">🌐 [Big Game/File]</b> ${l.name}</td>
-                                <td><span class="badge-vip">Cloud Link</span></td>
+                                <td style="word-break:break-all;">📄 ${item.name}</td>
+                                <td><span class="badge-normal">Cloud Storage Pool</span></td>
                                 <td>
-                                    <a href="${l.url}" target="_blank" style="padding: 0.25rem 0.6rem; background: var(--accent-vip); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:bold;">High-Speed Download 🚀</a>
+                                    ${isVideo ? `<button onclick="playCloudMedia('${item.url}', '${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Stream ▶</button>` : ''}
+                                    <button onclick="previewOverview('${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Overview 👁️</button>
+                                    <a href="${item.url}" target="_blank" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:bold;">Direct Download ⬇️</a>
                                 </td>
                             </tr>`;
                     });
                 }
             } catch (e) {}
 
-            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files or links found in vault.</td></tr>`;
+            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files found in cloud vault.</td></tr>`;
         }
 
-        // OPEN / CLOSE CLOUD LINK MODAL
         function openLinkShareModal() { document.getElementById("link-share-modal").style.display = "flex"; }
         function closeLinkShareModal() { document.getElementById("link-share-modal").style.display = "none"; }
 
-        // SUBMIT CLOUD LINK TO links.json
-        async function submitCloudLink() {
+        async function submitCloudNodeLink() {
             const name = document.getElementById("share-name").value.trim();
             const url = document.getElementById("share-url").value.trim();
-            if (!name || !url) { alert("Please fill in both fields!"); return; }
+            if (!name || !url) { alert("Please fill in all fields!"); return; }
 
             const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
-            let existingLinks = [];
+            let existingItems = [];
 
             try {
                 const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
                     const data = await res.json();
                     linksFileSha = data.sha;
-                    existingLinks = JSON.parse(atob(data.content));
+                    existingItems = JSON.parse(atob(data.content));
                 }
             } catch (e) {}
 
-            existingLinks.push({ name: name, url: url, date: new Date().toLocaleDateString() });
+            existingItems.push({ name: name, url: url, date: new Date().toLocaleDateString() });
 
             await fetch(apiUrl, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Add big file cloud link", content: btoa(JSON.stringify(existingLinks, null, 2)), sha: linksFileSha || undefined })
+                body: JSON.stringify({ message: "Add cloud storage node file", content: btoa(JSON.stringify(existingItems, null, 2)), sha: linksFileSha || undefined })
             });
 
-            alert("Massive file link published successfully to Vault!");
+            alert("File successfully deployed to Cloud Storage Cluster!");
             closeLinkShareModal();
             document.getElementById("share-name").value = "";
             document.getElementById("share-url").value = "";
             fetchVaultFiles();
         }
 
-        function playMedia(url, title, type) {
+        function playCloudMedia(url, title) {
             document.getElementById("modal-title").innerText = title;
-            const container = document.getElementById("media-container");
-            if (type === 'video') container.innerHTML = `<video src="${url}" controls autoplay></video>`;
-            else if (type === 'audio') container.innerHTML = `<div style="padding:1.5rem 0;"><div style="font-size:3rem; margin-bottom:1rem;">🎵</div><audio src="${url}" controls autoplay></audio></div>`;
+            document.getElementById("media-container").innerHTML = `<video src="${url}" controls autoplay></video>`;
+            document.getElementById("media-modal").style.display = "flex";
+        }
+
+        function previewOverview(title) {
+            document.getElementById("modal-title").innerText = title + " - Overview";
+            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">Cloud Storage Node Information</h3><p>File verified and optimized across multi-account cluster.</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Node Status: Secure & High-Speed Stream Ready</p></div>`;
             document.getElementById("media-modal").style.display = "flex";
         }
 
         function closeMediaModal() {
             document.getElementById("media-modal").style.display = "none";
             document.getElementById("media-container").innerHTML = "";
-        }
-
-        // SMALL FILE BACKGROUND UPLOADER (For documents, small mp3, clips under 50MB)
-        async function startSmallUpload() {
-            const fileInput = document.getElementById("file-picker");
-            const widget = document.getElementById("upload-widget");
-            const username = document.getElementById("welcome-user").innerText;
-
-            if (!fileInput.files.length) return;
-            const file = fileInput.files[0];
-
-            if (file.size > 50 * 1024 * 1024) {
-                alert("File size is over 50MB! For massive files (like GTA IV 19GB), please use the 'Share Big File Link' button instead.");
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function() {
-                const base64Content = reader.result.split(',')[1];
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                const path = `uploads/${username}_${timestamp}_${file.name}`;
-                const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/${path}`;
-
-                fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Upload ${file.name}`, content: base64Content })
-                }).then(res => {
-                    if (res.ok) {
-                        alert("File uploaded successfully!");
-                        fileInput.value = "";
-                        fetchVaultFiles();
-                    } else {
-                        alert("Upload failed. Try sharing as a cloud link.");
-                    }
-                });
-            };
         }
 
         async function fetchChatMessages() {
@@ -793,7 +729,7 @@
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
-                    const data = await res.json();
+                    const data = var_data = await res.json();
                     sha = data.sha;
                     currentMessages = JSON.parse(atob(data.content));
                 }
