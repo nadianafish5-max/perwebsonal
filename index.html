@@ -110,16 +110,6 @@
         .modal-content { background: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 16px; width: 100%; max-width: 650px; text-align: center; }
         video, audio { width: 100%; max-height: 350px; border-radius: 8px; outline: none; margin-top: 0.5rem; }
 
-        .floating-upload-widget {
-            position: fixed; bottom: 20px; right: 20px; width: 320px; 
-            background: #1e293b; border: 1px solid var(--accent-blue); 
-            border-radius: 12px; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
-            z-index: 3000; display: none; flex-direction: column; gap: 0.5rem;
-        }
-        .widget-header { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; color: var(--accent-cyan); }
-        .progress-bar-container { width: 100%; background: #0f172a; border-radius: 8px; height: 10px; overflow: hidden; margin-top: 0.25rem; }
-        .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); transition: width 0.1s; }
-
         .hidden { display: none !important; }
         .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.5rem; word-break: break-all; }
         .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.5rem; }
@@ -134,7 +124,7 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- Login & Registration Modal Overlay -->
+    <!-- Login Modal -->
     <div id="login-screen">
         <div id="login-card" class="auth-card">
             <h2 style="margin: 0 0 0.5rem 0;">📁 Client's Vault</h2>
@@ -190,10 +180,16 @@
 
     <div class="main-layout">
         <sidebar>
+            <!-- Small File Upload -->
             <button class="new-btn" onclick="document.getElementById('file-picker').click()">
-                <span>➕</span> <span style="font-size:0.85rem;">Upload File</span>
+                <span>➕</span> <span style="font-size:0.85rem;">Upload Small File</span>
             </button>
-            <input type="file" id="file-picker" style="display:none" onchange="startBackgroundUpload()">
+            <input type="file" id="file-picker" style="display:none" onchange="startSmallUpload()">
+
+            <!-- Massive File Cloud Link Share Button -->
+            <button class="new-btn" style="background:linear-gradient(135deg, var(--accent-vip), #d97706); margin-top:0.5rem;" onclick="openLinkShareModal()">
+                <span>🔗</span> <span style="font-size:0.85rem;">Share Big File Link</span>
+            </button>
 
             <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
             <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile</span></div>
@@ -206,7 +202,7 @@
         <div class="content-area">
             <div id="tab-home" class="tab-content">
                 <h2>Welcome to your Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage documents, stream media live, and track device authentication securely.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage documents, stream media live, and share massive 19GB+ game/video links securely.</p>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
                     <div class="profile-card">
                         <h4>Your Current Logged Device ID</h4>
@@ -249,12 +245,12 @@
             </div>
 
             <div id="tab-vault" class="tab-content hidden">
-                <h2>Global Vault Files</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Shared community repository. Play audio songs, stream videos live, or download files.</p>
+                <h2>Global Vault Files & Shared Links</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Repository containing uploaded files and high-speed cloud/torrent links for massive games (GTA IV, etc.).</p>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>File Name</th><th>Type</th><th>Actions</th></tr>
+                            <tr><th>Name / Title</th><th>Type</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="file-list">
                             <tr><td colspan="3" style="color: var(--text-muted);">Loading files...</td></tr>
@@ -293,19 +289,28 @@
         </div>
     </div>
 
-    <div id="upload-widget" class="floating-upload-widget">
-        <div class="widget-header">
-            <span id="widget-filename">Uploading...</span>
-            <span id="widget-percent">0%</span>
+    <!-- Big File Share Modal -->
+    <div id="link-share-modal" class="modal">
+        <div class="modal-content" style="text-align: left;">
+            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">🌐 Share Massive File / Game Link</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">Paste Google Drive, MEGA, or Magnet Link for files like GTA IV (19GB+)</p>
+            
+            <label style="font-size:0.75rem; color:var(--text-muted);">File / Game Name:</label>
+            <input type="text" id="share-name" placeholder="e.g. GTA IV Full Setup (19GB)" style="width:100%; padding:0.7rem; margin:0.3rem 0 1rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+
+            <label style="font-size:0.75rem; color:var(--text-muted);">Direct Download / Magnet Link:</label>
+            <input type="text" id="share-url" placeholder="https://mega.nz/... or magnet:?xt=..." style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+
+            <div style="display:flex; gap:1rem;">
+                <button onclick="submitCloudLink()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Publish to Vault</button>
+                <button onclick="closeLinkShareModal()" style="flex:1; padding:0.7rem; background:var(--accent-red); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+            </div>
         </div>
-        <div class="progress-bar-container">
-            <div id="widget-progress-fill" class="progress-fill"></div>
-        </div>
-        <div id="widget-status-msg" style="font-size:0.75rem; color:var(--text-muted);">Transferring to Cloud...</div>
     </div>
 
+    <!-- Media Player Modal -->
     <div id="media-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="text-align:center;">
             <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Stream Media</h3>
             <div id="media-container"></div>
             <button onclick="closeMediaModal()" style="margin-top: 1.25rem; padding: 0.5rem 1.25rem; background: var(--accent-red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Player</button>
@@ -328,9 +333,9 @@
         };
 
         let usersFileSha = "";
-        let isUploadingActive = false;
-        let resetTargetUser = null;
+        let linksFileSha = "";
         let pendingDeviceUser = null;
+        let resetTargetUser = null;
 
         function getDeviceId() {
             let deviceId = localStorage.getItem("portal_device_id");
@@ -361,7 +366,7 @@
                 await fetch(url, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Update users database in json", content: updatedContent, sha: usersFileSha || undefined })
+                    body: JSON.stringify({ message: "Update users database", content: updatedContent, sha: usersFileSha || undefined })
                 });
             } catch (e) { }
         }
@@ -397,11 +402,7 @@
             const clientRecord = CLIENT_DATABASE[username];
 
             if (inputHash !== clientRecord.passHash) { errorMsg.innerText = "Invalid username or password."; return; }
-
-            if (!clientRecord.approved) {
-                errorMsg.innerText = "Account pending approval by Admin.";
-                return;
-            }
+            if (!clientRecord.approved) { errorMsg.innerText = "Account pending approval by Admin."; return; }
 
             const currentDevice = getDeviceId();
             if (clientRecord.role !== "admin" && clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
@@ -440,7 +441,6 @@
 
             const ipAddress = await getClientIp();
             document.getElementById("profile-ip").innerText = ipAddress;
-
             document.getElementById("login-screen").style.display = "none";
 
             if (clientRecord.role === "admin") {
@@ -482,18 +482,12 @@
             const email = document.getElementById("reg-email").value.trim();
             const statusDiv = document.getElementById("reg-status");
 
-            if (!username || !password || !email) { statusDiv.innerHTML = '<div class="error">Fill all fields including email.</div>'; return; }
+            if (!username || !password || !email) { statusDiv.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
             if (CLIENT_DATABASE[username]) { statusDiv.innerHTML = '<div class="error">Username taken.</div>'; return; }
 
             const hash = await hashPassword(password);
             CLIENT_DATABASE[username] = {
-                passHash: hash,
-                role: "client",
-                vip: false,
-                allowedDevice: getDeviceId(),
-                approved: false,
-                email: email,
-                otp: ""
+                passHash: hash, role: "client", vip: false, allowedDevice: getDeviceId(), approved: false, email: email, otp: ""
             };
 
             await saveUsersToGithub();
@@ -514,7 +508,6 @@
             }
         }
 
-        // BUILT-IN JSON OTP GENERATOR & ADMIN NOTIFICATION (No Third-Party Needed)
         async function requestJsonOtp() {
             await syncUsersFromGithub();
             const username = document.getElementById("forgot-username").value.trim();
@@ -522,21 +515,17 @@
             const statusDiv = document.getElementById("forgot-status");
 
             if (!CLIENT_DATABASE[username] || CLIENT_DATABASE[username].email !== email) {
-                statusDiv.innerHTML = '<div class="error">Username and email do not match in database.</div>';
+                statusDiv.innerHTML = '<div class="error">Username and email do not match.</div>';
                 return;
             }
 
             resetTargetUser = username;
             const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            
-            // Save OTP directly into the user's record inside json database
             CLIENT_DATABASE[username].otp = newOtp;
             await saveUsersToGithub();
 
-            // Send an alert notification to Admin community chat log automatically
-            sendAdminAlert(`Password reset OTP generated for client: ${username} (Email: ${email}, OTP: ${newOtp})`);
-
-            statusDiv.innerHTML = `<div class="success">✅ Recovery OTP generated and registered securely in server JSON database!<br>Admin has been alerted with the OTP.</div>`;
+            sendAdminAlert(`Password reset OTP generated for client: ${username} (OTP: ${newOtp})`);
+            statusDiv.innerHTML = `<div class="success">✅ Recovery OTP generated! Admin has been alerted with the OTP.</div>`;
             document.getElementById("otp-section").classList.remove("hidden");
         }
 
@@ -548,18 +537,11 @@
             await syncUsersFromGithub();
             const serverOtp = CLIENT_DATABASE[resetTargetUser] ? CLIENT_DATABASE[resetTargetUser].otp : "";
 
-            if (!serverOtp || enteredOtp !== serverOtp) {
-                statusDiv.innerHTML = '<div class="error">Invalid or expired OTP code.</div>';
-                return;
-            }
-
-            if (!newPassword) {
-                statusDiv.innerHTML = '<div class="error">Enter new password.</div>';
-                return;
-            }
+            if (!serverOtp || enteredOtp !== serverOtp) { statusDiv.innerHTML = '<div class="error">Invalid OTP code.</div>'; return; }
+            if (!newPassword) { statusDiv.innerHTML = '<div class="error">Enter new password.</div>'; return; }
 
             CLIENT_DATABASE[resetTargetUser].passHash = await hashPassword(newPassword);
-            CLIENT_DATABASE[resetTargetUser].otp = ""; // Clear used OTP
+            CLIENT_DATABASE[resetTargetUser].otp = "";
             await saveUsersToGithub();
 
             alert("Password updated successfully!");
@@ -581,7 +563,7 @@
                 await fetch(url, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Admin Alert Notification", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
+                    body: JSON.stringify({ message: "Admin Alert", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
                 });
             } catch (e) {}
         }
@@ -607,15 +589,8 @@
                         <td><strong>${user}</strong></td>
                         <td style="font-family:monospace; font-size:0.7rem; word-break:break-all;">${data.allowedDevice || 'Not bound'}</td>
                         <td style="font-size:0.8rem;">${data.email || 'No email'}</td>
-                        <td>
-                            <button onclick="toggleVipStatus('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button>
-                        </td>
-                        <td>
-                            ${data.approved ? 
-                                `<button onclick="approveClient('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">Re-Approve</button>` : 
-                                `<button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Approve</button>`
-                            }
-                        </td>
+                        <td><button onclick="toggleVipStatus('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button></td>
+                        <td><button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Approve</button></td>
                     </tr>`;
             }
         }
@@ -637,29 +612,26 @@
             }
         }
 
+        // FETCH VAULT FILES AND CLOUD LINKS FROM JSON REPOSITORY
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
+            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Loading repository files...</td></tr>`;
 
+            let htmlContent = "";
+
+            // 1. Fetch direct uploaded files from uploads folder
+            const uploadsUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
             try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                const res = await fetch(uploadsUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
                     const files = await res.json();
-                    if (files.length === 0) {
-                        fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">No files found.</td></tr>`;
-                        return;
-                    }
-
-                    fileList.innerHTML = files.map(f => {
+                    files.forEach(f => {
                         const cleanName = f.name.replace(/^[^_]+_[^_]+_/, '');
                         const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(cleanName);
                         const isAudio = /\.(mp3|wav|ogg|aac|m4a)$/i.test(cleanName);
+                        let typeBadge = isVideo ? '🎥 Video' : (isAudio ? '🎵 Audio' : '📁 Document');
 
-                        let typeBadge = '📁 Doc';
-                        if (isVideo) typeBadge = '🎥 Video';
-                        if (isAudio) typeBadge = '🎵 Audio Track';
-
-                        return `
+                        htmlContent += `
                             <tr>
                                 <td style="word-break:break-all;">📄 ${cleanName}</td>
                                 <td>${typeBadge}</td>
@@ -668,11 +640,70 @@
                                     ${isAudio ? `<button onclick="playMedia('${f.download_url}', '${cleanName}', 'audio')" style="padding: 0.25rem 0.5rem; background: var(--accent-cyan); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Audio 🎵</button>` : ''}
                                     <a href="${f.download_url}" target="_blank" style="padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.1); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:500;">Download ⬇️</a>
                                 </td>
-                            </tr>
-                        `;
-                    }).join('');
+                            </tr>`;
+                    });
                 }
             } catch (e) {}
+
+            // 2. Fetch shared cloud/torrent links from links.json
+            const linksUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
+            try {
+                const res = await fetch(linksUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    linksFileSha = data.sha;
+                    const links = JSON.parse(atob(data.content));
+                    links.forEach(l => {
+                        htmlContent += `
+                            <tr>
+                                <td style="word-break:break-all;"><b style="color:var(--accent-vip);">🌐 [Big Game/File]</b> ${l.name}</td>
+                                <td><span class="badge-vip">Cloud Link</span></td>
+                                <td>
+                                    <a href="${l.url}" target="_blank" style="padding: 0.25rem 0.6rem; background: var(--accent-vip); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:bold;">High-Speed Download 🚀</a>
+                                </td>
+                            </tr>`;
+                    });
+                }
+            } catch (e) {}
+
+            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files or links found in vault.</td></tr>`;
+        }
+
+        // OPEN / CLOSE CLOUD LINK MODAL
+        function openLinkShareModal() { document.getElementById("link-share-modal").style.display = "flex"; }
+        function closeLinkShareModal() { document.getElementById("link-share-modal").style.display = "none"; }
+
+        // SUBMIT CLOUD LINK TO links.json
+        async function submitCloudLink() {
+            const name = document.getElementById("share-name").value.trim();
+            const url = document.getElementById("share-url").value.trim();
+            if (!name || !url) { alert("Please fill in both fields!"); return; }
+
+            const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
+            let existingLinks = [];
+
+            try {
+                const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    linksFileSha = data.sha;
+                    existingLinks = JSON.parse(atob(data.content));
+                }
+            } catch (e) {}
+
+            existingLinks.push({ name: name, url: url, date: new Date().toLocaleDateString() });
+
+            await fetch(apiUrl, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "Add big file cloud link", content: btoa(JSON.stringify(existingLinks, null, 2)), sha: linksFileSha || undefined })
+            });
+
+            alert("Massive file link published successfully to Vault!");
+            closeLinkShareModal();
+            document.getElementById("share-name").value = "";
+            document.getElementById("share-url").value = "";
+            fetchVaultFiles();
         }
 
         function playMedia(url, title, type) {
@@ -688,24 +719,19 @@
             document.getElementById("media-container").innerHTML = "";
         }
 
-        async function startBackgroundUpload() {
+        // SMALL FILE BACKGROUND UPLOADER (For documents, small mp3, clips under 50MB)
+        async function startSmallUpload() {
             const fileInput = document.getElementById("file-picker");
             const widget = document.getElementById("upload-widget");
-            const widgetFileName = document.getElementById("widget-filename");
-            const widgetPercent = document.getElementById("widget-percent");
-            const widgetProgressFill = document.getElementById("widget-progress-fill");
-            const widgetStatusMsg = document.getElementById("widget-status-msg");
             const username = document.getElementById("welcome-user").innerText;
 
             if (!fileInput.files.length) return;
-
             const file = fileInput.files[0];
-            isUploadingActive = true;
-            widget.style.display = "flex";
-            widgetFileName.innerText = file.name.length > 20 ? file.name.substring(0, 18) + "..." : file.name;
-            widgetPercent.innerText = "0%";
-            widgetProgressFill.style.width = "0%";
-            widgetStatusMsg.innerText = "Uploading...";
+
+            if (file.size > 50 * 1024 * 1024) {
+                alert("File size is over 50MB! For massive files (like GTA IV 19GB), please use the 'Share Big File Link' button instead.");
+                return;
+            }
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -715,33 +741,19 @@
                 const path = `uploads/${username}_${timestamp}_${file.name}`;
                 const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/${path}`;
 
-                const xhr = new XMLHttpRequest();
-                xhr.open("PUT", url, true);
-                xhr.setRequestHeader("Authorization", `token ${GITHUB_UPLOAD_TOKEN}`);
-                xhr.setRequestHeader("Content-Type", "application/json");
-
-                xhr.upload.onprogress = function(e) {
-                    if (e.lengthComputable) {
-                        let percent = Math.round((e.loaded / e.total) * 100);
-                        widgetPercent.innerText = percent + "%";
-                        widgetProgressFill.style.width = percent + "%";
-                    }
-                };
-
-                xhr.onload = function() {
-                    isUploadingActive = false;
-                    if (xhr.status === 200 || xhr.status === 201) {
-                        widgetStatusMsg.innerText = "✅ Uploaded Successfully!";
+                fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Upload ${file.name}`, content: base64Content })
+                }).then(res => {
+                    if (res.ok) {
+                        alert("File uploaded successfully!");
                         fileInput.value = "";
                         fetchVaultFiles();
-                        setTimeout(() => { widget.style.display = "none"; }, 3000);
                     } else {
-                        widgetStatusMsg.innerText = "❌ Upload Failed.";
-                        setTimeout(() => { widget.style.display = "none"; }, 4000);
+                        alert("Upload failed. Try sharing as a cloud link.");
                     }
-                };
-
-                xhr.send(JSON.stringify({ message: `Upload by ${username}`, content: base64ClientContent = base64Content }));
+                });
             };
         }
 
@@ -753,7 +765,7 @@
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
-                    const data = var_data = await res.json();
+                    const data = await res.json();
                     const messages = JSON.parse(atob(data.content));
                     chatBox.innerHTML = messages.map(m => `
                         <div class="msg ${m.user === currentUser ? 'me' : 'other'}">
