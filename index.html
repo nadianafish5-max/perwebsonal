@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Drive - Secure Client Workspace</title>
+    <title>Secure and safe server provided by Leo Jr.</title>
     <style>
         :root {
             --bg-main: #f8f9fa;
@@ -112,7 +112,7 @@
     <div id="login-screen">
         <div class="login-card">
             <h2>📁 Client Workspace</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Google Drive Style Secure Portal</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal</p>
             <input type="text" id="username-input" placeholder="Username">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
@@ -123,11 +123,11 @@
     <!-- Top Header -->
     <header>
         <div class="logo-area">
-            📁 <span style="font-weight: 500; color: #3c4043;">Client Drive Vault</span>
+            📁 <span style="font-weight: 500; color: #3c4043;">Client's Vault</span>
         </div>
         <div class="search-bar">
             <span>🔍</span>
-            <input type="text" placeholder="Search in Drive">
+            <input type="text" placeholder="Search in Server">
         </div>
         <div id="welcome-user" style="font-weight: 500; font-size: 0.9rem; color: var(--text-muted);">User</div>
     </header>
@@ -141,7 +141,7 @@
             <input type="file" id="file-picker" style="display:none" onchange="handleFileUpload()">
 
             <div class="nav-item active" onclick="switchTab('home', this)">🏠 Home</div>
-            <div class="nav-item" onclick="switchTab('drive', this)">📂 My Drive Files</div>
+            <div class="nav-item" onclick="switchTab('drive', this)">📂 My Files</div>
             <div class="nav-item" onclick="switchTab('chat', this)">💬 Client Chat</div>
             <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 Admin Panel</div>
             <div class="nav-item" onclick="logout()" style="color: #b3261e; margin-top: auto;">🚪 Logout</div>
@@ -150,7 +150,7 @@
         <div class="content-area">
             <!-- HOME TAB -->
             <div id="tab-home" class="tab-content">
-                <h2>Welcome to your Drive Workspace</h2>
+                <h2>Welcome to your Vault</h2>
                 <p style="color: var(--text-muted); font-size: 0.9rem;">Manage your documents, stream videos instantly, and collaborate securely.</p>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
@@ -171,14 +171,14 @@
             </div>
 
             <!-- MY DRIVE TAB (File Management & Video Player) -->
-            <div id="tab-drive" class="tab-content hidden">
-                <h2>My Drive Vault Files</h2>
+            <div id="tab-vault" class="tab-content hidden">
+                <h2>My Vault Files</h2>
                 <p style="color: var(--text-muted); font-size: 0.9rem;">Click any video to stream it live. Use download buttons to save files.</p>
                 <table>
                     <thead>
                         <tr><th>Name</th><th>Type</th><th>Actions</th></tr>
                     </thead>
-                    <tbody id="drive-file-list">
+                    <tbody id="file-list">
                         <tr><td colspan="3" style="color: var(--text-muted);">Loading files...</td></tr>
                     </tbody>
                 </table>
@@ -290,7 +290,7 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.remove('hidden');
             element.classList.add('active');
-            if (tabName === 'drive') fetchVaultFiles();
+            if (tabName === 'STORAGE') fetchVaultFiles();
         }
 
         function loadAdminScoreboard() {
@@ -304,7 +304,7 @@
 
         // FETCH FILES & DETECT VIDEO STREAMING
         async function fetchVaultFiles() {
-            const fileList = document.getElementById("drive-file-list");
+            const fileList = document.getElementById("file-list");
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
             const currentUser = document.getElementById("welcome-user").innerText;
             const isAdmin = CLIENT_DATABASE[currentUser]?.role === "admin";
@@ -392,7 +392,7 @@
 
                 xhr.onload = function() {
                     if (xhr.status === 200 || xhr.status === 201) {
-                        statusDiv.innerHTML = '<div class="success">✅ File successfully uploaded to your Drive vault!</div>';
+                        statusDiv.innerHTML = '<div class="success">✅ File successfully uploaded to your vault!</div>';
                         fileInput.value = "";
                         fetchVaultFiles();
                     } else {
