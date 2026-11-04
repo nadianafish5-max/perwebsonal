@@ -51,21 +51,21 @@
         .search-bar { flex: 0 1 400px; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.4rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
         .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.85rem; color: var(--text-main); }
 
-        /* TeraBox Style User Profile Popup Widget in Header */
-        .terabox-profile-widget { position: relative; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
-        .terabox-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.95rem; }
+        /* Professional Profile Widget Dropdown in Header */
+        .profile-widget { position: relative; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+        .profile-avatar-sm { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.95rem; }
         
-        .terabox-dropdown {
+        .profile-dropdown {
             position: absolute; top: 50px; right: 0; width: 280px;
             background: #ffffff; color: #1e293b; border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 1.25rem;
             display: none; z-index: 5000; text-align: left;
         }
-        .terabox-dropdown.show { display: block; }
-        .tb-header { display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.85rem; margin-bottom: 0.85rem; }
-        .tb-avatar-lg { width: 44px; height: 44px; border-radius: 50%; background: #334155; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; }
-        .tb-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; color: #334155; cursor: pointer; }
-        .tb-menu-item:hover { color: var(--accent-blue); }
+        .profile-dropdown.show { display: block; }
+        .pd-header { display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.85rem; margin-bottom: 0.85rem; }
+        .pd-avatar-lg { width: 44px; height: 44px; border-radius: 50%; background: #334155; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; }
+        .pd-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; color: #334155; cursor: pointer; }
+        .pd-menu-item:hover { color: var(--accent-blue); }
 
         .main-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
 
@@ -143,14 +143,13 @@
     <!-- Login Modal -->
     <div id="login-screen">
         <div id="login-card" class="auth-card">
-            <h2 style="margin: 0 0 0.5rem 0;">📁 TeraBox 1TB Vault</h2>
+            <h2 style="margin: 0 0 0.5rem 0;">📁 Secure Cloud Vault</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
             <button id="register-device-btn" class="btn-secondary hidden" onclick="requestDeviceBinding()">📱 Request Device Approval</button>
             <span class="link-text" onclick="toggleAuthView('register')">Need an account? Register Here</span>
-            <span class="link-text" style="color:var(--accent-red);" onclick="toggleAuthView('forgot')">Forgot Password?</span>
             <div id="error-msg" class="error"></div>
         </div>
 
@@ -159,59 +158,43 @@
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Request Access from Server Admin</p>
             <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
             <input type="password" id="reg-password" placeholder="Choose Password">
-            <input type="text" id="reg-email" placeholder="Your Gmail Address">
+            <input type="text" id="reg-email" placeholder="Your Gmail Address (For Account Mapping)">
             <button onclick="submitRegistration()">Request Registration</button>
             <span class="link-text" onclick="toggleAuthView('login')">Already registered? Sign In</span>
             <div id="reg-status"></div>
-        </div>
-
-        <div id="forgot-card" class="auth-card hidden">
-            <h2 style="margin: 0 0 0.5rem 0;">🔑 Password Recovery</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure JSON-based Password Reset</p>
-            <input type="text" id="forgot-username" placeholder="Your Username" autocomplete="off">
-            <input type="text" id="forgot-email" placeholder="Bound Email Address">
-            <button onclick="requestJsonOtp()">Generate Recovery OTP</button>
-            
-            <div id="otp-section" class="hidden" style="margin-top:1rem;">
-                <input type="text" id="otp-input" placeholder="Enter 6-digit OTP">
-                <input type="password" id="new-password" placeholder="New Password">
-                <button onclick="verifyAndResetPassword()">Update Password</button>
-            </div>
-            <span class="link-text" onclick="toggleAuthView('login')">Back to Sign In</span>
-            <div id="forgot-status"></div>
         </div>
     </div>
 
     <!-- Header Bar -->
     <header>
         <div class="logo-area">
-            📁 <span>TeraBox 1TB Vault</span>
+            📁 <span>Secure Cloud Vault</span>
         </div>
         <div class="search-bar">
             <span>🔍</span>
             <input type="text" placeholder="Search files in vault...">
         </div>
         
-        <!-- TeraBox Style Profile Widget Dropdown in Header -->
-        <div class="terabox-profile-widget" onclick="toggleTbDropdown(event)">
+        <!-- Professional Profile Widget Dropdown in Header -->
+        <div class="profile-widget" onclick="toggleProfileDropdown(event)">
             <span id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-main);">User</span>
-            <div class="terabox-avatar" id="header-avatar-initial">U</div>
+            <div class="profile-avatar-sm" id="header-avatar-initial">U</div>
 
-            <div id="tb-dropdown-menu" class="terabox-dropdown">
-                <div class="tb-header">
-                    <div class="tb-avatar-lg" id="dropdown-avatar-lg">U</div>
+            <div id="profile-dropdown-menu" class="profile-dropdown">
+                <div class="pd-header">
+                    <div class="pd-avatar-lg" id="dropdown-avatar-lg">U</div>
                     <div>
                         <div style="font-weight:700; font-size:0.95rem;" id="dropdown-username">User</div>
                         <span class="badge-normal" id="dropdown-rank-badge">Normal Client</span>
                     </div>
                 </div>
-                <div class="tb-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[1])">
+                <div class="pd-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[1])">
                     <span>👤 Profile & Devices</span> <span>➔</span>
                 </div>
-                <div class="tb-menu-item" onclick="switchTab('vault', document.querySelectorAll('.nav-item')[2])">
-                    <span>📂 TeraBox Storage (1 TB)</span> <span>➔</span>
+                <div class="pd-menu-item" onclick="switchTab('vault', document.querySelectorAll('.nav-item')[2])">
+                    <span>📂 Cloud Vault Storage</span> <span>➔</span>
                 </div>
-                <div class="tb-menu-item" onclick="logout()" style="color:var(--accent-red); border-bottom:none;">
+                <div class="pd-menu-item" onclick="logout()" style="color:var(--accent-red); border-bottom:none;">
                     <span>🚪 Logout</span> <span>➔</span>
                 </div>
             </div>
@@ -221,12 +204,12 @@
     <div class="main-layout">
         <sidebar>
             <button class="new-btn" onclick="openLinkShareModal()">
-                <span>☁️</span> <span style="font-size:0.85rem;">Add TeraBox File</span>
+                <span>☁️</span> <span style="font-size:0.85rem;">Upload File</span>
             </button>
 
             <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
             <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile & Devices</span></div>
-            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>TeraBox Vault</span></div>
+            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>Cloud Vault</span></div>
             <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Client Chat</span></div>
             <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
             <div class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></div>
@@ -235,8 +218,8 @@
         <div class="content-area">
             <!-- HOME TAB -->
             <div id="tab-home" class="tab-content">
-                <h2>Welcome to TeraBox 1TB Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage and stream your massive files backed by 1 TeraBox cloud storage pool[cite: 5].</p>
+                <h2>Welcome to Secure Cloud Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage and stream your files seamlessly across your private cloud storage.</p>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
                     <div class="profile-card">
                         <h4>Your Current Logged Device ID</h4>
@@ -274,7 +257,7 @@
                     <button onclick="requestAdditionalDevice()" style="width:auto; padding:0.4rem 0.8rem; background:var(--accent-purple); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem;">➕ Add Current Device to Account</button>
                 </div>
                 <div class="profile-card">
-                    <h4>Bound Gmail Address (TeraBox Linked)</h4>
+                    <h4>Bound Gmail Address (For Account Mapping)</h4>
                     <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
                         <input type="text" id="bind-email-input" placeholder="Enter gmail address" style="margin:0; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; flex:1;">
                         <button onclick="saveClientEmail()" style="width:auto; padding:0.5rem 1rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer;">Save Email</button>
@@ -288,15 +271,15 @@
 
             <!-- VAULT TAB -->
             <div id="tab-vault" class="tab-content hidden">
-                <h2>TeraBox 1TB Cloud Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream videos live or download high-capacity files instantly.</p>
+                <h2>Cloud Storage Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream videos, play audio, or download your stored files instantly.</p>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>File Name</th><th>Storage Node</th><th>Actions</th></tr>
+                            <tr><th>File Name</th><th>Storage Status</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="file-list">
-                            <tr><td colspan="3" style="color: var(--text-muted);">Syncing TeraBox nodes...</td></tr>
+                            <tr><td colspan="3" style="color: var(--text-muted);">Syncing cloud vault...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -318,7 +301,7 @@
             <!-- ADMIN TAB -->
             <div id="tab-admin" class="tab-content hidden">
                 <h2>Admin Device & Account Approval Dashboard</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Approve new accounts and multiple bound device requests.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Approve new accounts, manage bound devices, and handle recovery requests.</p>
                 <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Bound Devices</h3>
                 <div class="table-responsive">
                     <table>
@@ -337,14 +320,14 @@
     <!-- Add File Modal -->
     <div id="link-share-modal" class="modal">
         <div class="modal-content" style="text-align: left;">
-            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">☁️ Add File to TeraBox Vault</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">Files route directly to your 1TB TeraBox storage node[cite: 5].</p>
+            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">☁️ Upload File to Vault</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">Files route directly to your primary private cloud storage.</p>
             
-            <label style="font-size:0.75rem; color:var(--text-muted);">File / Game Name:</label>
-            <input type="text" id="share-name" placeholder="e.g. GTA IV Full Setup (19GB)" style="width:100%; padding:0.7rem; margin:0.3rem 0 1rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+            <label style="font-size:0.75rem; color:var(--text-muted);">File Name:</label>
+            <input type="text" id="share-name" placeholder="e.g. Movie / Setup / Document" style="width:100%; padding:0.7rem; margin:0.3rem 0 1rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
 
-            <label style="font-size:0.75rem; color:var(--text-muted);">TeraBox Cloud Direct / Share Link:</label>
-            <input type="text" id="share-url" placeholder="Paste TeraBox file link..." style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+            <label style="font-size:0.75rem; color:var(--text-muted);">Direct Storage Access Link:</label>
+            <input type="text" id="share-url" placeholder="Paste file share link..." style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
 
             <div style="display:flex; gap:1rem;">
                 <button onclick="submitCloudNodeLink()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Publish to Vault</button>
@@ -353,10 +336,10 @@
         </div>
     </div>
 
-    <!-- Media Player Modal -->
+    <!-- Media Player Modal (Supports Video & Audio Streaming) -->
     <div id="media-modal" class="modal">
         <div class="modal-content" style="text-align:center;">
-            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">TeraBox Media Streamer</h3>
+            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Cloud Media Player</h3>
             <div id="media-container"></div>
             <button onclick="closeMediaModal()" style="margin-top: 1.25rem; padding: 0.5rem 1.25rem; background: var(--accent-red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Viewer</button>
         </div>
@@ -372,15 +355,14 @@
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
         let CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevices: ["admin_master"], approved: true, email: "admin@server.com", otp: "" },
-            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevices: [], approved: true, email: "", otp: "" },
-            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevices: [], approved: true, email: "", otp: "" }
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevices: ["admin_master"], approved: true, email: "admin@server.com" },
+            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevices: [], approved: true, email: "" },
+            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevices: [], approved: true, email: "" }
         };
 
         let usersFileSha = "";
         let linksFileSha = "";
         let pendingDeviceUser = null;
-        let resetTargetUser = null;
 
         function getDeviceId() {
             let deviceId = localStorage.getItem("portal_device_id");
@@ -399,7 +381,6 @@
                     const data = await res.json();
                     usersFileSha = data.sha;
                     const loadedDb = JSON.parse(atob(data.content));
-                    // Backward compatibility conversion for single allowedDevice to allowedDevices array
                     for (let u in loadedDb) {
                         if (loadedDb[u].allowedDevice && !loadedDb[u].allowedDevices) {
                             loadedDb[u].allowedDevices = [loadedDb[u].allowedDevice];
@@ -426,22 +407,19 @@
         function toggleAuthView(view) {
             document.getElementById("login-card").classList.add("hidden");
             document.getElementById("register-card").classList.add("hidden");
-            document.getElementById("forgot-card").classList.add("hidden");
-
             if (view === 'register') document.getElementById("register-card").classList.remove("hidden");
-            else if (view === 'forgot') document.getElementById("forgot-card").classList.remove("hidden");
             else document.getElementById("login-card").classList.remove("hidden");
         }
 
-        function toggleTbDropdown(event) {
+        function toggleProfileDropdown(event) {
             event.stopPropagation();
-            const menu = document.getElementById("tb-dropdown-menu");
+            const menu = document.getElementById("profile-dropdown-menu");
             menu.classList.toggle("show");
         }
 
         window.onclick = function(event) {
-            if (!event.target.closest('.terabox-profile-widget')) {
-                const menu = document.getElementById("tb-dropdown-menu");
+            if (!event.target.closest('.profile-widget')) {
+                const menu = document.getElementById("profile-dropdown-menu");
                 if (menu && menu.classList.contains('show')) menu.classList.remove('show');
             }
         };
@@ -575,7 +553,7 @@
 
             const hash = await hashPassword(password);
             CLIENT_DATABASE[username] = {
-                passHash: hash, role: "client", vip: false, allowedDevices: [getDeviceId()], approved: false, email: email, otp: ""
+                passHash: hash, role: "client", vip: false, allowedDevices: [getDeviceId()], approved: false, email: email
             };
 
             await saveUsersToGithub();
@@ -592,68 +570,8 @@
             if (CLIENT_DATABASE[username]) {
                 CLIENT_DATABASE[username].email = email;
                 await saveUsersToGithub();
-                alert("Email bound successfully!");
+                alert("Email mapped successfully!");
             }
-        }
-
-        async function requestJsonOtp() {
-            await syncUsersFromGithub();
-            const username = document.getElementById("forgot-username").value.trim();
-            const email = document.getElementById("forgot-email").value.trim();
-            const statusDiv = document.getElementById("forgot-status");
-
-            if (!CLIENT_DATABASE[username] || CLIENT_DATABASE[username].email !== email) {
-                statusDiv.innerHTML = '<div class="error">Username and email do not match.</div>';
-                return;
-            }
-
-            resetTargetUser = username;
-            const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            CLIENT_DATABASE[username].otp = newOtp;
-            await saveUsersToGithub();
-
-            sendAdminAlert(`Password reset OTP generated for client: ${username} (OTP: ${newOtp})`);
-            statusDiv.innerHTML = `<div class="success">✅ Recovery OTP generated! Admin has been alerted with the OTP.</div>`;
-            document.getElementById("otp-section").classList.remove("hidden");
-        }
-
-        async function verifyAndResetPassword() {
-            const enteredOtp = document.getElementById("otp-input").value.trim();
-            const newPassword = document.getElementById("new-password").value;
-            const statusDiv = document.getElementById("forgot-status");
-
-            await syncUsersFromGithub();
-            const serverOtp = CLIENT_DATABASE[resetTargetUser] ? CLIENT_DATABASE[resetTargetUser].otp : "";
-
-            if (!serverOtp || enteredOtp !== serverOtp) { statusDiv.innerHTML = '<div class="error">Invalid OTP code.</div>'; return; }
-            if (!newPassword) { statusDiv.innerHTML = '<div class="error">Enter new password.</div>'; return; }
-
-            CLIENT_DATABASE[resetTargetUser].passHash = await hashPassword(newPassword);
-            CLIENT_DATABASE[resetTargetUser].otp = "";
-            await saveUsersToGithub();
-
-            alert("Password updated successfully!");
-            toggleAuthView('login');
-        }
-
-        async function sendAdminAlert(alertText) {
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                let messages = [];
-                let sha = "";
-                if (res.ok) {
-                    const data = await res.json();
-                    sha = data.sha;
-                    messages = JSON.parse(atob(data.content));
-                }
-                messages.push({ user: "🛡️ SYSTEM ALERT", text: alertText, time: new Date().toLocaleTimeString() });
-                await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Admin Alert", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
-                });
-            } catch (e) {}
         }
 
         function logout() { location.reload(); }
@@ -703,7 +621,7 @@
 
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
-            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Syncing TeraBox 1TB Vault...</td></tr>`;
+            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Syncing cloud vault...</td></tr>`;
 
             let htmlContent = "";
             const linksUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
@@ -717,22 +635,24 @@
                     
                     items.forEach((item) => {
                         const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(item.name);
+                        const isAudio = /\.(mp3|wav|ogg|m4a|aac)$/i.test(item.name);
                         
                         htmlContent += `
                             <tr>
                                 <td style="word-break:break-all;">📄 ${item.name}</td>
-                                <td><span class="badge-vip">TeraBox 1TB Node</span></td>
+                                <td><span class="badge-vip">Cloud Vault Storage</span></td>
                                 <td>
-                                    ${isVideo ? `<button onclick="playCloudMedia('${item.url}', '${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Stream ▶</button>` : ''}
-                                    <button onclick="previewOverview('${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Overview 👁️</button>
-                                    <a href="${item.url}" target="_blank" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:bold;">Direct Download ⬇️</a>
+                                    ${isVideo ? `<button onclick="playMedia('${item.url}', '${item.name}', 'video')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Video ▶</button>` : ''}
+                                    ${isAudio ? `<button onclick="playMedia('${item.url}', '${item.name}', 'audio')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Audio 🎵</button>` : ''}
+                                    <button onclick="previewOverview('${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-cyan); color:#0f172a; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem; font-weight:bold;">Overview 👁️</button>
+                                    <a href="${item.url}" target="_blank" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:bold;">Download ⬇️</a>
                                 </td>
                             </tr>`;
                     });
                 }
             } catch (e) {}
 
-            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files found in TeraBox vault.</td></tr>`;
+            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files found in cloud vault.</td></tr>`;
         }
 
         function openLinkShareModal() { document.getElementById("link-share-modal").style.display = "flex"; }
@@ -760,25 +680,29 @@
             await fetch(apiUrl, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Add file to TeraBox storage", content: btoa(JSON.stringify(existingItems, null, 2)), sha: linksFileSha || undefined })
+                body: JSON.stringify({ message: "Add file to cloud storage", content: btoa(JSON.stringify(existingItems, null, 2)), sha: linksFileSha || undefined })
             });
 
-            alert("File successfully added to TeraBox 1TB Vault!");
+            alert("File successfully added to Cloud Vault!");
             closeLinkShareModal();
             document.getElementById("share-name").value = "";
             document.getElementById("share-url").value = "";
             fetchVaultFiles();
         }
 
-        function playCloudMedia(url, title) {
+        function playMedia(url, title, type) {
             document.getElementById("modal-title").innerText = title;
-            document.getElementById("media-container").innerHTML = `<video src="${url}" controls autoplay></video>`;
+            if (type === 'video') {
+                document.getElementById("media-container").innerHTML = `<video src="${url}" controls autoplay></video>`;
+            } else {
+                document.getElementById("media-container").innerHTML = `<audio src="${url}" controls autoplay style="width:100%; margin-top:2rem;"></audio>`;
+            }
             document.getElementById("media-modal").style.display = "flex";
         }
 
         function previewOverview(title) {
             document.getElementById("modal-title").innerText = title + " - Overview";
-            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">TeraBox Cloud Storage Node</h3><p>File securely indexed on 1TB storage node[cite: 5].</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Stream Status: Ready & Optimized</p></div>`;
+            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">Cloud Storage File</h3><p>File securely indexed in your primary cloud vault.</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Stream & Play Status: Ready</p></div>`;
             document.getElementById("media-modal").style.display = "flex";
         }
 
