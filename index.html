@@ -2,16 +2,147 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Private Vault</title>
+    <title>Secure Client Portal</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 4rem; text-align: center; }
-        .card { background: #1e293b; padding: 2rem; border-radius: 8px; max-width: 500px; margin: 0 auto; }
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 2rem; border-radius: 8px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        input { width: 100%; padding: 0.75rem; margin: 0.5rem 0 1rem 0; border: 1px solid #475569; border-radius: 4px; background: #0f172a; color: white; box-sizing: border-box; }
+        label { display: block; text-align: left; font-size: 0.875rem; color: #94a3b8; }
+        button { width: 100%; padding: 0.75rem; background: #3b82f6; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+        button:hover { background: #2563eb; }
+        .error { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; }
+        .info-box { background: #0f172a; padding: 1rem; border-radius: 6px; margin-top: 1rem; text-align: left; font-size: 0.85rem; border: 1px solid #334155; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🔒 Private Access Granted</h1>
-        <p>This page is securely encrypted in the cloud and I can see you!</p>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="card">
+        <h2>🔒 Secure Client Login</h2>
+        
+        <label for="username-input">Username</label>
+        <input type="text" id="username-input" placeholder="Enter your username">
+        
+        <label for="password-input">Password</label>
+        <input type="password" id="password-input" placeholder="Enter your password">
+        
+        <button onclick="attemptLogin()">Authenticate</button>
+        <div id="error-msg" class="error"></div>
     </div>
+
+    <!-- Authorized Secret Content Dashboard -->
+    <div id="secret-content" class="card hidden" style="max-width: 550px; text-align: left;">
+        <h1>🎉 Welcome, <span id="welcome-user" style="color: #38bdf8;"></span>!</h1>
+        <p>Access granted. Your session is bound to your authorized device.</p>
+        
+        <div class="info-box">
+            <p><strong>🌐 Your IP Address:</strong> <span id="display-ip" style="color: #34d399;">Loading...</span></p>
+            <p><strong>💻 Your Device ID:</strong> <span id="display-device" style="color: #fbbf24; word-break: break-all;">Loading...</span></p>
+        </div>
+
+        <div style="margin-top: 1.5rem; background: #334155; padding: 1rem; border-radius: 6px;">
+            <h3>Your Protected Files & Links</h3>
+            <p>Put your client-specific download links or dashboard items here!</p>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // 1. SECURE DATABASE (Passwords are converted to SHA-256 cryptographic hashes)
+        // 2. DEVICE WHITELISTING (Clients can only log in from their approved Device ID)
+        // =========================================================================
+        const CLIENT_DATABASE = {
+            "leokasperteal": {
+                //
+                passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", 
+                // Allowed Device ID for this client (leave empty "" to allow first device that logs in, or paste their exact Device ID)
+                allowedDevice: "" 
+            },
+            "tisafu69": {
+                //
+                passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4",
+                allowedDevice: ""
+            }
+        };
+
+        // Generate or retrieve a persistent unique Device ID for this browser
+        function getDeviceId() {
+            let deviceId = localStorage.getItem("portal_device_id");
+            if (!deviceId) {
+                deviceId = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localStorage.setItem("portal_device_id", deviceId);
+            }
+            return deviceId;
+        }
+
+        // Fetch client's live public IP address
+        async function getClientIp() {
+            try {
+                let response = await fetch('https://api.ipify.org?format=json');
+                let data = await response.json();
+                return data.ip;
+            } catch (e) {
+                return "Unknown IP";
+            }
+        }
+
+        // Helper to hash passwords using standard browser crypto (SHA-256)
+        async function hashPassword(password) {
+            const msgBuffer = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function attemptLogin() {
+            const username = document.getElementById("username-input").value.trim();
+            const password = document.getElementById("password-input").value;
+            const errorMsg = document.getElementById("error-msg");
+
+            errorMsg.innerText = "Authenticating...";
+
+            if (!CLIENT_DATABASE[username]) {
+                errorMsg.innerText = "Invalid username or password.";
+                return;
+            }
+
+            const inputHash = await hashPassword(password);
+            const clientRecord = CLIENT_DATABASE[username];
+
+            if (inputHash !== clientRecord.passHash) {
+                errorMsg.innerText = "Invalid username or password.";
+                return;
+            }
+
+            // Check Device Whitelisting
+            const currentDevice = getDeviceId();
+            if (clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
+                errorMsg.innerHTML = `Access Denied: Unauthorized device.<br><span style="font-size:0.75rem; color:#94a3b8;">Your Device ID: ${currentDevice}</span>`;
+                return;
+            }
+
+            // If allowedDevice was empty, lock it to this first successful device automatically (or you can pre-fill it)
+            if (!clientRecord.allowedDevice) {
+                clientRecord.allowedDevice = currentDevice;
+            }
+
+            // Fetch live IP and display dashboard
+            const clientIp = await getClientIp();
+            document.getElementById("welcome-user").innerText = username;
+            document.getElementById("display-ip").innerText = clientIp;
+            document.getElementById("display-device").innerText = currentDevice;
+
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("secret-content").classList.remove("hidden");
+        }
+
+        document.getElementById("password-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                attemptLogin();
+            }
+        });
+    </script>
+
 </body>
 </html>
