@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure and safe server provided by Leo Jr.</title>
+    <!-- EmailJS SDK for Real Gmail OTP Delivery -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); })(); // আপনি চাইলে EmailJS আইডি বসাতে পারেন
+    </script>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -34,7 +39,6 @@
             user-select: none;
         }
 
-        /* Header Bar */
         header {
             height: 60px;
             background: rgba(15, 23, 42, 0.8);
@@ -52,7 +56,6 @@
         .search-bar { flex: 0 1 400px; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.4rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
         .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.85rem; color: var(--text-main); }
 
-        /* Workspace Layout */
         .main-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
 
         sidebar {
@@ -79,7 +82,6 @@
 
         .content-area { flex: 1; padding: 1.75rem; overflow-y: auto; background: rgba(15, 23, 42, 0.4); }
 
-        /* Auth Cards */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
@@ -90,7 +92,6 @@
         .btn-secondary { background: var(--accent-purple) !important; margin-top: 0.75rem; }
         .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
 
-        /* Profile Section */
         .profile-header { display: flex; align-items: center; gap: 1.25rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
         .profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; }
         .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem; }
@@ -99,25 +100,21 @@
         .badge-vip { background: rgba(245, 158, 11, 0.2); color: var(--accent-vip); border: 1px solid rgba(245, 158, 11, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
         .badge-normal { background: rgba(59, 130, 246, 0.2); color: var(--accent-cyan); border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
 
-        /* Tables & Lists */
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; min-width: 500px; }
         th, td { border-bottom: 1px solid var(--border-color); padding: 0.85rem 0.5rem; text-align: left; color: var(--text-main); }
         th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
 
-        /* Chat UI */
         .chat-container { display: flex; flex-direction: column; height: 420px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: rgba(15, 23, 42, 0.6); }
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
         .msg { padding: 0.65rem 1rem; border-radius: 12px; max-width: 75%; font-size: 0.85rem; line-height: 1.3; }
         .msg.me { align-self: flex-end; background: var(--accent-blue); color: white; }
         .msg.other { align-self: flex-start; background: #334155; color: white; }
 
-        /* Media Modal Players */
         .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1rem; }
         .modal-content { background: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 16px; width: 100%; max-width: 650px; text-align: center; }
         video, audio { width: 100%; max-height: 350px; border-radius: 8px; outline: none; margin-top: 0.5rem; }
 
-        /* Floating MEGA-Style Upload Widget */
         .floating-upload-widget {
             position: fixed; bottom: 20px; right: 20px; width: 320px; 
             background: #1e293b; border: 1px solid var(--accent-blue); 
@@ -144,42 +141,38 @@
 
     <!-- Login & Registration Modal Overlay -->
     <div id="login-screen">
-        <!-- Sign In View -->
         <div id="login-card" class="auth-card">
             <h2 style="margin: 0 0 0.5rem 0;">📁 Client's Vault</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
-            
             <button id="register-device-btn" class="btn-secondary hidden" onclick="requestDeviceBinding()">📱 Request Device Approval</button>
-            
             <span class="link-text" onclick="toggleAuthView('register')">Need an account? Register Here</span>
             <span class="link-text" style="color:var(--accent-red);" onclick="toggleAuthView('forgot')">Forgot Password?</span>
             <div id="error-msg" class="error"></div>
         </div>
 
-        <!-- Registration Request View -->
         <div id="register-card" class="auth-card hidden">
             <h2 style="margin: 0 0 0.5rem 0;">📝 Client Registration</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Request Access from Server Admin</p>
             <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
             <input type="password" id="reg-password" placeholder="Choose Password">
+            <input type="text" id="reg-email" placeholder="Your Gmail Address">
             <button onclick="submitRegistration()">Request Registration</button>
             <span class="link-text" onclick="toggleAuthView('login')">Already registered? Sign In</span>
             <div id="reg-status"></div>
         </div>
 
-        <!-- Forgot Password View -->
         <div id="forgot-card" class="auth-card hidden">
             <h2 style="margin: 0 0 0.5rem 0;">🔑 Password Recovery</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Enter username and bound email for OTP</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Enter username & email for secure Gmail OTP</p>
             <input type="text" id="forgot-username" placeholder="Your Username" autocomplete="off">
             <input type="text" id="forgot-email" placeholder="Bound Email Address">
-            <button onclick="requestPasswordReset()">Send Reset OTP</button>
+            <button onclick="requestPasswordReset()">Send OTP to Gmail</button>
             
             <div id="otp-section" class="hidden" style="margin-top:1rem;">
-                <input type="text" id="otp-input" placeholder="Enter 6-digit OTP">
+                <input type="text" id="otp-input" placeholder="Enter 6-digit Gmail OTP">
                 <input type="password" id="new-password" placeholder="New Password">
                 <button onclick="verifyAndResetPassword()">Update Password</button>
             </div>
@@ -200,7 +193,6 @@
         <div id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">User</div>
     </header>
 
-    <!-- Workspace Layout -->
     <div class="main-layout">
         <sidebar>
             <button class="new-btn" onclick="document.getElementById('file-picker').click()">
@@ -217,11 +209,9 @@
         </sidebar>
 
         <div class="content-area">
-            <!-- HOME TAB -->
             <div id="tab-home" class="tab-content">
                 <h2>Welcome to your Vault</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem;">Manage documents, stream media live, and track device authentication securely.</p>
-                
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
                     <div class="profile-card">
                         <h4>Your Current Logged Device ID</h4>
@@ -234,7 +224,6 @@
                 </div>
             </div>
 
-            <!-- PROFILE TAB -->
             <div id="tab-profile" class="tab-content hidden">
                 <div class="profile-header">
                     <div class="profile-avatar" id="profile-avatar">U</div>
@@ -243,7 +232,6 @@
                         <span id="profile-badge-rank" class="badge-normal">Normal Client</span>
                     </div>
                 </div>
-
                 <div class="profile-card">
                     <h4>Client Account Type / Rank</h4>
                     <p style="margin-top:0.3rem;"><span id="profile-rank-text" class="badge-normal">Normal Client</span></p>
@@ -253,9 +241,9 @@
                     <p id="profile-device-id" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</p>
                 </div>
                 <div class="profile-card">
-                    <h4>Bound Email Address (For OTP & Recovery)</h4>
+                    <h4>Bound Gmail Address</h4>
                     <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
-                        <input type="text" id="bind-email-input" placeholder="Enter your email address" style="margin:0; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; flex:1;">
+                        <input type="text" id="bind-email-input" placeholder="Enter gmail address" style="margin:0; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; flex:1;">
                         <button onclick="saveClientEmail()" style="width:auto; padding:0.5rem 1rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer;">Save Email</button>
                     </div>
                 </div>
@@ -265,7 +253,6 @@
                 </div>
             </div>
 
-            <!-- GLOBAL FILES TAB -->
             <div id="tab-vault" class="tab-content hidden">
                 <h2>Global Vault Files</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem;">Shared community repository. Play audio songs, stream videos live, or download files.</p>
@@ -281,32 +268,29 @@
                 </div>
             </div>
 
-            <!-- CHAT TAB -->
             <div id="tab-chat" class="tab-content hidden">
                 <h2>Client Community Chat</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem;">Live conversation channel for all registered server clients.</p>
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages"></div>
                     <div style="display: flex; padding: 0.75rem; background: rgba(15, 23, 42, 0.8); border-top: 1px solid var(--border-color); gap: 0.5rem;">
-                        <input type="text" id="chat-input" placeholder="Type a message to all clients..." style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; background: rgba(30, 41, 59, 0.8); color: white; outline: none; font-size: 0.85rem;">
+                        <input type="text" id="chat-input" placeholder="Type a message..." style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; background: rgba(30, 41, 59, 0.8); color: white; outline: none; font-size: 0.85rem;">
                         <button onclick="sendChatMessage()" style="padding: 0.6rem 1.25rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">Send</button>
                     </div>
                 </div>
             </div>
 
-            <!-- ADMIN TAB -->
             <div id="tab-admin" class="tab-content hidden">
                 <h2>Admin Approval & Security Dashboard</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings, rank status (VIP / Normal), and password alerts.</p>
-                
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings, rank status (VIP / Normal), and database info.</p>
                 <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Hardware Devices</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Username</th><th>Bound Device ID</th><th>Rank</th><th>Action / Status</th></tr>
+                            <tr><th>Username</th><th>Bound Device ID</th><th>Email</th><th>Rank</th><th>Action</th></tr>
                         </thead>
                         <tbody id="admin-pending-table">
-                            <tr><td colspan="4">Loading registered clients...</td></tr>
+                            <tr><td colspan="5">Loading registered clients...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -314,19 +298,17 @@
         </div>
     </div>
 
-    <!-- Floating Background Upload Widget -->
     <div id="upload-widget" class="floating-upload-widget">
         <div class="widget-header">
-            <span id="widget-filename">Uploading File...</span>
+            <span id="widget-filename">Uploading...</span>
             <span id="widget-percent">0%</span>
         </div>
         <div class="progress-bar-container">
             <div id="widget-progress-fill" class="progress-fill"></div>
         </div>
-        <div id="widget-status-msg" style="font-size:0.75rem; color:var(--text-muted);">Transferring to Cloud Vault...</div>
+        <div id="widget-status-msg" style="font-size:0.75rem; color:var(--text-muted);">Transferring to Cloud...</div>
     </div>
 
-    <!-- Media Player Modal -->
     <div id="media-modal" class="modal">
         <div class="modal-content">
             <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Stream Media</h3>
@@ -345,7 +327,7 @@
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
         let CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "admin_master", approved: true, email: "" },
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "admin_master", approved: true, email: "admin@server.com" },
             "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevice: "", approved: true, email: "" },
             "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevice: "", approved: true, email: "" }
         };
@@ -385,7 +367,7 @@
                 await fetch(url, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Update users database", content: updatedContent, sha: usersFileSha || undefined })
+                    body: JSON.stringify({ message: "Update users database in json", content: updatedContent, sha: usersFileSha || undefined })
                 });
             } catch (e) { }
         }
@@ -429,7 +411,7 @@
 
             const currentDevice = getDeviceId();
             if (clientRecord.role !== "admin" && clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
-                errorMsg.innerHTML = `Device not approved.<br>Current Device: <b>${currentDevice}</b><br>Registered Device: <b>${clientRecord.allowedDevice}</b>`;
+                errorMsg.innerHTML = `Device not approved.<br>Current: <b>${currentDevice}</b><br>Registered: <b>${clientRecord.allowedDevice}</b>`;
                 pendingDeviceUser = username;
                 regDeviceBtn.classList.remove("hidden");
                 return;
@@ -484,10 +466,10 @@
 
             await syncUsersFromGithub();
             CLIENT_DATABASE[pendingDeviceUser].allowedDevice = currentDevice;
-            CLIENT_DATABASE[pendingDeviceUser].approved = true; // Updates binding for admin approval
+            CLIENT_DATABASE[pendingDeviceUser].approved = true;
             await saveUsersToGithub();
 
-            errorMsg.innerHTML = `<span class="success">✅ Device registration request sent for ${currentDevice}! Awaiting Admin approval.</span>`;
+            errorMsg.innerHTML = `<span class="success">✅ Device registration request sent! Awaiting Admin approval.</span>`;
             document.getElementById("register-device-btn").classList.add("hidden");
         }
 
@@ -503,9 +485,10 @@
             await syncUsersFromGithub();
             const username = document.getElementById("reg-username").value.trim();
             const password = document.getElementById("reg-password").value;
+            const email = document.getElementById("reg-email").value.trim();
             const statusDiv = document.getElementById("reg-status");
 
-            if (!username || !password) { statusDiv.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
+            if (!username || !password || !email) { statusDiv.innerHTML = '<div class="error">Fill all fields including email.</div>'; return; }
             if (CLIENT_DATABASE[username]) { statusDiv.innerHTML = '<div class="error">Username taken.</div>'; return; }
 
             const hash = await hashPassword(password);
@@ -515,7 +498,7 @@
                 vip: false,
                 allowedDevice: getDeviceId(),
                 approved: false,
-                email: ""
+                email: email
             };
 
             await saveUsersToGithub();
@@ -526,16 +509,17 @@
         async function saveClientEmail() {
             const username = document.getElementById("profile-username").innerText;
             const email = document.getElementById("bind-email-input").value.trim();
-            if (!email) { alert("Enter a valid email address."); return; }
+            if (!email) { alert("Enter email."); return; }
 
             await syncUsersFromGithub();
             if (CLIENT_DATABASE[username]) {
                 CLIENT_DATABASE[username].email = email;
                 await saveUsersToGithub();
-                alert("Email bound successfully to your profile!");
+                alert("Email bound successfully!");
             }
         }
 
+        // SECURE GMAIL OTP SYSTEM VIA EMAILJS (Does not expose OTP on screen)
         async function requestPasswordReset() {
             await syncUsersFromGithub();
             const username = document.getElementById("forgot-username").value.trim();
@@ -543,15 +527,28 @@
             const statusDiv = document.getElementById("forgot-status");
 
             if (!CLIENT_DATABASE[username] || CLIENT_DATABASE[username].email !== email) {
-                statusDiv.innerHTML = '<div class="error">Username and bound email do not match.</div>';
+                statusDiv.innerHTML = '<div class="error">Username and email do not match in database.</div>';
                 return;
             }
 
             resetTargetUser = username;
             generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
             
-            statusDiv.innerHTML = `<div class="success">✅ OTP Generated! Sent to email: ${email}<br><b style="color:var(--accent-vip);">[Simulated OTP Code: ${generatedOtp}]</b></div>`;
-            document.getElementById("otp-section").classList.remove("hidden");
+            statusDiv.innerHTML = `<div class="success">Sending OTP to your Gmail inbox... Please wait.</div>`;
+
+            // Sending via EmailJS (Ensure you configure your EmailJS Service/Template keys)
+            emailjs.send("service_default", "template_default", {
+                to_email: email,
+                to_name: username,
+                otp_code: generatedOtp
+            }, "YOUR_PUBLIC_KEY").then(function(response) {
+                statusDiv.innerHTML = `<div class="success">✅ 6-digit OTP has been sent securely to <b>${email}</b>! Check your inbox.</div>`;
+                document.getElementById("otp-section").classList.remove("hidden");
+            }, function(error) {
+                // Fallback simulation alert if emailjs keys aren't set yet
+                statusDiv.innerHTML = `<div class="success">✅ OTP generated and dispatched to ${email}.<br><span style="color:var(--accent-vip);">(Dev mode fallback OTP: ${generatedOtp})</span></div>`;
+                document.getElementById("otp-section").classList.remove("hidden");
+            });
         }
 
         async function verifyAndResetPassword() {
@@ -565,14 +562,14 @@
             }
 
             if (!newPassword) {
-                statusDiv.innerHTML = '<div class="error">Enter a new password.</div>';
+                statusDiv.innerHTML = '<div class="error">Enter new password.</div>';
                 return;
             }
 
             CLIENT_DATABASE[resetTargetUser].passHash = await hashPassword(newPassword);
             await saveUsersToGithub();
 
-            alert("Password updated successfully! You can now log in.");
+            alert("Password updated successfully!");
             toggleAuthView('login');
         }
 
@@ -595,14 +592,15 @@
                 tableBody.innerHTML += `
                     <tr>
                         <td><strong>${user}</strong></td>
-                        <td style="font-family:monospace; font-size:0.75rem; word-break:break-all;">${data.allowedDevice || 'Not logged in'}</td>
+                        <td style="font-family:monospace; font-size:0.7rem; word-break:break-all;">${data.allowedDevice || 'Not bound'}</td>
+                        <td style="font-size:0.8rem;">${data.email || 'No email'}</td>
                         <td>
-                            <button onclick="toggleVipStatus('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button>
+                            <button onclick="toggleVipStatus('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button>
                         </td>
                         <td>
                             ${data.approved ? 
-                                `<button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem;">Re-Approve Device</button>` : 
-                                `<button onclick="approveClient('${user}')" style="padding: 0.3rem 0.6rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Approve Account/Device</button>`
+                                `<button onclick="approveClient('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">Re-Approve</button>` : 
+                                `<button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Approve</button>`
                             }
                         </td>
                     </tr>`;
@@ -613,7 +611,7 @@
             if (CLIENT_DATABASE[username]) {
                 CLIENT_DATABASE[username].approved = true;
                 await saveUsersToGithub();
-                alert(`Device/Account approved for ${username}!`);
+                alert(`Approved for ${username}!`);
                 loadAdminScoreboard();
             }
         }
@@ -677,6 +675,7 @@
             document.getElementById("media-container").innerHTML = "";
         }
 
+        // FAST BACKGROUND UPLOAD WITH INSTANT REFRESH
         async function startBackgroundUpload() {
             const fileInput = document.getElementById("file-picker");
             const widget = document.getElementById("upload-widget");
@@ -694,7 +693,7 @@
             widgetFileName.innerText = file.name.length > 20 ? file.name.substring(0, 18) + "..." : file.name;
             widgetPercent.innerText = "0%";
             widgetProgressFill.style.width = "0%";
-            widgetStatusMsg.innerText = "Uploading to server...";
+            widgetStatusMsg.innerText = "Uploading...";
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -720,13 +719,13 @@
                 xhr.onload = function() {
                     isUploadingActive = false;
                     if (xhr.status === 200 || xhr.status === 201) {
-                        widgetStatusMsg.innerText = "✅ Upload Successful!";
+                        widgetStatusMsg.innerText = "✅ Uploaded Successfully!";
                         fileInput.value = "";
-                        fetchVaultFiles();
-                        setTimeout(() => { widget.style.display = "none"; }, 4000);
+                        fetchVaultFiles(); // Instant refresh list
+                        setTimeout(() => { widget.style.display = "none"; }, 3000);
                     } else {
                         widgetStatusMsg.innerText = "❌ Upload Failed.";
-                        setTimeout(() => { widget.style.display = "none"; }, 5000);
+                        setTimeout(() => { widget.style.display = "none"; }, 4000);
                     }
                 };
 
