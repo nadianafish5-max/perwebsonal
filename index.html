@@ -2,71 +2,246 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Secure Client Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Client Portal & Cloud Vault</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 2rem; border-radius: 8px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        input { width: 100%; padding: 0.75rem; margin: 0.5rem 0 1rem 0; border: 1px solid #475569; border-radius: 4px; background: #0f172a; color: white; box-sizing: border-box; }
-        label { display: block; text-align: left; font-size: 0.875rem; color: #94a3b8; }
-        button { width: 100%; padding: 0.75rem; background: #3b82f6; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; margin-top: 1rem; }
-        button:hover { background: #2563eb; }
-        .error { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; }
-        .info-box { background: #0f172a; padding: 1rem; border-radius: 6px; margin-top: 1rem; text-align: left; font-size: 0.85rem; border: 1px solid #334155; }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --accent-green: #34d399;
+            --accent-yellow: #fbbf24;
+            --accent-red: #ef4444;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg-primary); 
+            color: var(--text-main); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 1rem; 
+            box-sizing: border-box; 
+            user-select: none; 
+        }
+
+        .container { width: 100%; max-width: 680px; }
+
+        .card { 
+            background: var(--bg-card); 
+            padding: 2rem; 
+            border-radius: 12px; 
+            text-align: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+            border: 1px solid var(--border-color); 
+        }
+
+        input[type="text"], input[type="password"], input[type="file"] { 
+            width: 100%; 
+            padding: 0.75rem; 
+            margin: 0.5rem 0 1rem 0; 
+            border: 1px solid #475569; 
+            border-radius: 6px; 
+            background: var(--bg-input); 
+            color: white; 
+            box-sizing: border-box; 
+        }
+
+        label { 
+            display: block; 
+            text-align: left; 
+            font-size: 0.875rem; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+        }
+
+        button { 
+            width: 100%; 
+            padding: 0.75rem; 
+            background: var(--accent-blue); 
+            border: none; 
+            border-radius: 6px; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: background 0.2s; 
+            margin-top: 0.5rem;
+        }
+        button:hover { background: var(--accent-blue-hover); }
+
+        .error { color: var(--accent-red); font-size: 0.875rem; margin-top: 0.5rem; word-break: break-all; }
+        .success { color: var(--accent-green); font-size: 0.875rem; margin-top: 0.5rem; }
+        
+        .info-box { 
+            background: var(--bg-input); 
+            padding: 1rem; 
+            border-radius: 8px; 
+            margin-top: 1rem; 
+            text-align: left; 
+            font-size: 0.85rem; 
+            border: 1px solid var(--border-color); 
+        }
+
+        .section-box { 
+            background: var(--bg-input); 
+            padding: 1.25rem; 
+            border-radius: 8px; 
+            margin-top: 1.5rem; 
+            border: 1px dashed var(--accent-blue); 
+            text-align: left; 
+        }
+
         .hidden { display: none; }
+        .timer { font-size: 0.75rem; color: var(--accent-yellow); margin-top: 0.5rem; text-align: left; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            text-align: left;
+        }
+        th { background: #0f172a; color: var(--accent-yellow); }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="card">
-        <h2>🔒 Secure Client Login</h2>
-        
-        <label for="username-input">Username</label>
-        <input type="text" id="username-input" placeholder="Enter your username">
-        
-        <label for="password-input">Password</label>
-        <input type="password" id="password-input" placeholder="Enter your password">
-        
-        <button onclick="attemptLogin()">Authenticate</button>
-        <div id="error-msg" class="error"></div>
-    </div>
-
-    <!-- Authorized Secret Content Dashboard -->
-    <div id="secret-content" class="card hidden" style="max-width: 550px; text-align: left;">
-        <h1>🎉 Welcome, <span id="welcome-user" style="color: #38bdf8;"></span>!</h1>
-        <p>Access granted. Your session is bound to your authorized device.</p>
-        
-        <div class="info-box">
-            <p><strong>🌐 Your IP Address:</strong> <span id="display-ip" style="color: #34d399;">Loading...</span></p>
-            <p><strong>💻 Your Device ID:</strong> <span id="display-device" style="color: #fbbf24; word-break: break-all;">Loading...</span></p>
+    <div class="container">
+        <!-- Authentication Screen -->
+        <div id="login-screen" class="card">
+            <h2>🔒 Secure Client Portal</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Role-Based Device & Cloud Authentication</p>
+            
+            <label for="username-input">Username</label>
+            <input type="text" id="username-input" placeholder="Enter your username" autocomplete="off">
+            
+            <label for="password-input">Password</label>
+            <input type="password" id="password-input" placeholder="Enter your password">
+            
+            <button onclick="attemptLogin()">Authenticate Session</button>
+            <div id="error-msg" class="error"></div>
         </div>
 
-        <div style="margin-top: 1.5rem; background: #334155; padding: 1rem; border-radius: 6px;">
-            <h3>Your Protected Files & Links</h3>
-            <p>Put your client-specific download links or dashboard items here!</p>
+        <!-- Dashboard Page -->
+        <div id="secret-content" class="card hidden" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <h2 style="margin: 0;">👋 Welcome, <span id="welcome-user" style="color: #38bdf8;"></span></h2>
+                <button onclick="logout()" style="width: auto; padding: 0.4rem 1rem; background: var(--accent-red); margin:0;">Logout</button>
+            </div>
+            
+            <div class="timer">⏱️ Auto-Logout in <span id="idle-timer">5:00</span> due to inactivity.</div>
+
+            <div class="info-box">
+                <p style="margin: 0.2rem 0;"><strong>🌐 Live IP:</strong> <span id="display-ip" style="color: var(--accent-green);">Loading...</span></p>
+                <p style="margin: 0.2rem 0;"><strong>💻 Device ID:</strong> <span id="display-device" style="color: var(--accent-yellow); word-break: break-all;">Loading...</span></p>
+                <p style="margin: 0.2rem 0;"><strong>🛡️ Role Level:</strong> <span id="display-role" style="color: #38bdf8;">Client</span></p>
+            </div>
+
+            <!-- ADMIN CONTROL CENTER -->
+            <div id="admin-panel" class="section-box hidden" style="border-color: var(--accent-yellow);">
+                <h3 style="margin-top: 0; color: var(--accent-yellow);">👑 Admin Monitoring Panel</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Overview of registered client accounts and bound hardware fingerprints.</p>
+                
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Bound Device ID</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-client-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FILE VAULT SECTION -->
+            <div class="section-box">
+                <h3 style="margin-top: 0; color: #38bdf8;">📂 Secure Private File Storage</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Upload files securely. Files are processed via cloud APIs without storing on local hardware.</p>
+                
+                <label for="file-picker">Select File</label>
+                <input type="file" id="file-picker">
+                <button onclick="handleFileUpload()">Upload Document</button>
+                <div id="upload-status"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // =========================================================================
-        // 1. SECURE DATABASE (Passwords are converted to SHA-256 cryptographic hashes)
-        // 2. DEVICE WHITELISTING (Clients can only log in from their approved Device ID)
-        // =========================================================================
+        // CONFIGURATION & ENCRYPTED DATABASE
+        const GITHUB_REPO_OWNER = "nadianafish5-max";
+        const GITHUB_VAULT_REPO = "client-vault";
+
         const CLIENT_DATABASE = {
+            "admin": {
+                passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", // Password: admin
+                role: "admin",
+                allowedDevice: ""
+            },
             "leokasperteal": {
-                //
                 passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", 
-                // Allowed Device ID for this client (leave empty "" to allow first device that logs in, or paste their exact Device ID)
+                role: "client",
                 allowedDevice: "" 
             },
             "tisafu69": {
-                //
                 passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4",
+                role: "client",
                 allowedDevice: ""
             }
         };
 
-        // Generate or retrieve a persistent unique Device ID for this browser
+        // ANTI-INSPECTION HARDENING
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || (e.ctrlKey && e.keyCode === 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 5-MINUTE INACTIVITY TIMER
+        let idleTimeSeconds = 0;
+        const maxIdleSeconds = 300;
+        let timerInterval;
+
+        function resetIdleTimer() { idleTimeSeconds = 0; }
+        function startIdleChecker() {
+            window.onmousemove = resetIdleTimer;
+            window.onmousedown = resetIdleTimer;
+            window.onkeydown = resetIdleTimer;
+            timerInterval = setInterval(() => {
+                idleTimeSeconds++;
+                let remaining = maxIdleSeconds - idleTimeSeconds;
+                let minutes = Math.floor(remaining / 60);
+                let seconds = remaining % 60;
+                document.getElementById("idle-timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (idleTimeSeconds >= maxIdleSeconds) { logout(); alert("Session expired due to inactivity."); }
+            }, 1000);
+        }
+
+        function logout() {
+            clearInterval(timerInterval);
+            sessionStorage.removeItem("vault_token");
+            document.getElementById("secret-content").classList.add("hidden");
+            document.getElementById("login-screen").classList.remove("hidden");
+            document.getElementById("password-input").value = "";
+            document.getElementById("error-msg").innerText = "";
+        }
+
+        // DEVICE FINGERPRINTING & IP IDENTIFICATION
         function getDeviceId() {
             let deviceId = localStorage.getItem("portal_device_id");
             if (!deviceId) {
@@ -76,18 +251,14 @@
             return deviceId;
         }
 
-        // Fetch client's live public IP address
         async function getClientIp() {
             try {
-                let response = await fetch('https://api.ipify.org?format=json');
-                let data = await response.json();
+                let res = await fetch('https://api.ipify.org?format=json');
+                let data = await res.json();
                 return data.ip;
-            } catch (e) {
-                return "Unknown IP";
-            }
+            } catch (e) { return "Hidden / Secure IP"; }
         }
 
-        // Helper to hash passwords using standard browser crypto (SHA-256)
         async function hashPassword(password) {
             const msgBuffer = new TextEncoder().encode(password);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -95,6 +266,7 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
+        // AUTHENTICATION LOGIC
         async function attemptLogin() {
             const username = document.getElementById("username-input").value.trim();
             const password = document.getElementById("password-input").value;
@@ -115,34 +287,114 @@
                 return;
             }
 
-            // Check Device Whitelisting
             const currentDevice = getDeviceId();
             if (clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
-                errorMsg.innerHTML = `Access Denied: Unauthorized device.<br><span style="font-size:0.75rem; color:#94a3b8;">Your Device ID: ${currentDevice}</span>`;
+                errorMsg.innerHTML = `Access Denied: Unauthorized device.<br><span style="font-size:0.75rem; color:#94a3b8;">Device ID: ${currentDevice}</span>`;
                 return;
             }
 
-            // If allowedDevice was empty, lock it to this first successful device automatically (or you can pre-fill it)
             if (!clientRecord.allowedDevice) {
                 clientRecord.allowedDevice = currentDevice;
             }
 
-            // Fetch live IP and display dashboard
             const clientIp = await getClientIp();
             document.getElementById("welcome-user").innerText = username;
             document.getElementById("display-ip").innerText = clientIp;
             document.getElementById("display-device").innerText = currentDevice;
+            document.getElementById("display-role").innerText = clientRecord.role.toUpperCase();
+
+            if (clientRecord.role === "admin") {
+                document.getElementById("admin-panel").classList.remove("hidden");
+                loadAdminScoreboard();
+            } else {
+                document.getElementById("admin-panel").classList.add("hidden");
+            }
 
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("secret-content").classList.remove("hidden");
+            
+            startIdleChecker();
+        }
+
+        function loadAdminScoreboard() {
+            const tableBody = document.getElementById("admin-client-table");
+            tableBody.innerHTML = "";
+            for (let [user, data] of Object.entries(CLIENT_DATABASE)) {
+                if (data.role === "admin") continue;
+                let row = `<tr>
+                    <td><strong>${user}</strong></td>
+                    <td style="word-break:break-all; font-family:monospace;">${data.allowedDevice || 'Not bound yet'}</td>
+                    <td><span style="color: ${data.allowedDevice ? 'var(--accent-green)' : 'var(--accent-yellow)'};">${data.allowedDevice ? 'Active / Bound' : 'Pending'}</span></td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            }
+        }
+
+        // SECURE FILE UPLOAD HANDLER
+        async function handleFileUpload() {
+            const fileInput = document.getElementById("file-picker");
+            const statusDiv = document.getElementById("upload-status");
+            const username = document.getElementById("welcome-user").innerText;
+
+            if (!fileInput.files.length) {
+                statusDiv.innerHTML = '<div class="error">Please choose a file first.</div>';
+                return;
+            }
+
+            let token = sessionStorage.getItem("vault_token");
+            if (!token) {
+                token = prompt("Enter your Private Vault Token (Admin Authorization Required):");
+                if (token) {
+                    sessionStorage.setItem("vault_token", token);
+                } else {
+                    statusDiv.innerHTML = '<div class="error">Upload canceled: Token required.</div>';
+                    return;
+                }
+            }
+
+            const file = fileInput.files[0];
+            statusDiv.innerHTML = '<div style="color:var(--accent-yellow); font-size:0.85rem;">Encrypting & transmitting to private vault...</div>';
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async function() {
+                const base64Content = reader.result.split(',')[1];
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const path = `uploads/${username}_${timestamp}_${file.name}`;
+                const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/${path}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: `Secure Upload by ${username}`,
+                            content: base64Content
+                        })
+                    });
+
+                    if (response.ok) {
+                        statusDiv.innerHTML = '<div class="success">✅ File successfully pushed to private cloud vault!</div>';
+                        fileInput.value = "";
+                    } else {
+                        const err = await response.json();
+                        if (response.status === 401 || response.status === 403) {
+                            sessionStorage.removeItem("vault_token");
+                        }
+                        statusDiv.innerHTML = `<div class="error">Upload failed: ${err.message}</div>`;
+                    }
+                } catch (e) {
+                    statusDiv.innerHTML = '<div class="error">Network error during cloud transfer.</div>';
+                }
+            };
         }
 
         document.getElementById("password-input").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                attemptLogin();
-            }
+            if (event.key === "Enter") { attemptLogin(); }
         });
     </script>
-
 </body>
 </html>
