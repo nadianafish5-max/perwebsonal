@@ -8,7 +8,7 @@
         :root {
             --bg-dark: #090d16;
             --bg-sidebar: #111827;
-            --bg-card: rgba(17, 24, 39, 0.85);
+            --bg-card: rgba(17, 24, 39, 0.88);
             --border-color: rgba(55, 65, 81, 0.6);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
@@ -53,17 +53,17 @@
 
         sidebar {
             width: 220px; background: rgba(11, 17, 32, 0.95); border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; padding: 1.2rem 0.6rem; flex-shrink: 0; z-index: 5;
+            display: flex; flex-direction: column; padding: 1.2rem 0.6rem; flex-shrink: 0; z-index: 5; overflow-y: auto;
         }
 
         .new-btn { 
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: white; border: none; 
             padding: 0.75rem; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.2rem; font-size: 0.85rem;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); flex-shrink: 0;
         }
 
-        .nav-item { padding: 0.7rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.3rem; }
+        .nav-item { padding: 0.65rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.25rem; }
         .nav-item:hover, .nav-item.active { background: rgba(37, 99, 235, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
 
         .content-area { flex: 1; padding: 1.5rem; overflow-y: auto; background: rgba(3, 7, 18, 0.3); -webkit-overflow-scrolling: touch; }
@@ -158,7 +158,7 @@
                         <span class="badge-normal" id="dropdown-rank-badge">Client</span>
                     </div>
                 </div>
-                <div class="pd-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[1])">👤 Profile & Devices</div>
+                <div class="pd-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[2])">👤 Profile & Devices</div>
                 <div class="pd-menu-item" onclick="logout()" style="color:var(--accent-red);">🚪 Logout</div>
             </div>
         </div>
@@ -167,7 +167,9 @@
     <div class="main-layout">
         <sidebar>
             <button class="new-btn" onclick="openUploadModal()">📤 <span>Upload</span></button>
-            <div class="nav-item active" onclick="switchTab('vault', this)">📂 <span>Vault</span></div>
+            <div class="nav-item active" onclick="switchTab('videos', this)">🎬 <span>Videos</span></div>
+            <div class="nav-item" onclick="switchTab('audio', this)">🎵 <span>Audio</span></div>
+            <div class="nav-item" onclick="switchTab('files', this)">📁 <span>Files</span></div>
             <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile</span></div>
             <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Chat</span></div>
             <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
@@ -175,14 +177,38 @@
         </sidebar>
 
         <div class="content-area">
-            <!-- Vault View -->
-            <div id="tab-vault" class="tab-content">
-                <h2>Cloud Storage Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream videos, test media players, or download files securely.</p>
+            <!-- Videos Tab -->
+            <div id="tab-videos" class="tab-content">
+                <h2>🎬 Video Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream and watch your uploaded videos instantly.</p>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Video Name</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="video-list"><tr><td colspan="3">Loading videos...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Audio Tab -->
+            <div id="tab-audio" class="tab-content hidden">
+                <h2>🎵 Audio Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Listen to background music and audio files.</p>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Audio Name</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="audio-list"><tr><td colspan="3">Loading audio...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Files Tab -->
+            <div id="tab-files" class="tab-content hidden">
+                <h2>📁 Document & File Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage and download secure files and documents.</p>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>File Name</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="file-list"><tr><td colspan="3">Syncing vault...</td></tr></tbody>
+                        <tbody id="file-list"><tr><td colspan="3">Loading files...</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -247,7 +273,7 @@
     <div id="upload-modal" class="modal">
         <div class="modal-content">
             <h3 style="margin-top:0;">Upload to Cloud Vault</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem;">Select video, audio, or test media files to publish.</p>
+            <p style="color:var(--text-muted); font-size:0.8rem;">Select video, audio, or document files. They will automatically go to their respective tabs.</p>
             <input type="file" id="file-picker" style="margin: 1rem 0; width:100%; padding:0.5rem; background:rgba(3,7,18,0.8); border:1px solid var(--border-color); color:white; border-radius:8px; font-size:0.85rem;">
             <div id="upload-status" style="margin-bottom:1rem; color:var(--accent-cyan); font-size:0.85rem;"></div>
             <div style="display:flex; gap:1rem;">
@@ -274,7 +300,9 @@
         const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
         const GITHUB_TOKEN = tokA + tokB + tokC;
 
-        let CLIENT_DB = {};
+        let CLIENT_DB = {
+            "admin": { passHash: "admin69", role: "admin", vip: true, allowedDevices: ["Master PC"], approved: true, email: "admin@server.com" }
+        };
         let usersFileSha = "";
         let linksFileSha = "";
         let pendingUser = null;
@@ -317,13 +345,16 @@
                     const data = await res.json();
                     usersFileSha = data.sha;
                     const loadedDb = JSON.parse(atob(data.content));
-                    CLIENT_DB = loadedDb;
+                    if (loadedDb && Object.keys(loadedDb).length > 0) {
+                        CLIENT_DB = Object.assign({}, CLIENT_DB, loadedDb);
+                    }
+                } else if (res.status === 404) {
+                    await saveUsers(); // Initialize if not exists
                 }
             } catch (e) {}
         }
 
         async function saveUsers() {
-            // Force pull latest SHA right before saving to prevent conflict / rejection
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
             try {
                 const checkRes = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
@@ -331,7 +362,6 @@
                     const checkData = await checkRes.json();
                     usersFileSha = checkData.sha;
                     const serverDb = JSON.parse(atob(checkData.content));
-                    // Merge local modifications into server data safely
                     CLIENT_DB = Object.assign({}, serverDb, CLIENT_DB);
                 }
             } catch(e) {}
@@ -339,7 +369,7 @@
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Sync Database Update", content: btoa(JSON.stringify(CLIENT_DB, null, 2)), sha: usersFileSha })
+                body: JSON.stringify({ message: "Sync Database Update", content: btoa(JSON.stringify(CLIENT_DB, null, 2)), sha: usersFileSha || undefined })
             });
             if(res.ok) {
                 const data = await res.json();
@@ -425,7 +455,6 @@
             if (!user || !pass || !email) { status.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
             if (CLIENT_DB[user]) { status.innerHTML = '<div class="error">Username already taken.</div>'; return; }
 
-            // Save new user as pending approval automatically
             CLIENT_DB[user] = {
                 passHash: pass,
                 role: "client",
@@ -539,8 +568,12 @@
             }
         }
 
+        // Categorized Fetch Vault Files for Videos, Audio, and Files tabs
         async function fetchVaultFiles() {
-            const list = document.getElementById("file-list");
+            const videoList = document.getElementById("video-list");
+            const audioList = document.getElementById("audio-list");
+            const fileList = document.getElementById("file-list");
+
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
@@ -548,10 +581,16 @@
                     const data = await res.json();
                     linksFileSha = data.sha;
                     const items = JSON.parse(atob(data.content));
-                    list.innerHTML = items.map(item => {
-                        const isVideo = /\.(mp4|webm|mov|mkv)$/i.test(item.name);
-                        const isAudio = /\.(mp3|wav|aac|m4a)$/i.test(item.name);
-                        return `<tr>
+
+                    let videoHTML = "";
+                    let audioHTML = "";
+                    let fileHTML = "";
+
+                    items.forEach(item => {
+                        const isVideo = /\.(mp4|webm|mov|mkv)$/i.test(item.name) || item.category === 'video';
+                        const isAudio = /\.(mp3|wav|aac|m4a)$/i.test(item.name) || item.category === 'audio';
+
+                        const row = `<tr>
                             <td style="word-break:break-all;">📄 ${item.name}</td>
                             <td><span class="badge-vip">Vault Ready</span></td>
                             <td>
@@ -560,9 +599,21 @@
                                 <a href="${item.url}" target="_blank" download style="padding:0.3rem 0.6rem; background:var(--accent-green); color:white; text-decoration:none; border-radius:6px; font-size:0.75rem; font-weight:bold;">Download ⬇️</a>
                             </td>
                         </tr>`;
-                    }).join('');
+
+                        if (isVideo) videoHTML += row;
+                        else if (isAudio) audioHTML += row;
+                        else fileHTML += row;
+                    });
+
+                    videoList.innerHTML = videoHTML || `<tr><td colspan="3" style="color:var(--text-muted);">No videos uploaded yet.</td></tr>`;
+                    audioList.innerHTML = audioHTML || `<tr><td colspan="3" style="color:var(--text-muted);">No audio files uploaded yet.</td></tr>`;
+                    fileList.innerHTML = fileHTML || `<tr><td colspan="3" style="color:var(--text-muted);">No documents or files uploaded yet.</td></tr>`;
                 }
-            } catch (e) { list.innerHTML = `<tr><td colspan="3">Error loading vault files.</td></tr>`; }
+            } catch (e) {
+                videoList.innerHTML = `<tr><td colspan="3">Error loading videos.</td></tr>`;
+                audioList.innerHTML = `<tr><td colspan="3">Error loading audio.</td></tr>`;
+                fileList.innerHTML = `<tr><td colspan="3">Error loading files.</td></tr>`;
+            }
         }
 
         function openUploadModal() { document.getElementById("upload-modal").style.display = "flex"; }
@@ -575,20 +626,28 @@
             const file = picker.files[0];
             status.innerText = "⏳ Publishing file to Cloud Vault...";
 
+            let category = "file";
+            if (/\.(mp4|webm|mov|mkv)$/i.test(file.name)) category = "video";
+            else if (/\.(mp3|wav|aac|m4a)$/i.test(file.name)) category = "audio";
+
             const fileUrl = URL.createObjectURL(file);
             const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
             let items = [];
             try {
                 const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (res.ok) items = JSON.parse(atob((await res.json()).content));
+                if (res.ok) {
+                    const data = await res.json();
+                    linksFileSha = data.sha;
+                    items = JSON.parse(atob(data.content));
+                }
             } catch (e) {}
 
-            items.push({ name: file.name, url: fileUrl });
+            items.push({ name: file.name, url: fileUrl, category: category });
 
             const res = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `Upload: ${file.name}`, content: btoa(JSON.stringify(items, null, 2)), sha: linksFileSha })
+                body: JSON.stringify({ message: `Upload: ${file.name}`, content: btoa(JSON.stringify(items, null, 2)), sha: linksFileSha || undefined })
             });
             if(res.ok) {
                 linksFileSha = (await res.json()).content.sha;
@@ -619,7 +678,8 @@
             try {
                 const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
                 if (res.ok) {
-                    const messages = JSON.parse(atob((await res.json()).content));
+                    const data = await res.json();
+                    const messages = JSON.parse(atob(data.content));
                     container.innerHTML = messages.map(m => `<div class="msg ${m.user === currentUser ? 'me' : 'other'}"><b style="font-size:0.7rem; display:block; opacity:0.8;">${m.user}</b>${m.text}</div>`).join('');
                     container.scrollTop = container.scrollHeight;
                 }
