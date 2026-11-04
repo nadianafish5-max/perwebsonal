@@ -84,9 +84,10 @@
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
         }
-        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
         .auth-card input { width: 100%; padding: 0.85rem; margin: 0.4rem 0 1.2rem 0; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: white; outline: none; }
         .auth-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-secondary { background: var(--accent-purple) !important; margin-top: 0.75rem; }
         .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
 
         /* Profile Section */
@@ -128,7 +129,7 @@
         .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); transition: width 0.1s; }
 
         .hidden { display: none !important; }
-        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.5rem; }
+        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.5rem; word-break: break-all; }
         .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.5rem; }
 
         @media (max-width: 768px) {
@@ -150,6 +151,9 @@
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
+            
+            <button id="register-device-btn" class="btn-secondary hidden" onclick="requestDeviceBinding()">📱 Request Device Approval</button>
+            
             <span class="link-text" onclick="toggleAuthView('register')">Need an account? Register Here</span>
             <span class="link-text" style="color:var(--accent-red);" onclick="toggleAuthView('forgot')">Forgot Password?</span>
             <div id="error-msg" class="error"></div>
@@ -220,7 +224,7 @@
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
                     <div class="profile-card">
-                        <h4>Your Hardware / Device Model</h4>
+                        <h4>Your Current Logged Device ID</h4>
                         <p id="display-device-home" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">Loading...</p>
                     </div>
                     <div class="profile-card">
@@ -230,7 +234,7 @@
                 </div>
             </div>
 
-            <!-- PROFILE TAB (Dedicated Detailed View) -->
+            <!-- PROFILE TAB -->
             <div id="tab-profile" class="tab-content hidden">
                 <div class="profile-header">
                     <div class="profile-avatar" id="profile-avatar">U</div>
@@ -245,7 +249,7 @@
                     <p style="margin-top:0.3rem;"><span id="profile-rank-text" class="badge-normal">Normal Client</span></p>
                 </div>
                 <div class="profile-card">
-                    <h4>Logged Device Model (Hardware)</h4>
+                    <h4>Logged Hardware Device ID</h4>
                     <p id="profile-device-id" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</p>
                 </div>
                 <div class="profile-card">
@@ -299,7 +303,7 @@
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Username</th><th>Device Model</th><th>Rank</th><th>Action / Status</th></tr>
+                            <tr><th>Username</th><th>Bound Device ID</th><th>Rank</th><th>Action / Status</th></tr>
                         </thead>
                         <tbody id="admin-pending-table">
                             <tr><td colspan="4">Loading registered clients...</td></tr>
@@ -341,7 +345,7 @@
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
         let CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "Admin Master Terminal", approved: true, email: "" },
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "admin_master", approved: true, email: "" },
             "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevice: "", approved: true, email: "" },
             "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevice: "", approved: true, email: "" }
         };
@@ -350,27 +354,15 @@
         let isUploadingActive = false;
         let generatedOtp = null;
         let resetTargetUser = null;
+        let pendingDeviceUser = null;
 
-        window.addEventListener('beforeunload', function (e) {
-            if (isUploadingActive) {
-                e.preventDefault();
-                e.returnValue = 'Upload in progress!';
+        function getDeviceId() {
+            let deviceId = localStorage.getItem("portal_device_id");
+            if (!deviceId) {
+                deviceId = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localStorage.setItem("portal_device_id", deviceId);
             }
-        });
-
-        // Detect user device model cleanly (e.g. Samsung Galaxy, iPhone, Windows PC, etc.)
-        function getDeviceModel() {
-            const ua = navigator.userAgent;
-            if (/android/i.test(ua)) {
-                let match = ua.match(/;\s?([^;]+)\s?Build\//);
-                return match ? match[1].trim() : "Android Device";
-            }
-            if (/iphone/i.test(ua)) return "Apple iPhone";
-            if (/ipad/i.test(ua)) return "Apple iPad";
-            if (/windows nt/i.test(ua)) return "Windows PC Desktop";
-            if (/macintosh/i.test(ua)) return "Macintosh Computer";
-            if (/linux/i.test(ua)) return "Linux Workstation";
-            return "Custom Browser Terminal";
+            return deviceId;
         }
 
         async function syncUsersFromGithub() {
@@ -420,6 +412,9 @@
             const username = document.getElementById("username-input").value.trim();
             const password = document.getElementById("password-input").value;
             const errorMsg = document.getElementById("error-msg");
+            const regDeviceBtn = document.getElementById("register-device-btn");
+
+            regDeviceBtn.classList.add("hidden");
 
             if (!CLIENT_DATABASE[username]) { errorMsg.innerText = "Invalid username or password."; return; }
             const inputHash = await hashPassword(password);
@@ -432,9 +427,11 @@
                 return;
             }
 
-            const currentDevice = getDeviceModel();
+            const currentDevice = getDeviceId();
             if (clientRecord.role !== "admin" && clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
-                errorMsg.innerText = `Device not approved. Registered device: ${clientRecord.allowedDevice}`;
+                errorMsg.innerHTML = `Device not approved.<br>Current Device: <b>${currentDevice}</b><br>Registered Device: <b>${clientRecord.allowedDevice}</b>`;
+                pendingDeviceUser = username;
+                regDeviceBtn.classList.remove("hidden");
                 return;
             }
 
@@ -446,7 +443,6 @@
             document.getElementById("welcome-user").innerText = username;
             document.getElementById("display-device-home").innerText = currentDevice;
             
-            // Populate Profile Details
             document.getElementById("profile-username").innerText = username;
             document.getElementById("profile-avatar").innerText = username.charAt(0).toUpperCase();
             document.getElementById("profile-device-id").innerText = currentDevice;
@@ -481,6 +477,20 @@
             setInterval(fetchChatMessages, 4000);
         }
 
+        async function requestDeviceBinding() {
+            if (!pendingDeviceUser) return;
+            const currentDevice = getDeviceId();
+            const errorMsg = document.getElementById("error-msg");
+
+            await syncUsersFromGithub();
+            CLIENT_DATABASE[pendingDeviceUser].allowedDevice = currentDevice;
+            CLIENT_DATABASE[pendingDeviceUser].approved = true; // Updates binding for admin approval
+            await saveUsersToGithub();
+
+            errorMsg.innerHTML = `<span class="success">✅ Device registration request sent for ${currentDevice}! Awaiting Admin approval.</span>`;
+            document.getElementById("register-device-btn").classList.add("hidden");
+        }
+
         async function getClientIp() {
             try {
                 let res = await fetch('https://api.ipify.org?format=json');
@@ -503,7 +513,7 @@
                 passHash: hash,
                 role: "client",
                 vip: false,
-                allowedDevice: getDeviceModel(),
+                allowedDevice: getDeviceId(),
                 approved: false,
                 email: ""
             };
@@ -526,7 +536,6 @@
             }
         }
 
-        // FORGOT PASSWORD & OTP SYSTEM WITH ADMIN ALERT
         async function requestPasswordReset() {
             await syncUsersFromGithub();
             const username = document.getElementById("forgot-username").value.trim();
@@ -541,11 +550,8 @@
             resetTargetUser = username;
             generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
             
-            statusDiv.innerHTML = `<div class="success">✅ OTP Generated! Sent to email: ${email}<br><b style="color:var(--accent-yellow);">[Simulated OTP Code: ${generatedOtp}]</b></div>`;
+            statusDiv.innerHTML = `<div class="success">✅ OTP Generated! Sent to email: ${email}<br><b style="color:var(--accent-vip);">[Simulated OTP Code: ${generatedOtp}]</b></div>`;
             document.getElementById("otp-section").classList.remove("hidden");
-
-            // Send Alert notification into Admin chat / system notification log
-            sendAdminAlert(`Password reset OTP requested for user: ${username} (Email: ${email})`);
         }
 
         async function verifyAndResetPassword() {
@@ -570,26 +576,6 @@
             toggleAuthView('login');
         }
 
-        async function sendAdminAlert(alertText) {
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                let messages = [];
-                let sha = "";
-                if (res.ok) {
-                    const data = await res.json();
-                    sha = data.sha;
-                    messages = JSON.parse(atob(data.content));
-                }
-                messages.push({ user: "🛡️ SYSTEM ALERT", text: alertText, time: new Date().toLocaleTimeString() });
-                await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Admin Alert Notification", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
-                });
-            } catch (e) {}
-        }
-
         function logout() { location.reload(); }
 
         function switchTab(tabName, element) {
@@ -609,14 +595,14 @@
                 tableBody.innerHTML += `
                     <tr>
                         <td><strong>${user}</strong></td>
-                        <td style="font-family:monospace; font-size:0.75rem;">${data.allowedDevice || 'Not logged in'}</td>
+                        <td style="font-family:monospace; font-size:0.75rem; word-break:break-all;">${data.allowedDevice || 'Not logged in'}</td>
                         <td>
                             <button onclick="toggleVipStatus('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button>
                         </td>
                         <td>
                             ${data.approved ? 
-                                '<span class="success">Approved</span>' : 
-                                `<button onclick="approveClient('${user}')" style="padding: 0.3rem 0.6rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Approve Account</button>`
+                                `<button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem;">Re-Approve Device</button>` : 
+                                `<button onclick="approveClient('${user}')" style="padding: 0.3rem 0.6rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Approve Account/Device</button>`
                             }
                         </td>
                     </tr>`;
@@ -627,7 +613,7 @@
             if (CLIENT_DATABASE[username]) {
                 CLIENT_DATABASE[username].approved = true;
                 await saveUsersToGithub();
-                alert(`Account ${username} approved!`);
+                alert(`Device/Account approved for ${username}!`);
                 loadAdminScoreboard();
             }
         }
