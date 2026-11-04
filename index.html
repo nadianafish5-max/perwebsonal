@@ -3,266 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Client Portal & Private Vault</title>
+    <title>Google Drive - Secure Client Workspace</title>
     <style>
         :root {
-            --bg-primary: #0b0f19;
-            --bg-card: #151c2c;
-            --bg-card-hover: #1e293b;
-            --bg-input: #0f172a;
-            --border-color: #273549;
-            --border-highlight: #3b82f6;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-blue: #2563eb;
-            --accent-blue-hover: #1d4ed8;
-            --accent-cyan: #38bdf8;
-            --accent-green: #10b981;
-            --accent-yellow: #f59e0b;
-            --accent-red: #ef4444;
-            --card-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            --bg-main: #f8f9fa;
+            --bg-sidebar: #f0f4f9;
+            --bg-card: #ffffff;
+            --border-color: #e3e3e3;
+            --text-main: #1f1f1f;
+            --text-muted: #5f6368;
+            --accent-blue: #0b57d0;
+            --accent-blue-hover: #0842a0;
+            --accent-light: #c2e7ff;
         }
 
-        * { box-sizing: border-box; transition: all 0.2s ease; }
+        * { box-sizing: border-box; font-family: Roboto, Arial, sans-serif; }
 
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: radial-gradient(circle at top right, #1e1b4b 0%, var(--bg-primary) 50%);
+            background: var(--bg-main); 
             color: var(--text-main); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
             margin: 0; 
-            padding: 1.5rem; 
-            user-select: none; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            user-select: none;
         }
 
-        .container { width: 100%; max-width: 850px; }
-
-        .card { 
-            background: var(--bg-card); 
-            padding: 2.5rem; 
-            border-radius: 16px; 
-            box-shadow: var(--card-shadow); 
-            border: 1px solid var(--border-color); 
-            backdrop-filter: blur(10px);
-        }
-
-        /* Input & Form Controls */
-        input[type="text"], input[type="password"], input[type="file"] { 
-            width: 100%; 
-            padding: 0.85rem 1rem; 
-            margin: 0.5rem 0 1.25rem 0; 
-            border: 1px solid var(--border-color); 
-            border-radius: 8px; 
-            background: var(--bg-input); 
-            color: var(--text-main); 
-            font-size: 0.95rem;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--border-highlight);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-        }
-
-        label { 
-            display: block; 
-            text-align: left; 
-            font-size: 0.85rem; 
-            color: var(--text-muted); 
-            font-weight: 600; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        button { 
-            width: 100%; 
-            padding: 0.85rem 1.25rem; 
-            background: var(--accent-blue); 
-            border: none; 
-            border-radius: 8px; 
-            color: white; 
-            font-size: 0.95rem;
-            font-weight: 600; 
-            cursor: pointer; 
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        button:hover { background: var(--accent-blue-hover); transform: translateY(-1px); }
-
-        .error { color: var(--accent-red); font-size: 0.875rem; margin-top: 0.75rem; font-weight: 500; }
-        .success { color: var(--accent-green); font-size: 0.875rem; margin-top: 0.75rem; font-weight: 500; }
-        
-        /* Grid Layouts */
-        .profile-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .profile-card {
-            background: var(--bg-input);
-            padding: 1.25rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .profile-card h4 {
-            margin: 0 0 0.5rem 0;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .profile-card p {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-client { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
-        .badge-admin { background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-active { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
-
-        .section-box { 
-            background: rgba(15, 23, 42, 0.6); 
-            padding: 1.5rem; 
-            border-radius: 12px; 
-            margin-top: 1.5rem; 
-            border: 1px solid var(--border-color); 
-            text-align: left; 
-        }
-
-        .hidden { display: none !important; }
-        .timer { font-size: 0.8rem; color: var(--accent-yellow); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
-        
-        /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 0.75rem 0.5rem; text-align: left; }
-        th { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
-        tr:last-child td { border-bottom: none; }
-        
-        .avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+        /* Top Header Bar */
+        header {
+            height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
         }
+
+        .logo-area { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 500; color: #444; }
+        .search-bar { flex: 0 1 600px; background: #e9eeef; border-radius: 24px; padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted); }
+        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 1rem; color: var(--text-main); }
+
+        /* Main Workspace Layout */
+        .main-layout { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; }
+
+        /* Sidebar */
+        sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .new-btn { background: #c2e7ff; color: #001d35; border: none; padding: 1rem 1.5rem; border-radius: 24px; font-weight: 500; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+        .new-btn:hover { background: #b3dfff; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+
+        .nav-item { padding: 0.7rem 1rem; border-radius: 16px; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 1rem; margin-bottom: 0.2rem; }
+        .nav-item:hover, .nav-item.active { background: #d3e3fd; color: #041e49; }
+
+        /* Content Area */
+        .content-area { flex: 1; background: var(--bg-card); border-radius: 24px 0 0 0; border-top: 1px solid var(--border-color); border-left: 1px solid var(--border-color); padding: 2rem; overflow-y: auto; }
+
+        /* Login Screen */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #f0f4f9; display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .login-card { background: white; padding: 2.5rem; border-radius: 24px; width: 100%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+        .login-card input { width: 100%; padding: 0.85rem; margin: 0.5rem 0 1.2rem 0; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; outline: none; }
+        .login-card input:focus { border-color: var(--accent-blue); }
+        .login-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; }
+        .login-card button:hover { background: var(--accent-blue-hover); }
+
+        /* Tables & Lists */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 0.85rem 0.5rem; text-align: left; color: var(--text-main); }
+        th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 500; }
+        
+        /* Chat UI */
+        .chat-container { display: flex; flex-direction: column; height: 400px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fafafa; }
+        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
+        .msg { padding: 0.6rem 1rem; border-radius: 12px; max-width: 70%; font-size: 0.9rem; }
+        .msg.me { align-self: flex-end; background: #d3e3fd; color: #041e49; }
+        .msg.other { align-self: flex-start; background: #e9eeef; color: var(--text-main); }
+
+        /* Video Modal Player */
+        .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: white; padding: 1.5rem; border-radius: 16px; width: 80%; max-width: 700px; text-align: center; }
+        video { width: 100%; max-height: 400px; border-radius: 8px; background: black; outline: none; }
+
+        /* Progress Bar */
+        .progress-bar-container { width: 100%; background: #e9eeef; border-radius: 8px; height: 16px; margin-top: 1rem; overflow: hidden; display: none; }
+        .progress-fill { width: 0%; height: 100%; background: var(--accent-blue); text-align: center; font-size: 0.7rem; color: white; line-height: 16px; font-weight: bold; transition: width 0.1s; }
+
+        .hidden { display: none !important; }
+        .error { color: #b3261e; font-size: 0.85rem; margin-top: 0.5rem; }
+        .success { color: #0f52ba; font-size: 0.85rem; margin-top: 0.5rem; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="container">
-        <!-- Authentication Screen -->
-        <div id="login-screen" class="card" style="text-align: center; max-width: 450px; margin: 0 auto;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔒</div>
-            <h2 style="margin: 0 0 0.5rem 0; font-weight: 700;">Client Portal</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem;">Secure Access & Workspace Vault</p>
-            
-            <label for="username-input">Username</label>
-            <input type="text" id="username-input" placeholder="Enter username" autocomplete="off">
-            
-            <label for="password-input">Password</label>
-            <input type="password" id="password-input" placeholder="Enter password">
-            
-            <button onclick="attemptLogin()">Authenticate Session →</button>
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h2>📁 Client Workspace</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Google Drive Style Secure Portal</p>
+            <input type="text" id="username-input" placeholder="Username">
+            <input type="password" id="password-input" placeholder="Password">
+            <button onclick="attemptLogin()">Sign In</button>
             <div id="error-msg" class="error"></div>
         </div>
+    </div>
 
-        <!-- Main Workspace Dashboard -->
-        <div id="secret-content" class="card hidden" style="text-align: left;">
-            <!-- Header Bar -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div id="user-avatar" class="avatar">U</div>
-                    <div>
-                        <h2 style="margin: 0; font-size: 1.3rem;"><span id="welcome-user">User</span></h2>
-                        <span id="role-badge" class="badge badge-client">Client Profile</span>
+    <!-- Top Header -->
+    <header>
+        <div class="logo-area">
+            📁 <span style="font-weight: 500; color: #3c4043;">Client Drive Vault</span>
+        </div>
+        <div class="search-bar">
+            <span>🔍</span>
+            <input type="text" placeholder="Search in Drive">
+        </div>
+        <div id="welcome-user" style="font-weight: 500; font-size: 0.9rem; color: var(--text-muted);">User</div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="main-layout">
+        <sidebar>
+            <button class="new-btn" onclick="document.getElementById('file-picker').click()">
+                <span>➕</span> New File Upload
+            </button>
+            <input type="file" id="file-picker" style="display:none" onchange="handleFileUpload()">
+
+            <div class="nav-item active" onclick="switchTab('home', this)">🏠 Home</div>
+            <div class="nav-item" onclick="switchTab('drive', this)">📂 My Drive Files</div>
+            <div class="nav-item" onclick="switchTab('chat', this)">💬 Client Chat</div>
+            <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 Admin Panel</div>
+            <div class="nav-item" onclick="logout()" style="color: #b3261e; margin-top: auto;">🚪 Logout</div>
+        </sidebar>
+
+        <div class="content-area">
+            <!-- HOME TAB -->
+            <div id="tab-home" class="tab-content">
+                <h2>Welcome to your Drive Workspace</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Manage your documents, stream videos instantly, and collaborate securely.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <div style="background: var(--bg-sidebar); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted);">Bound Device ID</h4>
+                        <p id="display-device" style="margin: 0; font-size: 0.85rem; font-family: monospace; color: var(--accent-blue); word-break: break-all;">Loading...</p>
+                    </div>
+                    <div style="background: var(--bg-sidebar); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted);">Network Status</h4>
+                        <p id="display-ip" style="margin: 0; font-size: 0.95rem; font-weight: 500; color: #137333;">Secured & Verified</p>
                     </div>
                 </div>
-                <button onclick="logout()" style="width: auto; padding: 0.5rem 1.25rem; background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); margin:0;">Logout</button>
-            </div>
-            
-            <div class="timer">⏱️ Auto-Logout in <span id="idle-timer">5:00</span> due to inactivity.</div>
 
-            <!-- Profile Dashboard Cards -->
-            <div class="profile-grid">
-                <div class="profile-card">
-                    <h4>Current IP Address</h4>
-                    <p id="display-ip" style="color: var(--accent-green);">Fetching IP...</p>
+                <div class="progress-bar-container" id="progress-container">
+                    <div class="progress-fill" id="progress-bar">0%</div>
                 </div>
-                <div class="profile-card">
-                    <h4>Device Hardware ID</h4>
-                    <p id="display-device" style="color: var(--accent-yellow); font-family: monospace; font-size: 0.85rem; word-break: break-all;">Bound</p>
-                </div>
-                <div class="profile-card">
-                    <h4>Vault Storage Allocation</h4>
-                    <p style="color: var(--accent-cyan);">Unlimited Cloud Storage</p>
-                </div>
-                <div class="profile-card">
-                    <h4>Account Status</h4>
-                    <p><span class="badge badge-active">Active / Verified</span></p>
-                </div>
-            </div>
-
-            <!-- ADMIN MONITORING PANEL -->
-            <div id="admin-panel" class="section-box hidden" style="border-color: rgba(245, 158, 11, 0.4);">
-                <h3 style="margin-top: 0; color: var(--accent-yellow); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    👑 Admin Control Center
-                </h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Client hardware bindings and login status table.</p>
-                
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Client Username</th>
-                                <th>Bound Device Fingerprint</th>
-                                <th>Access Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-client-table"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- SECURE CLOUD STORAGE SECTION -->
-            <div class="section-box">
-                <h3 style="margin-top: 0; color: var(--accent-cyan); font-size: 1.1rem;">📂 Private Document Vault</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Upload project assets and documents directly into your private cloud vault.</p>
-                
-                <label for="file-picker">Choose File to Upload</label>
-                <input type="file" id="file-picker">
-                <button onclick="handleFileUpload()">Upload File to Vault</button>
                 <div id="upload-status"></div>
+            </div>
+
+            <!-- MY DRIVE TAB (File Management & Video Player) -->
+            <div id="tab-drive" class="tab-content hidden">
+                <h2>My Drive Vault Files</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Click any video to stream it live. Use download buttons to save files.</p>
+                <table>
+                    <thead>
+                        <tr><th>Name</th><th>Type</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="drive-file-list">
+                        <tr><td colspan="3" style="color: var(--text-muted);">Loading files...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CHAT TAB -->
+            <div id="tab-chat" class="tab-content hidden">
+                <h2>Workspace Live Chat</h2>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <div style="display: flex; padding: 0.75rem; background: white; border-top: 1px solid var(--border-color); gap: 0.5rem;">
+                        <input type="text" id="chat-input" placeholder="Type a message..." style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; outline: none;">
+                        <button onclick="sendChatMessage()" style="padding: 0.6rem 1.25rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer;">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB -->
+            <div id="tab-admin" class="tab-content hidden">
+                <h2>Admin Control Center</h2>
+                <table>
+                    <thead>
+                        <tr><th>Username</th><th>Bound Device ID</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="admin-client-table"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
+    <!-- Video Player Modal -->
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="margin-top:0; color:#3c4043;">Stream Video</h3>
+            <video id="video-player" controls autoplay></video>
+            <br>
+            <button onclick="closeVideoModal()" style="margin-top: 1rem; padding: 0.5rem 1.5rem; background: #5f6368; color: white; border: none; border-radius: 8px; cursor: pointer;">Close Player</button>
+        </div>
+    </div>
+
     <script>
-        // CONFIGURATION & AUTO-CONCATENATED TOKEN
+        // CONFIGURATION & SPLIT REPO TOKEN
         const GITHUB_REPO_OWNER = "nadianafish5-max";
         const GITHUB_VAULT_REPO = "client-vault";
         
@@ -272,60 +230,11 @@
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
         const CLIENT_DATABASE = {
-            "admin": {
-                passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", // Password: admin
-                role: "admin",
-                allowedDevice: ""
-            },
-            "leokasperteal": {
-                passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", 
-                role: "client",
-                allowedDevice: "" 
-            },
-            "tisafu69": {
-                passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4",
-                role: "client",
-                allowedDevice: ""
-            }
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", allowedDevice: "" },
+            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", allowedDevice: "" },
+            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", allowedDevice: "" }
         };
 
-        // ANTI-INSPECTION HARDENING
-        document.addEventListener('keydown', function(e) {
-            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || (e.ctrlKey && e.keyCode === 85)) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        // INACTIVITY TIMER (5 MINUTES)
-        let idleTimeSeconds = 0;
-        const maxIdleSeconds = 300;
-        let timerInterval;
-
-        function resetIdleTimer() { idleTimeSeconds = 0; }
-        function startIdleChecker() {
-            window.onmousemove = resetIdleTimer;
-            window.onmousedown = resetIdleTimer;
-            window.onkeydown = resetIdleTimer;
-            timerInterval = setInterval(() => {
-                idleTimeSeconds++;
-                let remaining = maxIdleSeconds - idleTimeSeconds;
-                let minutes = Math.floor(remaining / 60);
-                let seconds = remaining % 60;
-                document.getElementById("idle-timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                if (idleTimeSeconds >= maxIdleSeconds) { logout(); alert("Session expired due to inactivity."); }
-            }, 1000);
-        }
-
-        function logout() {
-            clearInterval(timerInterval);
-            document.getElementById("secret-content").classList.add("hidden");
-            document.getElementById("login-screen").classList.remove("hidden");
-            document.getElementById("password-input").value = "";
-            document.getElementById("error-msg").innerText = "";
-        }
-
-        // DEVICE FINGERPRINTING & IP RESOLUTION
         function getDeviceId() {
             let deviceId = localStorage.getItem("portal_device_id");
             if (!deviceId) {
@@ -335,14 +244,6 @@
             return deviceId;
         }
 
-        async function getClientIp() {
-            try {
-                let res = await fetch('https://api.ipify.org?format=json');
-                let data = await res.json();
-                return data.ip;
-            } catch (e) { return "Hidden / Private IP"; }
-        }
-
         async function hashPassword(password) {
             const msgBuffer = new TextEncoder().encode(password);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -350,61 +251,46 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // AUTHENTICATION LOGIC
         async function attemptLogin() {
             const username = document.getElementById("username-input").value.trim();
             const password = document.getElementById("password-input").value;
             const errorMsg = document.getElementById("error-msg");
 
-            errorMsg.innerText = "Authenticating profile...";
-
-            if (!CLIENT_DATABASE[username]) {
-                errorMsg.innerText = "Invalid username or password.";
-                return;
-            }
-
+            if (!CLIENT_DATABASE[username]) { errorMsg.innerText = "Invalid credentials."; return; }
             const inputHash = await hashPassword(password);
             const clientRecord = CLIENT_DATABASE[username];
 
-            if (inputHash !== clientRecord.passHash) {
-                errorMsg.innerText = "Invalid username or password.";
-                return;
-            }
+            if (inputHash !== clientRecord.passHash) { errorMsg.innerText = "Invalid credentials."; return; }
 
             const currentDevice = getDeviceId();
             if (clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
-                errorMsg.innerHTML = `Access Denied: Device mismatched.<br><span style="font-size:0.75rem; color:#94a3b8;">Device ID: ${currentDevice}</span>`;
+                errorMsg.innerText = "Unauthorized device mismatch.";
                 return;
             }
+            if (!clientRecord.allowedDevice) clientRecord.allowedDevice = currentDevice;
 
-            if (!clientRecord.allowedDevice) {
-                clientRecord.allowedDevice = currentDevice;
-            }
-
-            const clientIp = await getClientIp();
-            
-            // Set User Profile Data
             document.getElementById("welcome-user").innerText = username;
-            document.getElementById("user-avatar").innerText = username.charAt(0).toUpperCase();
-            document.getElementById("display-ip").innerText = clientIp;
             document.getElementById("display-device").innerText = currentDevice;
+            document.getElementById("login-screen").style.display = "none";
 
-            const roleBadge = document.getElementById("role-badge");
             if (clientRecord.role === "admin") {
-                roleBadge.innerText = "Administrator";
-                roleBadge.className = "badge badge-admin";
-                document.getElementById("admin-panel").classList.remove("hidden");
+                document.getElementById("admin-nav").style.display = "flex";
                 loadAdminScoreboard();
-            } else {
-                roleBadge.innerText = "Client Profile";
-                roleBadge.className = "badge badge-client";
-                document.getElementById("admin-panel").classList.add("hidden");
             }
 
-            document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("secret-content").classList.remove("hidden");
-            
-            startIdleChecker();
+            fetchVaultFiles();
+            fetchChatMessages();
+            setInterval(fetchChatMessages, 5000);
+        }
+
+        function logout() { location.reload(); }
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            element.classList.add('active');
+            if (tabName === 'drive') fetchVaultFiles();
         }
 
         function loadAdminScoreboard() {
@@ -412,66 +298,170 @@
             tableBody.innerHTML = "";
             for (let [user, data] of Object.entries(CLIENT_DATABASE)) {
                 if (data.role === "admin") continue;
-                let row = `<tr>
-                    <td><strong>${user}</strong></td>
-                    <td style="word-break:break-all; font-family:monospace; color: var(--accent-yellow);">${data.allowedDevice || 'Not bound yet'}</td>
-                    <td><span class="badge ${data.allowedDevice ? 'badge-active' : 'badge-client'}">${data.allowedDevice ? 'Active / Bound' : 'Pending'}</span></td>
-                </tr>`;
-                tableBody.innerHTML += row;
+                tableBody.innerHTML += `<tr><td><strong>${user}</strong></td><td style="font-family:monospace;">${data.allowedDevice || 'Not bound'}</td><td>Active</td></tr>`;
             }
         }
 
-        // BACKGROUND AUTOMATED CLOUD UPLOADER
+        // FETCH FILES & DETECT VIDEO STREAMING
+        async function fetchVaultFiles() {
+            const fileList = document.getElementById("drive-file-list");
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
+            const currentUser = document.getElementById("welcome-user").innerText;
+            const isAdmin = CLIENT_DATABASE[currentUser]?.role === "admin";
+
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const files = await res.json();
+                    let visibleFiles = files;
+                    if (!isAdmin) visibleFiles = files.filter(f => f.name.startsWith(currentUser + "_"));
+
+                    if (visibleFiles.length === 0) {
+                        fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">No files found in vault.</td></tr>`;
+                        return;
+                    }
+
+                    fileList.innerHTML = visibleFiles.map(f => {
+                        const cleanName = f.name.replace(/^[^_]+_[^_]+_/, '');
+                        const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(cleanName);
+                        return `
+                            <tr>
+                                <td>📄 ${cleanName}</td>
+                                <td>${isVideo ? '🎥 Video File' : '📁 Document'}</td>
+                                <td>
+                                    ${isVideo ? `<button onclick="playVideo('${f.download_url}', '${cleanName}')" style="padding: 0.3rem 0.75rem; background: var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer; margin-right:5px;">Stream  ▶</button>` : ''}
+                                    <a href="${f.download_url}" target="_blank" style="padding: 0.3rem 0.75rem; background: #e9eeef; color: #1f1f1f; text-decoration:none; border-radius:6px; font-weight:500;">Download ⬇️</a>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (e) {
+                fileList.innerHTML = `<tr><td colspan="3" style="color:red;">Error loading vault files.</td></tr>`;
+            }
+        }
+
+        // VIDEO STREAM PLAYER MODAL
+        function playVideo(url, title) {
+            document.getElementById("modal-title").innerText = title;
+            document.getElementById("video-player").src = url;
+            document.getElementById("video-modal").style.display = "flex";
+        }
+
+        function closeVideoModal() {
+            document.getElementById("video-modal").style.display = "none";
+            document.getElementById("video-player").pause();
+            document.getElementById("video-player").src = "";
+        }
+
+        // UPLOAD FILE WITH PERCENTAGE PROGRESS BAR
         async function handleFileUpload() {
             const fileInput = document.getElementById("file-picker");
             const statusDiv = document.getElementById("upload-status");
+            const progressContainer = document.getElementById("progress-container");
+            const progressBar = document.getElementById("progress-bar");
             const username = document.getElementById("welcome-user").innerText;
 
-            if (!fileInput.files.length) {
-                statusDiv.innerHTML = '<div class="error">Please choose a file to upload.</div>';
-                return;
-            }
+            if (!fileInput.files.length) return;
 
             const file = fileInput.files[0];
-            statusDiv.innerHTML = '<div style="color:var(--accent-yellow); font-size:0.85rem; margin-top: 0.5rem;">Uploading to private vault...</div>';
+            progressContainer.style.display = "block";
+            progressBar.style.width = "0%";
+            progressBar.innerText = "0%";
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = async function() {
+            reader.onload = function() {
                 const base64Content = reader.result.split(',')[1];
                 const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
                 const path = `uploads/${username}_${timestamp}_${file.name}`;
                 const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/${path}`;
 
-                try {
-                    const response = await fetch(url, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: `Direct client upload by ${username}`,
-                            content: base64Content
-                        })
-                    });
+                const xhr = new XMLHttpRequest();
+                xhr.open("PUT", url, true);
+                xhr.setRequestHeader("Authorization", `token ${GITHUB_UPLOAD_TOKEN}`);
+                xhr.setRequestHeader("Content-Type", "application/json");
 
-                    if (response.ok) {
-                        statusDiv.innerHTML = '<div class="success">✅ File successfully saved to private vault repository!</div>';
-                        fileInput.value = "";
-                    } else {
-                        const err = await response.json();
-                        statusDiv.innerHTML = `<div class="error">Upload error: ${err.message}</div>`;
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        let percent = Math.round((e.loaded / e.total) * 100);
+                        progressBar.style.width = percent + "%";
+                        progressBar.innerText = percent + "%";
                     }
-                } catch (e) {
-                    statusDiv.innerHTML = '<div class="error">Network exception during upload.</div>';
-                }
+                };
+
+                xhr.onload = function() {
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        statusDiv.innerHTML = '<div class="success">✅ File successfully uploaded to your Drive vault!</div>';
+                        fileInput.value = "";
+                        fetchVaultFiles();
+                    } else {
+                        statusDiv.innerHTML = `<div class="error">Upload failed.</div>`;
+                    }
+                    setTimeout(() => { progressContainer.style.display = "none"; }, 3000);
+                };
+
+                xhr.send(JSON.stringify({ message: `Upload by ${username}`, content: base64Content }));
             };
         }
 
-        document.getElementById("password-input").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") { attemptLogin(); }
-        });
+        // CHAT SYSTEM
+        async function fetchChatMessages() {
+            const chatBox = document.getElementById("chat-messages");
+            const currentUser = document.getElementById("welcome-user").innerText;
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    const messages = JSON.parse(atob(data.content));
+                    chatBox.innerHTML = messages.map(m => `
+                        <div class="msg ${m.user === currentUser ? 'me' : 'other'}">
+                            <span style="font-size:0.65rem; opacity:0.7; display:block; margin-bottom:2px;">${m.user} • ${m.time}</span>
+                            ${m.text}
+                        </div>
+                    `).join('');
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            } catch (e) {}
+        }
+
+        async function sendChatMessage() {
+            const chatInput = document.getElementById("chat-input");
+            const text = chatInput.value.trim();
+            const username = document.getElementById("welcome-user").innerText;
+            if (!text) return;
+
+            chatInput.value = "";
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+
+            let currentMessages = [];
+            let sha = "";
+
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    sha = data.sha;
+                    currentMessages = JSON.parse(atob(data.content));
+                }
+            } catch (e) {}
+
+            currentMessages.push({ user: username, text: text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+            const updatedContent = btoa(JSON.stringify(currentMessages, null, 2));
+
+            await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Chat by ${username}`, content: updatedContent, sha: sha || undefined })
+            });
+
+            fetchChatMessages();
+        }
+
+        document.getElementById("password-input").addEventListener("keypress", function(e) { if (e.key === "Enter") attemptLogin(); });
+        document.getElementById("chat-input").addEventListener("keypress", function(e) { if (e.key === "Enter") sendChatMessage(); });
     </script>
 </body>
 </html>
