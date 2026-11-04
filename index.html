@@ -1,27 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure and safe server provided by Leo Jr.</title>
     <style>
         :root {
-            --bg-main: #f8f9fa;
-            --bg-sidebar: #f0f4f9;
-            --bg-card: #ffffff;
-            --border-color: #e3e3e3;
-            --text-main: #1f1f1f;
-            --text-muted: #5f6368;
-            --accent-blue: #0b57d0;
-            --accent-blue-hover: #0842a0;
-            --accent-green: #137333;
-            --accent-red: #b3261e;
+            --bg-dark: #0f172a;
+            --bg-sidebar: #1e293b;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
         }
 
-        * { box-sizing: border-box; font-family: Roboto, Arial, sans-serif; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; transition: all 0.2s ease; }
 
         body { 
-            background: var(--bg-main); 
+            background: radial-gradient(circle at top right, #1e1b4b 0%, var(--bg-dark) 60%);
             color: var(--text-main); 
             margin: 0; 
             height: 100vh; 
@@ -34,78 +36,93 @@
         /* Header Bar */
         header {
             height: 60px;
-            background: #ffffff;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1rem;
+            padding: 0 1.25rem;
             flex-shrink: 0;
+            z-index: 10;
         }
 
-        .logo-area { display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 500; color: #444; }
-        .search-bar { flex: 0 1 400px; background: #e9eeef; border-radius: 24px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
-        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.9rem; color: var(--text-main); }
+        .logo-area { display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+        .search-bar { flex: 0 1 400px; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.4rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
+        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.85rem; color: var(--text-main); }
 
         /* Workspace Layout */
         .main-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
 
         sidebar {
             width: 240px;
-            background: var(--bg-sidebar);
+            background: rgba(15, 23, 42, 0.9);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            padding: 1rem 0.5rem;
+            padding: 1.25rem 0.75rem;
             flex-shrink: 0;
         }
 
-        .new-btn { background: #c2e7ff; color: #001d35; border: none; padding: 0.85rem 1rem; border-radius: 24px; font-weight: 500; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1rem; }
-        .new-btn:hover { background: #b3dfff; }
+        .new-btn { 
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); 
+            color: white; border: none; padding: 0.85rem 1rem; border-radius: 12px; 
+            font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; gap: 0.6rem; 
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); margin-bottom: 1.25rem; 
+        }
+        .new-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
 
-        .nav-item { padding: 0.7rem 1rem; border-radius: 16px; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.2rem; }
-        .nav-item:hover, .nav-item.active { background: #d3e3fd; color: #041e49; }
+        .nav-item { padding: 0.75rem 1rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.3rem; }
+        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.2); }
 
-        .content-area { flex: 1; background: var(--bg-card); border-radius: 16px 0 0 0; border-top: 1px solid var(--border-color); border-left: 1px solid var(--border-color); padding: 1.5rem; overflow-y: auto; }
+        .content-area { flex: 1; padding: 1.75rem; overflow-y: auto; background: rgba(15, 23, 42, 0.4); }
 
-        /* Login & Registration Cards */
+        /* Auth Cards */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #f0f4f9; display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
         }
-        .auth-card { background: white; padding: 2rem; border-radius: 24px; width: 100%; max-width: 380px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
-        .auth-card input { width: 100%; padding: 0.85rem; margin: 0.4rem 0 1rem 0; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; outline: none; }
-        .auth-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; }
-        .link-text { font-size: 0.8rem; color: var(--accent-blue); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
+        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        .auth-card input { width: 100%; padding: 0.85rem; margin: 0.4rem 0 1.2rem 0; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: white; outline: none; }
+        .auth-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
 
-        /* Profile Page Styling */
+        /* Profile Section */
         .profile-header { display: flex; align-items: center; gap: 1.25rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
-        .profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--accent-blue); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; }
-        .profile-card { background: var(--bg-sidebar); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 1rem; }
+        .profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; }
+        .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem; }
         .profile-card h4 { margin: 0 0 0.4rem 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
         .profile-card p { margin: 0; font-size: 0.95rem; font-weight: 600; }
 
-        /* Table Responsiveness */
+        /* Tables & Lists */
         .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; min-width: 450px; }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 0.75rem 0.5rem; text-align: left; color: var(--text-main); }
-        th { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; min-width: 500px; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 0.85rem 0.5rem; text-align: left; color: var(--text-main); }
+        th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
 
         /* Chat UI */
-        .chat-container { display: flex; flex-direction: column; height: 420px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fafafa; }
+        .chat-container { display: flex; flex-direction: column; height: 420px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: rgba(15, 23, 42, 0.6); }
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
-        .msg { padding: 0.6rem 1rem; border-radius: 12px; max-width: 75%; font-size: 0.85rem; line-height: 1.3; }
-        .msg.me { align-self: flex-end; background: #d3e3fd; color: #041e49; }
-        .msg.other { align-self: flex-start; background: #e9eeef; color: var(--text-main); }
+        .msg { padding: 0.65rem 1rem; border-radius: 12px; max-width: 75%; font-size: 0.85rem; line-height: 1.3; }
+        .msg.me { align-self: flex-end; background: var(--accent-blue); color: white; }
+        .msg.other { align-self: flex-start; background: #334155; color: white; }
 
-        /* Video Stream Player Modal */
-        .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1rem; }
-        .modal-content { background: white; padding: 1.25rem; border-radius: 16px; width: 100%; max-width: 650px; text-align: center; }
-        video { width: 100%; max-height: 350px; border-radius: 8px; background: black; outline: none; }
+        /* Media Modal Players */
+        .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1rem; }
+        .modal-content { background: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 16px; width: 100%; max-width: 650px; text-align: center; }
+        video, audio { width: 100%; max-height: 350px; border-radius: 8px; outline: none; margin-top: 0.5rem; }
 
-        /* Upload Progress Bar */
-        .progress-bar-container { width: 100%; background: #e9eeef; border-radius: 8px; height: 14px; margin-top: 1rem; overflow: hidden; display: none; }
-        .progress-fill { width: 0%; height: 100%; background: var(--accent-blue); text-align: center; font-size: 0.65rem; color: white; line-height: 14px; font-weight: bold; transition: width 0.1s; }
+        /* Floating MEGA-Style Upload Widget */
+        .floating-upload-widget {
+            position: fixed; bottom: 20px; right: 20px; width: 320px; 
+            background: #1e293b; border: 1px solid var(--accent-blue); 
+            border-radius: 12px; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
+            z-index: 3000; display: none; flex-direction: column; gap: 0.5rem;
+        }
+        .widget-header { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; color: var(--accent-cyan); }
+        .progress-bar-container { width: 100%; background: #0f172a; border-radius: 8px; height: 10px; overflow: hidden; margin-top: 0.25rem; }
+        .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); transition: width 0.1s; }
 
         .hidden { display: none !important; }
         .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.5rem; }
@@ -123,10 +140,9 @@
 
     <!-- Login & Registration Modal Overlay -->
     <div id="login-screen">
-        <!-- Sign In View -->
         <div id="login-card" class="auth-card">
-            <h2>📁 Client's Vault</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Secure Server Portal by Leo Jr.</p>
+            <h2 style="margin: 0 0 0.5rem 0;">📁 Client's Vault</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
@@ -134,10 +150,9 @@
             <div id="error-msg" class="error"></div>
         </div>
 
-        <!-- Registration Request View (TorrentBD Style) -->
         <div id="register-card" class="auth-card hidden">
-            <h2>📝 Client Registration</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Request Access from Server Admin</p>
+            <h2 style="margin: 0 0 0.5rem 0;">📝 Client Registration</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Request Access from Server Admin</p>
             <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
             <input type="password" id="reg-password" placeholder="Choose Password">
             <button onclick="submitRegistration()">Request Registration</button>
@@ -149,11 +164,11 @@
     <!-- Header Bar -->
     <header>
         <div class="logo-area">
-            📁 <span style="font-weight: 500; color: #3c4043;">Client's Vault</span>
+            📁 <span>Client's Vault</span>
         </div>
         <div class="search-bar">
             <span>🔍</span>
-            <input type="text" placeholder="Search in Server">
+            <input type="text" placeholder="Search files in server...">
         </div>
         <div id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">User</div>
     </header>
@@ -162,9 +177,9 @@
     <div class="main-layout">
         <sidebar>
             <button class="new-btn" onclick="document.getElementById('file-picker').click()">
-                <span>➕</span> <span style="font-size:0.85rem;">Upload</span>
+                <span>➕</span> <span style="font-size:0.85rem;">Upload File</span>
             </button>
-            <input type="file" id="file-picker" style="display:none" onchange="handleFileUpload()">
+            <input type="file" id="file-picker" style="display:none" onchange="startBackgroundUpload()">
 
             <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
             <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile</span></div>
@@ -180,21 +195,16 @@
                 <h2>Welcome to your Vault</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem;">Manage documents, stream media live, and track device authentication securely.</p>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-                    <div style="background: var(--bg-sidebar); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <h4 style="margin: 0 0 0.4rem 0; color: var(--text-muted); font-size: 0.75rem;">Your Profile Device ID</h4>
-                        <p id="display-device-home" style="margin: 0; font-size: 0.8rem; font-family: monospace; color: var(--accent-blue); word-break: break-all;">Loading...</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <div class="profile-card">
+                        <h4>Your Profile Device ID</h4>
+                        <p id="display-device-home" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">Loading...</p>
                     </div>
-                    <div style="background: var(--bg-sidebar); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <h4 style="margin: 0 0 0.4rem 0; color: var(--text-muted); font-size: 0.75rem;">Device Approval Status</h4>
-                        <p id="display-approval-home" style="margin: 0; font-size: 0.85rem; font-weight: 500; color: var(--accent-green);">Approved & Active</p>
+                    <div class="profile-card">
+                        <h4>Device Approval Status</h4>
+                        <p id="display-approval-home" style="color: var(--accent-green);">Approved & Verified</p>
                     </div>
                 </div>
-
-                <div class="progress-bar-container" id="progress-container">
-                    <div class="progress-fill" id="progress-bar">0%</div>
-                </div>
-                <div id="upload-status"></div>
             </div>
 
             <!-- PROFILE TAB -->
@@ -203,13 +213,13 @@
                     <div class="profile-avatar" id="profile-avatar">U</div>
                     <div>
                         <h2 style="margin: 0;" id="profile-username">User</h2>
-                        <span id="profile-role" style="font-size: 0.8rem; color: var(--accent-blue); font-weight: bold;">Client Account</span>
+                        <span id="profile-role" style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: bold;">Client Account</span>
                     </div>
                 </div>
 
                 <div class="profile-card">
                     <h4>Logged Device ID (Bound Hardware)</h4>
-                    <p id="profile-device-id" style="font-family: monospace; color: var(--accent-blue); word-break: break-all;">-</p>
+                    <p id="profile-device-id" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</p>
                 </div>
                 <div class="profile-card">
                     <h4>Approval Status</h4>
@@ -224,11 +234,11 @@
             <!-- GLOBAL FILES TAB -->
             <div id="tab-vault" class="tab-content hidden">
                 <h2>Global Vault Files</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Shared community repository files. Stream videos live or download directly.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Shared community repository. Play audio songs, stream videos live, or download files.</p>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Name</th><th>Type</th><th>Actions</th></tr>
+                            <tr><th>File Name</th><th>Type</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="file-list">
                             <tr><td colspan="3" style="color: var(--text-muted);">Loading files...</td></tr>
@@ -243,9 +253,9 @@
                 <p style="color: var(--text-muted); font-size: 0.85rem;">Live conversation channel for all registered server clients.</p>
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages"></div>
-                    <div style="display: flex; padding: 0.5rem; background: white; border-top: 1px solid var(--border-color); gap: 0.5rem;">
-                        <input type="text" id="chat-input" placeholder="Type a message to all clients..." style="flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 20px; outline: none; font-size: 0.85rem;">
-                        <button onclick="sendChatMessage()" style="padding: 0.5rem 1rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">Send</button>
+                    <div style="display: flex; padding: 0.75rem; background: rgba(15, 23, 42, 0.8); border-top: 1px solid var(--border-color); gap: 0.5rem;">
+                        <input type="text" id="chat-input" placeholder="Type a message to all clients..." style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; background: rgba(30, 41, 59, 0.8); color: white; outline: none; font-size: 0.85rem;">
+                        <button onclick="sendChatMessage()" style="padding: 0.6rem 1.25rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">Send</button>
                     </div>
                 </div>
             </div>
@@ -253,16 +263,16 @@
             <!-- ADMIN TAB -->
             <div id="tab-admin" class="tab-content hidden">
                 <h2>Admin Approval Dashboard</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings and approve new registration requests.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings and approve registration requests.</p>
                 
-                <h3 style="margin-top:1.5rem; font-size:1rem;">Pending Registrations & Device Bindings</h3>
+                <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Accounts & Devices</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Username</th><th>Registered Device ID</th><th>Action</th></tr>
+                            <tr><th>Username</th><th>Registered Device ID</th><th>Action / Status</th></tr>
                         </thead>
                         <tbody id="admin-pending-table">
-                            <tr><td colspan="3">No pending client requests.</td></tr>
+                            <tr><td colspan="3">Loading registered clients...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -270,13 +280,24 @@
         </div>
     </div>
 
-    <!-- Video Player Modal -->
-    <div id="video-modal" class="modal">
+    <!-- Floating Background Upload Widget -->
+    <div id="upload-widget" class="floating-upload-widget">
+        <div class="widget-header">
+            <span id="widget-filename">Uploading File...</span>
+            <span id="widget-percent">0%</span>
+        </div>
+        <div class="progress-bar-container">
+            <div id="widget-progress-fill" class="progress-fill"></div>
+        </div>
+        <div id="widget-status-msg" style="font-size:0.75rem; color:var(--text-muted);">Transferring to Cloud Vault...</div>
+    </div>
+
+    <!-- Media Player Modal (Video & Audio Support) -->
+    <div id="media-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="margin-top:0; color:#3c4043; font-size: 1rem;">Stream Video</h3>
-            <video id="video-player" controls autoplay></video>
-            <br>
-            <button onclick="closeVideoModal()" style="margin-top: 1rem; padding: 0.5rem 1.25rem; background: #5f6368; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Player</button>
+            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Stream Media</h3>
+            <div id="media-container"></div>
+            <button onclick="closeMediaModal()" style="margin-top: 1.25rem; padding: 0.5rem 1.25rem; background: var(--accent-red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Player</button>
         </div>
     </div>
 
@@ -289,12 +310,48 @@
         const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
-        // LOCAL INITIAL DATABASE & APPROVAL SYSTEM
         let CLIENT_DATABASE = {
             "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", allowedDevice: "admin_master", approved: true },
             "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", allowedDevice: "", approved: true },
             "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", allowedDevice: "", approved: true }
         };
+
+        let usersFileSha = "";
+        let isUploadingActive = false;
+
+        // Prevent accidental tab refresh during heavy upload
+        window.addEventListener('beforeunload', function (e) {
+            if (isUploadingActive) {
+                e.preventDefault();
+                e.returnValue = 'Upload in progress. Leaving will cancel the transfer!';
+            }
+        });
+
+        async function syncUsersFromGithub() {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    usersFileSha = data.sha;
+                    const loadedDb = JSON.parse(atob(data.content));
+                    CLIENT_DATABASE = Object.assign({}, CLIENT_DATABASE, loadedDb);
+                }
+            } catch (e) { }
+        }
+
+        async function saveUsersToGithub() {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+            const updatedContent = btoa(JSON.stringify(CLIENT_DATABASE, null, 2));
+
+            try {
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Update users database", content: updatedContent, sha: usersFileSha || undefined })
+                });
+            } catch (e) { }
+        }
 
         function toggleAuthView(view) {
             if (view === 'register') {
@@ -331,6 +388,7 @@
         }
 
         async function attemptLogin() {
+            await syncUsersFromGithub();
             const username = document.getElementById("username-input").value.trim();
             const password = document.getElementById("password-input").value;
             const errorMsg = document.getElementById("error-msg");
@@ -354,13 +412,12 @@
 
             if (!clientRecord.allowedDevice) {
                 clientRecord.allowedDevice = currentDevice;
+                saveUsersToGithub();
             }
 
-            // Populate UI Elements
             document.getElementById("welcome-user").innerText = username;
             document.getElementById("display-device-home").innerText = currentDevice;
             
-            // Populate Profile Tab
             document.getElementById("profile-username").innerText = username;
             document.getElementById("profile-avatar").innerText = username.charAt(0).toUpperCase();
             document.getElementById("profile-role").innerText = clientRecord.role === "admin" ? "Administrator Rank" : "Verified Client Rank";
@@ -382,6 +439,7 @@
         }
 
         async function submitRegistration() {
+            await syncUsersFromGithub();
             const username = document.getElementById("reg-username").value.trim();
             const password = document.getElementById("reg-password").value;
             const statusDiv = document.getElementById("reg-status");
@@ -405,6 +463,8 @@
                 allowedDevice: currentDevice,
                 approved: false
             };
+
+            await saveUsersToGithub();
 
             statusDiv.innerHTML = '<div class="success">✅ Registration request sent! Awaiting Admin approval.</div>';
             setTimeout(() => { toggleAuthView('login'); }, 2000);
@@ -432,7 +492,7 @@
                         <td style="font-family:monospace; font-size:0.75rem;">${data.allowedDevice || 'Not bound'}</td>
                         <td>
                             ${data.approved ? 
-                                '<span class="success">Approved</span>' : 
+                                '<span class="success">Approved & Active</span>' : 
                                 `<button onclick="approveClient('${user}')" style="padding: 0.3rem 0.6rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Approve Account</button>`
                             }
                         </td>
@@ -440,14 +500,16 @@
             }
         }
 
-        function approveClient(username) {
+        async function approveClient(username) {
             if (CLIENT_DATABASE[username]) {
                 CLIENT_DATABASE[username].approved = true;
-                alert(`Account ${username} has been approved!`);
+                await saveUsersToGithub();
+                alert(`Account ${username} approved!`);
                 loadAdminScoreboard();
             }
         }
 
+        // FETCH ALL FILES (Detect Audio, Video & Docs)
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
@@ -464,13 +526,20 @@
                     fileList.innerHTML = files.map(f => {
                         const cleanName = f.name.replace(/^[^_]+_[^_]+_/, '');
                         const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(cleanName);
+                        const isAudio = /\.(mp3|wav|ogg|aac|m4a)$/i.test(cleanName);
+
+                        let typeBadge = '📁 Doc';
+                        if (isVideo) typeBadge = '🎥 Video';
+                        if (isAudio) typeBadge = '🎵 Audio Track';
+
                         return `
                             <tr>
                                 <td style="word-break:break-all;">📄 ${cleanName}</td>
-                                <td>${isVideo ? '🎥 Video' : '📁 Doc'}</td>
+                                <td>${typeBadge}</td>
                                 <td>
-                                    ${isVideo ? `<button onclick="playVideo('${f.download_url}', '${cleanName}')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Stream ▶</button>` : ''}
-                                    <a href="${f.download_url}" target="_blank" style="padding: 0.25rem 0.5rem; background: #e9eeef; color: #1f1f1f; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:500;">Download ⬇️</a>
+                                    ${isVideo ? `<button onclick="playMedia('${f.download_url}', '${cleanName}', 'video')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Stream ▶</button>` : ''}
+                                    ${isAudio ? `<button onclick="playMedia('${f.download_url}', '${cleanName}', 'audio')" style="padding: 0.25rem 0.5rem; background: var(--accent-cyan); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Audio 🎵</button>` : ''}
+                                    <a href="${f.download_url}" target="_blank" style="padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.1); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:500;">Download ⬇️</a>
                                 </td>
                             </tr>
                         `;
@@ -483,31 +552,42 @@
             }
         }
 
-        function playVideo(url, title) {
+        // STREAM MEDIA PLAYER (VIDEO & AUDIO)
+        function playMedia(url, title, type) {
             document.getElementById("modal-title").innerText = title;
-            document.getElementById("video-player").src = url;
-            document.getElementById("video-modal").style.display = "flex";
+            const container = document.getElementById("media-container");
+            if (type === 'video') {
+                container.innerHTML = `<video src="${url}" controls autoplay></video>`;
+            } else if (type === 'audio') {
+                container.innerHTML = `<div style="padding:1.5rem 0;"><div style="font-size:3rem; margin-bottom:1rem;">🎵</div><audio src="${url}" controls autoplay></audio></div>`;
+            }
+            document.getElementById("media-modal").style.display = "flex";
         }
 
-        function closeVideoModal() {
-            document.getElementById("video-modal").style.display = "none";
-            document.getElementById("video-player").pause();
-            document.getElementById("video-player").src = "";
+        function closeMediaModal() {
+            document.getElementById("media-modal").style.display = "none";
+            document.getElementById("media-container").innerHTML = "";
         }
 
-        async function handleFileUpload() {
+        // FLOATING GLOBAL BACKGROUND UPLOADER WITH PERCENTAGE WIDGET
+        async function startBackgroundUpload() {
             const fileInput = document.getElementById("file-picker");
-            const statusDiv = document.getElementById("upload-status");
-            const progressContainer = document.getElementById("progress-container");
-            const progressBar = document.getElementById("progress-bar");
+            const widget = document.getElementById("upload-widget");
+            const widgetFileName = document.getElementById("widget-filename");
+            const widgetPercent = document.getElementById("widget-percent");
+            const widgetProgressFill = document.getElementById("widget-progress-fill");
+            const widgetStatusMsg = document.getElementById("widget-status-msg");
             const username = document.getElementById("welcome-user").innerText;
 
             if (!fileInput.files.length) return;
 
             const file = fileInput.files[0];
-            progressContainer.style.display = "block";
-            progressBar.style.width = "0%";
-            progressBar.innerText = "0%";
+            isUploadingActive = true;
+            widget.style.display = "flex";
+            widgetFileName.innerText = file.name.length > 20 ? file.name.substring(0, 18) + "..." : file.name;
+            widgetPercent.innerText = "0%";
+            widgetProgressFill.style.width = "0%";
+            widgetStatusMsg.innerText = "Encrypting & Uploading...";
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -525,26 +605,35 @@
                 xhr.upload.onprogress = function(e) {
                     if (e.lengthComputable) {
                         let percent = Math.round((e.loaded / e.total) * 100);
-                        progressBar.style.width = percent + "%";
-                        progressBar.innerText = percent + "%";
+                        widgetPercent.innerText = percent + "%";
+                        widgetProgressFill.style.width = percent + "%";
                     }
                 };
 
                 xhr.onload = function() {
+                    isUploadingActive = false;
                     if (xhr.status === 200 || xhr.status === 201) {
-                        statusDiv.innerHTML = '<div class="success">✅ File successfully uploaded globally!</div>';
+                        widgetStatusMsg.innerText = "✅ Upload Completed!";
                         fileInput.value = "";
                         fetchVaultFiles();
+                        setTimeout(() => { widget.style.display = "none"; }, 4000);
                     } else {
-                        statusDiv.innerHTML = `<div class="error">Upload failed.</div>`;
+                        widgetStatusMsg.innerText = "❌ Upload Failed.";
+                        setTimeout(() => { widget.style.display = "none"; }, 5000);
                     }
-                    setTimeout(() => { progressContainer.style.display = "none"; }, 3000);
+                };
+
+                xhr.onerror = function() {
+                    isUploadingActive = false;
+                    widgetStatusMsg.innerText = "❌ Connection Error.";
+                    setTimeout(() => { widget.style.display = "none"; }, 5000);
                 };
 
                 xhr.send(JSON.stringify({ message: `Upload by ${username}`, content: base64Content }));
             };
         }
 
+        // CHAT SYSTEM
         async function fetchChatMessages() {
             const chatBox = document.getElementById("chat-messages");
             const currentUser = document.getElementById("welcome-user").innerText;
@@ -598,6 +687,8 @@
 
             fetchChatMessages();
         }
+
+        syncUsersFromGithub();
 
         document.getElementById("password-input").addEventListener("keypress", function(e) { if (e.key === "Enter") attemptLogin(); });
         document.getElementById("chat-input").addEventListener("keypress", function(e) { if (e.key === "Enter") sendChatMessage(); });
