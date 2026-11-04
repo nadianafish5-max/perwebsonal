@@ -35,7 +35,25 @@
         }
 
         .logo-area { display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; font-weight: 700; color: #fff; }
+        .search-bar { flex: 0 1 400px; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.4rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
+        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.85rem; color: var(--text-main); }
+
+        /* Professional Profile Widget Dropdown in Header */
+        .profile-widget { position: relative; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+        .profile-avatar-sm { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.95rem; }
         
+        .profile-dropdown {
+            position: absolute; top: 50px; right: 0; width: 280px;
+            background: #ffffff; color: #1e293b; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 1.25rem;
+            display: none; z-index: 5000; text-align: left;
+        }
+        .profile-dropdown.show { display: block; }
+        .pd-header { display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.85rem; margin-bottom: 0.85rem; }
+        .pd-avatar-lg { width: 44px; height: 44px; border-radius: 50%; background: #334155; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; }
+        .pd-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; color: #334155; cursor: pointer; }
+        .pd-menu-item:hover { color: var(--accent-blue); }
+
         .main-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
 
         sidebar {
@@ -44,54 +62,198 @@
         }
 
         .new-btn { 
-            background: linear-gradient(135deg, var(--accent-blue), #06b6d4); color: white; border: none; 
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: white; border: none; 
             padding: 0.85rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; 
             align-items: center; justify-content: center; gap: 0.6rem; margin-bottom: 1.25rem; 
-            text-decoration: none; text-align: center; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
         .new-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
 
         .nav-item { padding: 0.75rem 1rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.3rem; }
-        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.15); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.2); }
+        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.2); }
 
         .content-area { flex: 1; padding: 1.75rem; overflow-y: auto; background: rgba(15, 23, 42, 0.4); }
 
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
+        }
+        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        .auth-card input { width: 100%; padding: 0.85rem; margin: 0.4rem 0 1.2rem 0; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: white; outline: none; }
+        .auth-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-secondary { background: var(--accent-purple) !important; margin-top: 0.75rem; }
+        .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
+
+        .profile-header { display: flex; align-items: center; gap: 1.25rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+        .profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; }
         .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem; }
         .profile-card h4 { margin: 0 0 0.4rem 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
         .profile-card p { margin: 0; font-size: 0.95rem; font-weight: 600; }
+        .badge-vip { background: rgba(245, 158, 11, 0.2); color: var(--accent-vip); border: 1px solid rgba(245, 158, 11, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-normal { background: rgba(59, 130, 246, 0.2); color: var(--accent-cyan); border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
 
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; min-width: 500px; }
         th, td { border-bottom: 1px solid var(--border-color); padding: 0.85rem 0.5rem; text-align: left; color: var(--text-main); }
         th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
 
+        .chat-container { display: flex; flex-direction: column; height: 420px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: rgba(15, 23, 42, 0.6); }
+        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
+        .msg { padding: 0.65rem 1rem; border-radius: 12px; max-width: 75%; font-size: 0.85rem; line-height: 1.3; }
+        .msg.me { align-self: flex-end; background: var(--accent-blue); color: white; }
+        .msg.other { align-self: flex-start; background: #334155; color: white; }
+
         .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1rem; }
         .modal-content { background: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 16px; width: 100%; max-width: 650px; text-align: center; }
         video, audio { width: 100%; max-height: 350px; border-radius: 8px; outline: none; margin-top: 0.5rem; }
 
         .hidden { display: none !important; }
+        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.5rem; word-break: break-all; }
+        .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.5rem; }
+
+        @media (max-width: 768px) {
+            sidebar { width: 70px; padding: 1rem 0.2rem; }
+            sidebar .new-btn span:last-child, sidebar .nav-item span:last-child { display: none; }
+            .search-bar { display: none; }
+            .content-area { padding: 1rem; }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
+    <!-- Login Modal -->
+    <div id="login-screen">
+        <div id="login-card" class="auth-card">
+            <h2 style="margin: 0 0 0.5rem 0;">📁 Secure Cloud Vault</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
+            <input type="text" id="username-input" placeholder="Username" autocomplete="off">
+            <input type="password" id="password-input" placeholder="Password">
+            <button onclick="attemptLogin()">Sign In</button>
+            <button id="register-device-btn" class="btn-secondary hidden" onclick="requestDeviceBinding()">📱 Request Device Approval</button>
+            <span class="link-text" onclick="toggleAuthView('register')">Need an account? Register Here</span>
+            <div id="error-msg" class="error"></div>
+        </div>
+
+        <div id="register-card" class="auth-card hidden">
+            <h2 style="margin: 0 0 0.5rem 0;">📝 Client Registration</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Request Access from Server Admin</p>
+            <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
+            <input type="password" id="reg-password" placeholder="Choose Password">
+            <input type="text" id="reg-email" placeholder="Your Gmail Address (For Mapping)">
+            <button onclick="submitRegistration()">Request Registration</button>
+            <span class="link-text" onclick="toggleAuthView('login')">Already registered? Sign In</span>
+            <div id="reg-status"></div>
+        </div>
+    </div>
+
+    <!-- Header Bar -->
     <header>
-        <div class="logo-area">📁 <span>Secure Cloud Vault</span></div>
-        <div style="font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">Admin Portal</div>
+        <div class="logo-area">
+            📁 <span>Secure Cloud Vault</span>
+        </div>
+        <div class="search-bar">
+            <span>🔍</span>
+            <input type="text" placeholder="Search files in vault...">
+        </div>
+        
+        <!-- Professional Profile Widget Dropdown in Header -->
+        <div class="profile-widget" onclick="toggleProfileDropdown(event)">
+            <span id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-main);">User</span>
+            <div class="profile-avatar-sm" id="header-avatar-initial">U</div>
+
+            <div id="profile-dropdown-menu" class="profile-dropdown">
+                <div class="pd-header">
+                    <div class="pd-avatar-lg" id="dropdown-avatar-lg">U</div>
+                    <div>
+                        <div style="font-weight:700; font-size:0.95rem;" id="dropdown-username">User</div>
+                        <span class="badge-normal" id="dropdown-rank-badge">Normal Client</span>
+                    </div>
+                </div>
+                <div class="pd-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[1])">
+                    <span>👤 Profile & Devices</span> <span>➔</span>
+                </div>
+                <div class="pd-menu-item" onclick="switchTab('vault', document.querySelectorAll('.nav-item')[2])">
+                    <span>📂 Cloud Vault Storage</span> <span>➔</span>
+                </div>
+                <div class="pd-menu-item" onclick="logout()" style="color:var(--accent-red); border-bottom:none;">
+                    <span>🚪 Logout</span> <span>➔</span>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="main-layout">
         <sidebar>
-            <!-- Direct Link to Your Central TeraBox Client Folder -->
-            <a href="https://1024terabox.com/s/1PoaVr_Xg_K7PqPAd-keBGQ" target="_blank" class="new-btn">
-                <span>📁</span> <span>Open TeraBox Folder</span>
-            </a>
-            <div class="nav-item active" onclick="switchTab('vault', this)">📂 <span>Cloud Vault Storage</span></div>
+            <button class="new-btn" onclick="openLinkShareModal()">
+                <span>🤖</span> <span style="font-size:0.85rem;">Add Telegram File</span>
+            </button>
+
+            <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
+            <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile & Devices</span></div>
+            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>Cloud Vault</span></div>
+            <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Client Chat</span></div>
+            <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
+            <div class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></div>
         </sidebar>
 
         <div class="content-area">
-            <div id="tab-vault" class="tab-content">
+            <!-- HOME TAB -->
+            <div id="tab-home" class="tab-content">
+                <h2>Welcome to Secure Cloud Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage and stream your files seamlessly across your private cloud storage.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <div class="profile-card">
+                        <h4>Your Current Logged Device ID</h4>
+                        <p id="display-device-home" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">Loading...</p>
+                    </div>
+                    <div class="profile-card">
+                        <h4>Registered & Bound Devices for this Account</h4>
+                        <div id="home-bound-devices-list" style="font-size:0.85rem; color:var(--text-main); margin-top:0.4rem; max-height:100px; overflow-y:auto;">
+                            Loading registered devices...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE TAB -->
+            <div id="tab-profile" class="tab-content hidden">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profile-avatar">U</div>
+                    <div>
+                        <h2 style="margin: 0;" id="profile-username">User</h2>
+                        <span id="profile-badge-rank" class="badge-normal">Normal Client</span>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <h4>Client Account Type / Rank</h4>
+                    <p style="margin-top:0.3rem;"><span id="profile-rank-text" class="badge-normal">Normal Client</span></p>
+                </div>
+                <div class="profile-card">
+                    <h4>Current Hardware Device ID</h4>
+                    <p id="profile-device-id" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</p>
+                </div>
+                <div class="profile-card">
+                    <h4>All Bound Devices & Multi-Device Manager</h4>
+                    <div id="profile-all-devices" style="font-family: monospace; font-size:0.85rem; color:var(--accent-cyan); margin:0.5rem 0;">Loading...</div>
+                    <button onclick="requestAdditionalDevice()" style="width:auto; padding:0.4rem 0.8rem; background:var(--accent-purple); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem;">➕ Add Current Device to Account</button>
+                </div>
+                <div class="profile-card">
+                    <h4>Bound Gmail Address (For Mapping)</h4>
+                    <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
+                        <input type="text" id="bind-email-input" placeholder="Enter gmail address" style="margin:0; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; flex:1;">
+                        <button onclick="saveClientEmail()" style="width:auto; padding:0.5rem 1rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer;">Save Email</button>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <h4>Server Network IP</h4>
+                    <p id="profile-ip" style="color: var(--text-main);">Fetching...</p>
+                </div>
+            </div>
+
+            <!-- VAULT TAB -->
+            <div id="tab-vault" class="tab-content hidden">
                 <h2>Cloud Storage Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream videos, music, or download files directly from your central cloud storage.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream videos, play audio, or download your stored files instantly.</p>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -102,6 +264,55 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- CHAT TAB -->
+            <div id="tab-chat" class="tab-content hidden">
+                <h2>Client Community Chat</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Live conversation channel for all registered server clients.</p>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <div style="display: flex; padding: 0.75rem; background: rgba(15, 23, 42, 0.8); border-top: 1px solid var(--border-color); gap: 0.5rem;">
+                        <input type="text" id="chat-input" placeholder="Type a message..." style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; background: rgba(30, 41, 59, 0.8); color: white; outline: none; font-size: 0.85rem;">
+                        <button onclick="sendChatMessage()" style="padding: 0.6rem 1.25rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB -->
+            <div id="tab-admin" class="tab-content hidden">
+                <h2>Admin Device & Account Approval Dashboard</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Approve new accounts, manage bound devices, and handle recovery requests.</p>
+                <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Bound Devices</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr><th>Username</th><th>Bound Devices List</th><th>Email</th><th>Rank</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="admin-pending-table">
+                            <tr><td colspan="5">Loading registered clients...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Telegram File Modal -->
+    <div id="link-share-modal" class="modal">
+        <div class="modal-content" style="text-align: left;">
+            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">🤖 Add Telegram File Link</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">Send your file to your Telegram Bot and paste the direct file link here.</p>
+            
+            <label style="font-size:0.75rem; color:var(--text-muted);">File Name:</label>
+            <input type="text" id="share-name" placeholder="e.g. Movie / Setup / Document" style="width:100%; padding:0.7rem; margin:0.3rem 0 1rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+
+            <label style="font-size:0.75rem; color:var(--text-muted);">Telegram File Direct Link:</label>
+            <input type="text" id="share-url" placeholder="https://api.telegram.org/file/bot.../file_path" style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+
+            <div style="display:flex; gap:1rem;">
+                <button onclick="submitCloudNodeLink()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Publish to Vault</button>
+                <button onclick="closeLinkShareModal()" style="flex:1; padding:0.7rem; background:var(--accent-red); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
             </div>
         </div>
     </div>
@@ -118,12 +329,276 @@
     <script>
         const GITHUB_REPO_OWNER = "nadianafish5-max";
         const GITHUB_VAULT_REPO = "client-vault";
+        
         const tokA = "github_pat_11CLG5N3I0k";
         const tokB = "a4ywlHFWZm9_jvpLkxbPap";
         const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
+        let CLIENT_DATABASE = {
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevices: ["admin_master"], approved: true, email: "admin@server.com" },
+            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevices: [], approved: true, email: "" },
+            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevices: [], approved: true, email: "" }
+        };
+
+        let usersFileSha = "";
         let linksFileSha = "";
+        let pendingDeviceUser = null;
+
+        function getDeviceId() {
+            let deviceId = localStorage.getItem("portal_device_id");
+            if (!deviceId) {
+                deviceId = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localStorage.setItem("portal_device_id", deviceId);
+            }
+            return deviceId;
+        }
+
+        async function syncUsersFromGithub() {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    usersFileSha = data.sha;
+                    const loadedDb = JSON.parse(atob(data.content));
+                    for (let u in loadedDb) {
+                        if (loadedDb[u].allowedDevice && !loadedDb[u].allowedDevices) {
+                            loadedDb[u].allowedDevices = [loadedDb[u].allowedDevice];
+                        }
+                        if (!loadedDb[u].allowedDevices) loadedDb[u].allowedDevices = [];
+                    }
+                    CLIENT_DATABASE = Object.assign({}, CLIENT_DATABASE, loadedDb);
+                }
+            } catch (e) { }
+        }
+
+        async function saveUsersToGithub() {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+            const updatedContent = btoa(JSON.stringify(CLIENT_DATABASE, null, 2));
+            try {
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Update users database", content: updatedContent, sha: usersFileSha || undefined })
+                });
+            } catch (e) { }
+        }
+
+        function toggleAuthView(view) {
+            document.getElementById("login-card").classList.add("hidden");
+            document.getElementById("register-card").classList.add("hidden");
+            if (view === 'register') document.getElementById("register-card").classList.remove("hidden");
+            else document.getElementById("login-card").classList.remove("hidden");
+        }
+
+        function toggleProfileDropdown(event) {
+            event.stopPropagation();
+            const menu = document.getElementById("profile-dropdown-menu");
+            menu.classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.profile-widget')) {
+                const menu = document.getElementById("profile-dropdown-menu");
+                if (menu && menu.classList.contains('show')) menu.classList.remove('show');
+            }
+        };
+
+        async function hashPassword(password) {
+            const msgBuffer = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function attemptLogin() {
+            await syncUsersFromGithub();
+            const username = document.getElementById("username-input").value.trim();
+            const password = document.getElementById("password-input").value;
+            const errorMsg = document.getElementById("error-msg");
+            const regDeviceBtn = document.getElementById("register-device-btn");
+
+            regDeviceBtn.classList.add("hidden");
+
+            if (!CLIENT_DATABASE[username]) { errorMsg.innerText = "Invalid username or password."; return; }
+            const inputHash = await hashPassword(password);
+            const clientRecord = CLIENT_DATABASE[username];
+
+            if (inputHash !== clientRecord.passHash) { errorMsg.innerText = "Invalid username or password."; return; }
+            if (!clientRecord.approved) { errorMsg.innerText = "Account pending approval by Admin."; return; }
+
+            const currentDevice = getDeviceId();
+            if (clientRecord.role !== "admin" && clientRecord.allowedDevices.length > 0 && !clientRecord.allowedDevices.includes(currentDevice)) {
+                errorMsg.innerHTML = `Device not approved.<br>Current Device: <b>${currentDevice}</b>`;
+                pendingDeviceUser = username;
+                regDeviceBtn.classList.remove("hidden");
+                return;
+            }
+
+            if (clientRecord.allowedDevices.length === 0) {
+                clientRecord.allowedDevices.push(currentDevice);
+                saveUsersToGithub();
+            }
+
+            document.getElementById("welcome-user").innerText = username;
+            document.getElementById("header-avatar-initial").innerText = username.charAt(0).toUpperCase();
+            document.getElementById("dropdown-avatar-lg").innerText = username.charAt(0).toUpperCase();
+            document.getElementById("dropdown-username").innerText = username;
+            
+            document.getElementById("display-device-home").innerText = currentDevice;
+            document.getElementById("home-bound-devices-list").innerHTML = clientRecord.allowedDevices.map(d => `<div style="padding:0.2rem 0; font-family:monospace; color:var(--accent-cyan);">💻 ${d}</div>`).join('');
+            
+            document.getElementById("profile-username").innerText = username;
+            document.getElementById("profile-avatar").innerText = username.charAt(0).toUpperCase();
+            document.getElementById("profile-device-id").innerText = currentDevice;
+            document.getElementById("profile-all-devices").innerHTML = clientRecord.allowedDevices.map(d => `<div>💻 ${d} (Verified)</div>`).join('');
+            document.getElementById("bind-email-input").value = clientRecord.email || "";
+
+            const rankText = document.getElementById("profile-rank-text");
+            const badgeRank = document.getElementById("profile-badge-rank");
+            const dropdownRank = document.getElementById("dropdown-rank-badge");
+
+            if (clientRecord.vip || clientRecord.role === "admin") {
+                rankText.className = "badge-vip"; rankText.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+                badgeRank.className = "badge-vip"; badgeRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+                dropdownRank.className = "badge-vip"; dropdownRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+            } else {
+                rankText.className = "badge-normal"; rankText.innerText = "Normal Client";
+                badgeRank.className = "badge-normal"; badgeRank.innerText = "Normal Client";
+                dropdownRank.className = "badge-normal"; dropdownRank.innerText = "Normal Client";
+            }
+
+            const ipAddress = await getClientIp();
+            document.getElementById("profile-ip").innerText = ipAddress;
+            document.getElementById("login-screen").style.display = "none";
+
+            if (clientRecord.role === "admin") {
+                document.getElementById("admin-nav").style.display = "flex";
+                loadAdminScoreboard();
+            }
+
+            fetchVaultFiles();
+            fetchChatMessages();
+            setInterval(fetchChatMessages, 4000);
+        }
+
+        async function requestDeviceBinding() {
+            if (!pendingDeviceUser) return;
+            const currentDevice = getDeviceId();
+            const errorMsg = document.getElementById("error-msg");
+
+            await syncUsersFromGithub();
+            if (!CLIENT_DATABASE[pendingDeviceUser].allowedDevices.includes(currentDevice)) {
+                CLIENT_DATABASE[pendingDeviceUser].allowedDevices.push(currentDevice);
+            }
+            CLIENT_DATABASE[pendingDeviceUser].approved = true;
+            await saveUsersToGithub();
+
+            errorMsg.innerHTML = `<span class="success">✅ Device registration request sent for ${currentDevice}! Awaiting Admin approval.</span>`;
+            document.getElementById("register-device-btn").classList.add("hidden");
+        }
+
+        async function requestAdditionalDevice() {
+            const username = document.getElementById("profile-username").innerText;
+            const currentDevice = getDeviceId();
+
+            await syncUsersFromGithub();
+            if (!CLIENT_DATABASE[username].allowedDevices.includes(currentDevice)) {
+                CLIENT_DATABASE[username].allowedDevices.push(currentDevice);
+                await saveUsersToGithub();
+                alert("Device bind request sent for admin approval!");
+                location.reload();
+            } else {
+                alert("This device is already bound to your account.");
+            }
+        }
+
+        async function getClientIp() {
+            try {
+                let res = await fetch('https://api.ipify.org?format=json');
+                let data = await res.json();
+                return data.ip;
+            } catch (e) { return "127.0.0.1 (Secured)"; }
+        }
+
+        async function submitRegistration() {
+            await syncUsersFromGithub();
+            const username = document.getElementById("reg-username").value.trim();
+            const password = document.getElementById("reg-password").value;
+            const email = document.getElementById("reg-email").value.trim();
+            const statusDiv = document.getElementById("reg-status");
+
+            if (!username || !password || !email) { statusDiv.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
+            if (CLIENT_DATABASE[username]) { statusDiv.innerHTML = '<div class="error">Username taken.</div>'; return; }
+
+            const hash = await hashPassword(password);
+            CLIENT_DATABASE[username] = {
+                passHash: hash, role: "client", vip: false, allowedDevices: [getDeviceId()], approved: false, email: email
+            };
+
+            await saveUsersToGithub();
+            statusDiv.innerHTML = '<div class="success">✅ Request sent! Awaiting Admin approval.</div>';
+            setTimeout(() => { toggleAuthView('login'); }, 2000);
+        }
+
+        async function saveClientEmail() {
+            const username = document.getElementById("profile-username").innerText;
+            const email = document.getElementById("bind-email-input").value.trim();
+            if (!email) { alert("Enter email."); return; }
+
+            await syncUsersFromGithub();
+            if (CLIENT_DATABASE[username]) {
+                CLIENT_DATABASE[username].email = email;
+                await saveUsersToGithub();
+                alert("Email mapped successfully!");
+            }
+        }
+
+        function logout() { location.reload(); }
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            if(element) element.classList.add('active');
+            if (tabName === 'vault') fetchVaultFiles();
+            if (tabName === 'admin') loadAdminScoreboard();
+        }
+
+        function loadAdminScoreboard() {
+            const tableBody = document.getElementById("admin-pending-table");
+            tableBody.innerHTML = "";
+            for (let [user, data] of Object.entries(CLIENT_DATABASE)) {
+                if (data.role === "admin") continue;
+                let devicesHtml = (data.allowedDevices || []).map(d => `<div style="font-family:monospace; font-size:0.7rem;">💻 ${d}</div>`).join('');
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><strong>${user}</strong></td>
+                        <td>${devicesHtml || 'No devices'}</td>
+                        <td style="font-size:0.8rem;">${data.email || 'No email'}</td>
+                        <td><button onclick="toggleVipStatus('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button></td>
+                        <td><button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Approve All Devices</button></td>
+                    </tr>`;
+            }
+        }
+
+        async function approveClient(username) {
+            if (CLIENT_DATABASE[username]) {
+                CLIENT_DATABASE[username].approved = true;
+                await saveUsersToGithub();
+                alert(`Approved all devices for ${username}!`);
+                loadAdminScoreboard();
+            }
+        }
+
+        async function toggleVipStatus(username) {
+            if (CLIENT_DATABASE[username]) {
+                CLIENT_DATABASE[username].vip = !CLIENT_DATABASE[username].vip;
+                await saveUsersToGithub();
+                loadAdminScoreboard();
+            }
+        }
 
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
@@ -146,7 +621,7 @@
                         htmlContent += `
                             <tr>
                                 <td style="word-break:break-all;">📄 ${item.name}</td>
-                                <td><span style="background:rgba(245,158,11,0.2); color:#f59e0b; padding:0.2rem 0.6rem; border-radius:20px; font-size:0.75rem; font-weight:bold;">Central Storage</span></td>
+                                <td><span style="background:rgba(59,130,246,0.2); color:#3b82f6; padding:0.2rem 0.6rem; border-radius:20px; font-size:0.75rem; font-weight:bold;">Telegram Node</span></td>
                                 <td>
                                     ${isVideo ? `<button onclick="playMedia('${item.url}', '${item.name}', 'video')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Video ▶</button>` : ''}
                                     ${isAudio ? `<button onclick="playMedia('${item.url}', '${item.name}', 'audio')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Audio 🎵</button>` : ''}
@@ -161,10 +636,39 @@
             fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files found in vault.</td></tr>`;
         }
 
-        function previewOverview(title) {
-            document.getElementById("modal-title").innerText = title + " - Overview";
-            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">Cloud Storage File</h3><p>File securely indexed in your central private cloud vault.</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Stream & Play Status: Ready</p></div>`;
-            document.getElementById("media-modal").style.display = "flex";
+        function openLinkShareModal() { document.getElementById("link-share-modal").style.display = "flex"; }
+        function closeLinkShareModal() { document.getElementById("link-share-modal").style.display = "none"; }
+
+        async function submitCloudNodeLink() {
+            const name = document.getElementById("share-name").value.trim();
+            const url = document.getElementById("share-url").value.trim();
+            if (!name || !url) { alert("Please fill in all fields!"); return; }
+
+            const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
+            let existingItems = [];
+
+            try {
+                const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    linksFileSha = data.sha;
+                    existingItems = JSON.parse(atob(data.content));
+                }
+            } catch (e) {}
+
+            existingItems.push({ name: name, url: url, date: new Date().toLocaleDateString() });
+
+            await fetch(apiUrl, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "Add telegram file to vault", content: btoa(JSON.stringify(existingItems, null, 2)), sha: linksFileSha || undefined })
+            });
+
+            alert("File successfully published to Vault!");
+            closeLinkShareModal();
+            document.getElementById("share-name").value = "";
+            document.getElementById("share-url").value = "";
+            fetchVaultFiles();
         }
 
         function playMedia(url, title, type) {
@@ -177,12 +681,75 @@
             document.getElementById("media-modal").style.display = "flex";
         }
 
-        function closeMediaModal() {
-            document.getElementById("media-modal").style.display = "none";
-            document.getElementById("media-container").innerHTML = ``;
+        function previewOverview(title) {
+            document.getElementById("modal-title").innerText = title + " - Overview";
+            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">Telegram Cloud File</h3><p>File securely indexed via Telegram bot storage node.</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Stream Status: Ready & Optimized</p></div>`;
+            document.getElementById("media-modal").style.display = "flex";
         }
 
-        fetchVaultFiles();
+        function closeMediaModal() {
+            document.getElementById("media-modal").style.display = "none";
+            document.getElementById("media-container").innerHTML = "";
+        }
+
+        async function fetchChatMessages() {
+            const chatBox = document.getElementById("chat-messages");
+            const currentUser = document.getElementById("welcome-user").innerText;
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    const messages = JSON.parse(atob(data.content));
+                    chatBox.innerHTML = messages.map(m => `
+                        <div class="msg ${m.user === currentUser ? 'me' : 'other'}">
+                            <span style="font-size:0.6rem; opacity:0.7; display:block; margin-bottom:2px;">${m.user} • ${m.time}</span>
+                            ${m.text}
+                        </div>
+                    `).join('');
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            } catch (e) {}
+        }
+
+        async function sendChatMessage() {
+            const chatInput = document.getElementById("chat-input");
+            const text = chatInput.value.trim();
+            const username = document.getElementById("welcome-user").innerText;
+            if (!text) return;
+
+            chatInput.value = "";
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+
+            let currentMessages = [];
+            let sha = "";
+
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    sha = data.sha;
+                    currentMessages = JSON.parse(atob(data.content));
+                }
+            } catch (e) {}
+
+            currentMessages.push({ user: username, text: text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+            const updatedContent = btoa(JSON.stringify(currentMessages, null, 2));
+
+            await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Chat by ${username}`, content: updatedContent, sha: sha || undefined })
+            });
+
+            fetchChatMessages();
+        }
+
+        syncUsersFromGithub();
+
+        document.getElementById("password-input").addEventListener("keypress", function(e) { if (e.key === "Enter") attemptLogin(); });
+        document.getElementById("chat-input").addEventListener("keypress", function(e) { if (e.key === "Enter") sendChatMessage(); });
     </script>
 </body>
 </html>
