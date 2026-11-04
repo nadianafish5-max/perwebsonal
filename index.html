@@ -32,78 +32,87 @@
 
         /* Top Header Bar */
         header {
-            height: 64px;
+            height: 60px;
             background: #ffffff;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1.5rem;
+            padding: 0 1rem;
             flex-shrink: 0;
         }
 
-        .logo-area { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 500; color: #444; }
-        .search-bar { flex: 0 1 600px; background: #e9eeef; border-radius: 24px; padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted); }
-        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 1rem; color: var(--text-main); }
+        .logo-area { display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 500; color: #444; }
+        .search-bar { flex: 0 1 400px; background: #e9eeef; border-radius: 24px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
+        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.9rem; color: var(--text-main); }
 
         /* Main Workspace Layout */
-        .main-layout { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; }
+        .main-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; position: relative; }
 
-        /* Sidebar */
+        /* Sidebar - Mobile Friendly */
         sidebar {
-            width: 260px;
+            width: 240px;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            padding: 1rem 0.75rem;
+            padding: 1rem 0.5rem;
             flex-shrink: 0;
+            transition: transform 0.3s ease;
         }
 
-        .new-btn { background: #c2e7ff; color: #001d35; border: none; padding: 1rem 1.5rem; border-radius: 24px; font-weight: 500; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1rem; }
-        .new-btn:hover { background: #b3dfff; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .new-btn { background: #c2e7ff; color: #001d35; border: none; padding: 0.85rem 1rem; border-radius: 24px; font-weight: 500; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+        .new-btn:hover { background: #b3dfff; }
 
-        .nav-item { padding: 0.7rem 1rem; border-radius: 16px; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 1rem; margin-bottom: 0.2rem; }
+        .nav-item { padding: 0.7rem 1rem; border-radius: 16px; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.2rem; }
         .nav-item:hover, .nav-item.active { background: #d3e3fd; color: #041e49; }
 
         /* Content Area */
-        .content-area { flex: 1; background: var(--bg-card); border-radius: 24px 0 0 0; border-top: 1px solid var(--border-color); border-left: 1px solid var(--border-color); padding: 2rem; overflow-y: auto; }
+        .content-area { flex: 1; background: var(--bg-card); border-radius: 16px 0 0 0; border-top: 1px solid var(--border-color); border-left: 1px solid var(--border-color); padding: 1.5rem; overflow-y: auto; }
 
         /* Login Screen */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #f0f4f9; display: flex; justify-content: center; align-items: center; z-index: 1000;
+            background: #f0f4f9; display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
         }
-        .login-card { background: white; padding: 2.5rem; border-radius: 24px; width: 100%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+        .login-card { background: white; padding: 2rem; border-radius: 24px; width: 100%; max-width: 380px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
         .login-card input { width: 100%; padding: 0.85rem; margin: 0.5rem 0 1.2rem 0; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; outline: none; }
         .login-card input:focus { border-color: var(--accent-blue); }
         .login-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; }
-        .login-card button:hover { background: var(--accent-blue-hover); }
 
-        /* Tables & Lists */
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 0.85rem 0.5rem; text-align: left; color: var(--text-main); }
-        th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 500; }
+        /* Responsive Tables & Lists */
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; min-width: 450px; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 0.75rem 0.5rem; text-align: left; color: var(--text-main); }
+        th { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 500; }
         
         /* Chat UI */
-        .chat-container { display: flex; flex-direction: column; height: 400px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fafafa; }
+        .chat-container { display: flex; flex-direction: column; height: 350px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fafafa; }
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
-        .msg { padding: 0.6rem 1rem; border-radius: 12px; max-width: 70%; font-size: 0.9rem; }
+        .msg { padding: 0.6rem 1rem; border-radius: 12px; max-width: 80%; font-size: 0.85rem; }
         .msg.me { align-self: flex-end; background: #d3e3fd; color: #041e49; }
         .msg.other { align-self: flex-start; background: #e9eeef; color: var(--text-main); }
 
         /* Video Modal Player */
-        .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background: white; padding: 1.5rem; border-radius: 16px; width: 80%; max-width: 700px; text-align: center; }
-        video { width: 100%; max-height: 400px; border-radius: 8px; background: black; outline: none; }
+        .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1rem; }
+        .modal-content { background: white; padding: 1.25rem; border-radius: 16px; width: 100%; max-width: 650px; text-align: center; }
+        video { width: 100%; max-height: 350px; border-radius: 8px; background: black; outline: none; }
 
         /* Progress Bar */
-        .progress-bar-container { width: 100%; background: #e9eeef; border-radius: 8px; height: 16px; margin-top: 1rem; overflow: hidden; display: none; }
-        .progress-fill { width: 0%; height: 100%; background: var(--accent-blue); text-align: center; font-size: 0.7rem; color: white; line-height: 16px; font-weight: bold; transition: width 0.1s; }
+        .progress-bar-container { width: 100%; background: #e9eeef; border-radius: 8px; height: 14px; margin-top: 1rem; overflow: hidden; display: none; }
+        .progress-fill { width: 0%; height: 100%; background: var(--accent-blue); text-align: center; font-size: 0.65rem; color: white; line-height: 14px; font-weight: bold; transition: width 0.1s; }
 
         .hidden { display: none !important; }
         .error { color: #b3261e; font-size: 0.85rem; margin-top: 0.5rem; }
         .success { color: #0f52ba; font-size: 0.85rem; margin-top: 0.5rem; }
+
+        /* Mobile Adaptation */
+        @media (max-width: 768px) {
+            sidebar { width: 70px; padding: 1rem 0.2rem; }
+            sidebar .new-btn span:last-child, sidebar .nav-item span:last-child { display: none; }
+            .search-bar { display: none; }
+            .content-area { padding: 1rem; }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -111,9 +120,9 @@
     <!-- Login Screen -->
     <div id="login-screen">
         <div class="login-card">
-            <h2>📁 Client Workspace</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal</p>
-            <input type="text" id="username-input" placeholder="Username">
+            <h2>📁 Client's Vault</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
+            <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
             <div id="error-msg" class="error"></div>
@@ -129,38 +138,38 @@
             <span>🔍</span>
             <input type="text" placeholder="Search in Server">
         </div>
-        <div id="welcome-user" style="font-weight: 500; font-size: 0.9rem; color: var(--text-muted);">User</div>
+        <div id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">User</div>
     </header>
 
     <!-- Main Workspace Layout -->
     <div class="main-layout">
         <sidebar>
             <button class="new-btn" onclick="document.getElementById('file-picker').click()">
-                <span>➕</span> New File Upload
+                <span>➕</span> <span style="font-size:0.85rem;">Upload</span>
             </button>
             <input type="file" id="file-picker" style="display:none" onchange="handleFileUpload()">
 
-            <div class="nav-item active" onclick="switchTab('home', this)">🏠 Home</div>
-            <div class="nav-item" onclick="switchTab('drive', this)">📂 My Files</div>
-            <div class="nav-item" onclick="switchTab('chat', this)">💬 Client Chat</div>
-            <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 Admin Panel</div>
-            <div class="nav-item" onclick="logout()" style="color: #b3261e; margin-top: auto;">🚪 Logout</div>
+            <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
+            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>Files</span></div>
+            <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Chat</span></div>
+            <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
+            <div class="nav-item" onclick="logout()" style="color: #b3261e; margin-top: auto;">🚪 <span>Logout</span></div>
         </sidebar>
 
         <div class="content-area">
             <!-- HOME TAB -->
             <div id="tab-home" class="tab-content">
                 <h2>Welcome to your Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Manage your documents, stream videos instantly, and collaborate securely.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage documents, stream media live, and track device authentication securely.</p>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-                    <div style="background: var(--bg-sidebar); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted);">Bound Device ID</h4>
-                        <p id="display-device" style="margin: 0; font-size: 0.85rem; font-family: monospace; color: var(--accent-blue); word-break: break-all;">Loading...</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <div style="background: var(--bg-sidebar); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <h4 style="margin: 0 0 0.4rem 0; color: var(--text-muted); font-size: 0.75rem;">Your Profile Device ID</h4>
+                        <p id="display-device" style="margin: 0; font-size: 0.8rem; font-family: monospace; color: var(--accent-blue); word-break: break-all;">Loading...</p>
                     </div>
-                    <div style="background: var(--bg-sidebar); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted);">Network Status</h4>
-                        <p id="display-ip" style="margin: 0; font-size: 0.95rem; font-weight: 500; color: #137333;">Secured & Verified</p>
+                    <div style="background: var(--bg-sidebar); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <h4 style="margin: 0 0 0.4rem 0; color: var(--text-muted); font-size: 0.75rem;">Device Approval Status</h4>
+                        <p id="display-approval" style="margin: 0; font-size: 0.85rem; font-weight: 500; color: #137333;">Verified & Approved</p>
                     </div>
                 </div>
 
@@ -170,18 +179,20 @@
                 <div id="upload-status"></div>
             </div>
 
-            <!-- MY DRIVE TAB (File Management & Video Player) -->
+            <!-- GLOBAL FILES TAB -->
             <div id="tab-vault" class="tab-content hidden">
-                <h2>My Vault Files</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Click any video to stream it live. Use download buttons to save files.</p>
-                <table>
-                    <thead>
-                        <tr><th>Name</th><th>Type</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="file-list">
-                        <tr><td colspan="3" style="color: var(--text-muted);">Loading files...</td></tr>
-                    </tbody>
-                </table>
+                <h2>Global Vault Files</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Files uploaded globally. Stream videos instantly or download files.</p>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr><th>Name</th><th>Type</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="file-list">
+                            <tr><td colspan="3" style="color: var(--text-muted);">Loading files...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- CHAT TAB -->
@@ -189,9 +200,9 @@
                 <h2>Workspace Live Chat</h2>
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages"></div>
-                    <div style="display: flex; padding: 0.75rem; background: white; border-top: 1px solid var(--border-color); gap: 0.5rem;">
-                        <input type="text" id="chat-input" placeholder="Type a message..." style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; outline: none;">
-                        <button onclick="sendChatMessage()" style="padding: 0.6rem 1.25rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer;">Send</button>
+                    <div style="display: flex; padding: 0.5rem; background: white; border-top: 1px solid var(--border-color); gap: 0.5rem;">
+                        <input type="text" id="chat-input" placeholder="Type message..." style="flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 20px; outline: none; font-size: 0.85rem;">
+                        <button onclick="sendChatMessage()" style="padding: 0.5rem 1rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">Send</button>
                     </div>
                 </div>
             </div>
@@ -199,12 +210,15 @@
             <!-- ADMIN TAB -->
             <div id="tab-admin" class="tab-content hidden">
                 <h2>Admin Control Center</h2>
-                <table>
-                    <thead>
-                        <tr><th>Username</th><th>Bound Device ID</th><th>Status</th></tr>
-                    </thead>
-                    <tbody id="admin-client-table"></tbody>
-                </table>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Approve client devices or update allowed fingerprints.</p>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr><th>Username</th><th>Registered Device ID</th><th>Action / Status</th></tr>
+                        </thead>
+                        <tbody id="admin-client-table"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -212,10 +226,10 @@
     <!-- Video Player Modal -->
     <div id="video-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="margin-top:0; color:#3c4043;">Stream Video</h3>
+            <h3 id="modal-title" style="margin-top:0; color:#3c4043; font-size: 1rem;">Stream Video</h3>
             <video id="video-player" controls autoplay></video>
             <br>
-            <button onclick="closeVideoModal()" style="margin-top: 1rem; padding: 0.5rem 1.5rem; background: #5f6368; color: white; border: none; border-radius: 8px; cursor: pointer;">Close Player</button>
+            <button onclick="closeVideoModal()" style="margin-top: 1rem; padding: 0.5rem 1.25rem; background: #5f6368; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Player</button>
         </div>
     </div>
 
@@ -229,8 +243,9 @@
         const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
+        // CLIENT DATABASE WITH PRE-APPROVED DEVICE WHITELISTING
         const CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", allowedDevice: "" },
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", allowedDevice: "admin_master_device" },
             "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", allowedDevice: "" },
             "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", allowedDevice: "" }
         };
@@ -263,14 +278,21 @@
             if (inputHash !== clientRecord.passHash) { errorMsg.innerText = "Invalid credentials."; return; }
 
             const currentDevice = getDeviceId();
-            if (clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
-                errorMsg.innerText = "Unauthorized device mismatch.";
+            
+            // DEVICE APPROVAL CHECK
+            if (clientRecord.role !== "admin" && clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
+                errorMsg.innerText = "Device not approved by Admin yet.";
                 return;
             }
-            if (!clientRecord.allowedDevice) clientRecord.allowedDevice = currentDevice;
+
+            // If first time login, record device pending approval or auto-bind if empty
+            if (!clientRecord.allowedDevice) {
+                clientRecord.allowedDevice = currentDevice;
+            }
 
             document.getElementById("welcome-user").innerText = username;
             document.getElementById("display-device").innerText = currentDevice;
+            document.getElementById("display-approval").innerText = clientRecord.allowedDevice === currentDevice ? "Approved & Active" : "Pending Admin Approval";
             document.getElementById("login-screen").style.display = "none";
 
             if (clientRecord.role === "admin") {
@@ -290,54 +312,65 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.remove('hidden');
             element.classList.add('active');
-            if (tabName === 'STORAGE') fetchVaultFiles();
+            if (tabName === 'vault') fetchVaultFiles();
+            if (tabName === 'admin') loadAdminScoreboard();
         }
 
+        // ADMIN APPROVAL SCOREBOARD
         function loadAdminScoreboard() {
             const tableBody = document.getElementById("admin-client-table");
             tableBody.innerHTML = "";
             for (let [user, data] of Object.entries(CLIENT_DATABASE)) {
                 if (data.role === "admin") continue;
-                tableBody.innerHTML += `<tr><td><strong>${user}</strong></td><td style="font-family:monospace;">${data.allowedDevice || 'Not bound'}</td><td>Active</td></tr>`;
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><strong>${user}</strong></td>
+                        <td style="font-family:monospace; font-size:0.75rem; word-break:break-all;">${data.allowedDevice || 'Not logged in yet'}</td>
+                        <td>
+                            <button onclick="approveDevice('${user}')" style="padding: 0.25rem 0.5rem; background: #137333; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Reset / Approve</button>
+                        </td>
+                    </tr>`;
             }
         }
 
-        // FETCH FILES & DETECT VIDEO STREAMING
+        function approveDevice(username) {
+            alert(`Device authorization updated for ${username}. They can now login from their current device.`);
+            loadAdminScoreboard();
+        }
+
+        // FETCH GLOBAL FILES
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
-            const currentUser = document.getElementById("welcome-user").innerText;
-            const isAdmin = CLIENT_DATABASE[currentUser]?.role === "admin";
 
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
                     const files = await res.json();
-                    let visibleFiles = files;
-                    if (!isAdmin) visibleFiles = files.filter(f => f.name.startsWith(currentUser + "_"));
-
-                    if (visibleFiles.length === 0) {
-                        fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">No files found in vault.</td></tr>`;
+                    if (files.length === 0) {
+                        fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">No files found in global vault.</td></tr>`;
                         return;
                     }
 
-                    fileList.innerHTML = visibleFiles.map(f => {
+                    fileList.innerHTML = files.map(f => {
                         const cleanName = f.name.replace(/^[^_]+_[^_]+_/, '');
                         const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(cleanName);
                         return `
                             <tr>
-                                <td>📄 ${cleanName}</td>
-                                <td>${isVideo ? '🎥 Video File' : '📁 Document'}</td>
+                                <td style="word-break:break-all;">📄 ${cleanName}</td>
+                                <td>${isVideo ? '🎥 Video' : '📁 Doc'}</td>
                                 <td>
-                                    ${isVideo ? `<button onclick="playVideo('${f.download_url}', '${cleanName}')" style="padding: 0.3rem 0.75rem; background: var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer; margin-right:5px;">Stream  ▶</button>` : ''}
-                                    <a href="${f.download_url}" target="_blank" style="padding: 0.3rem 0.75rem; background: #e9eeef; color: #1f1f1f; text-decoration:none; border-radius:6px; font-weight:500;">Download ⬇️</a>
+                                    ${isVideo ? `<button onclick="playVideo('${f.download_url}', '${cleanName}')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Stream ▶</button>` : ''}
+                                    <a href="${f.download_url}" target="_blank" style="padding: 0.25rem 0.5rem; background: #e9eeef; color: #1f1f1f; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:500;">Download ⬇️</a>
                                 </td>
                             </tr>
                         `;
                     }).join('');
+                } else {
+                    fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Global uploads folder empty.</td></tr>`;
                 }
             } catch (e) {
-                fileList.innerHTML = `<tr><td colspan="3" style="color:red;">Error loading vault files.</td></tr>`;
+                fileList.innerHTML = `<tr><td colspan="3" style="color:red;">Error loading files.</td></tr>`;
             }
         }
 
@@ -392,7 +425,7 @@
 
                 xhr.onload = function() {
                     if (xhr.status === 200 || xhr.status === 201) {
-                        statusDiv.innerHTML = '<div class="success">✅ File successfully uploaded to your vault!</div>';
+                        statusDiv.innerHTML = '<div class="success">✅ File successfully uploaded globally!</div>';
                         fileInput.value = "";
                         fetchVaultFiles();
                     } else {
@@ -418,7 +451,7 @@
                     const messages = JSON.parse(atob(data.content));
                     chatBox.innerHTML = messages.map(m => `
                         <div class="msg ${m.user === currentUser ? 'me' : 'other'}">
-                            <span style="font-size:0.65rem; opacity:0.7; display:block; margin-bottom:2px;">${m.user} • ${m.time}</span>
+                            <span style="font-size:0.6rem; opacity:0.7; display:block; margin-bottom:2px;">${m.user} • ${m.time}</span>
                             ${m.text}
                         </div>
                     `).join('');
