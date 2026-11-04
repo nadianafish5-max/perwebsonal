@@ -1,11 +1,1 @@
 
-{
-  "admin": {
-    "passHash": "admin69",
-    "role": "admin",
-    "vip": true,
-    "allowedDevices": ["Master PC"],
-    "approved": true,
-    "email": ""
-  }
-}
