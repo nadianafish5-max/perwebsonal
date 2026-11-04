@@ -51,6 +51,22 @@
         .search-bar { flex: 0 1 400px; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.4rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
         .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.85rem; color: var(--text-main); }
 
+        /* TeraBox Style User Profile Popup Widget in Header */
+        .terabox-profile-widget { position: relative; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+        .terabox-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.95rem; }
+        
+        .terabox-dropdown {
+            position: absolute; top: 50px; right: 0; width: 280px;
+            background: #ffffff; color: #1e293b; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 1.25rem;
+            display: none; z-index: 5000; text-align: left;
+        }
+        .terabox-dropdown.show { display: block; }
+        .tb-header { display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.85rem; margin-bottom: 0.85rem; }
+        .tb-avatar-lg { width: 44px; height: 44px; border-radius: 50%; background: #334155; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; }
+        .tb-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; color: #334155; cursor: pointer; }
+        .tb-menu-item:hover { color: var(--accent-blue); }
+
         .main-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
 
         sidebar {
@@ -127,7 +143,7 @@
     <!-- Login Modal -->
     <div id="login-screen">
         <div id="login-card" class="auth-card">
-            <h2 style="margin: 0 0 0.5rem 0;">📁 Multi-Cloud Vault</h2>
+            <h2 style="margin: 0 0 0.5rem 0;">📁 TeraBox 1TB Vault</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
@@ -169,46 +185,73 @@
     <!-- Header Bar -->
     <header>
         <div class="logo-area">
-            📁 <span>Multi-Cloud Vault</span>
+            📁 <span>TeraBox 1TB Vault</span>
         </div>
         <div class="search-bar">
             <span>🔍</span>
             <input type="text" placeholder="Search files in vault...">
         </div>
-        <div id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">User</div>
+        
+        <!-- TeraBox Style Profile Widget Dropdown in Header -->
+        <div class="terabox-profile-widget" onclick="toggleTbDropdown(event)">
+            <span id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-main);">User</span>
+            <div class="terabox-avatar" id="header-avatar-initial">U</div>
+
+            <div id="tb-dropdown-menu" class="terabox-dropdown">
+                <div class="tb-header">
+                    <div class="tb-avatar-lg" id="dropdown-avatar-lg">U</div>
+                    <div>
+                        <div style="font-weight:700; font-size:0.95rem;" id="dropdown-username">User</div>
+                        <span class="badge-normal" id="dropdown-rank-badge">Normal Client</span>
+                    </div>
+                </div>
+                <div class="tb-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[1])">
+                    <span>👤 Profile & Devices</span> <span>➔</span>
+                </div>
+                <div class="tb-menu-item" onclick="switchTab('vault', document.querySelectorAll('.nav-item')[2])">
+                    <span>📂 TeraBox Storage (1 TB)</span> <span>➔</span>
+                </div>
+                <div class="tb-menu-item" onclick="logout()" style="color:var(--accent-red); border-bottom:none;">
+                    <span>🚪 Logout</span> <span>➔</span>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="main-layout">
         <sidebar>
-            <!-- Add File / Cloud Link Hub Button -->
             <button class="new-btn" onclick="openLinkShareModal()">
-                <span>☁️</span> <span style="font-size:0.85rem;">Add Cloud File / Game</span>
+                <span>☁️</span> <span style="font-size:0.85rem;">Add TeraBox File</span>
             </button>
 
             <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
-            <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile</span></div>
-            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>Cloud Vault</span></div>
+            <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile & Devices</span></div>
+            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>TeraBox Vault</span></div>
             <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Client Chat</span></div>
             <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
             <div class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></div>
         </sidebar>
 
         <div class="content-area">
+            <!-- HOME TAB -->
             <div id="tab-home" class="tab-content">
-                <h2>Welcome to Multi-Cloud Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Seamlessly manage and stream massive files across your multi-account cloud storage pools.</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                <h2>Welcome to TeraBox 1TB Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage and stream your massive files backed by 1 TeraBox cloud storage pool[cite: 5].</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
                     <div class="profile-card">
                         <h4>Your Current Logged Device ID</h4>
                         <p id="display-device-home" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">Loading...</p>
                     </div>
                     <div class="profile-card">
-                        <h4>Cloud Pool Status</h4>
-                        <p style="color: var(--accent-green);">16 Storage Nodes Active (TeraBox / Drive Pools)</p>
+                        <h4>Registered & Bound Devices for this Account</h4>
+                        <div id="home-bound-devices-list" style="font-size:0.85rem; color:var(--text-main); margin-top:0.4rem; max-height:100px; overflow-y:auto;">
+                            Loading registered devices...
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- PROFILE TAB -->
             <div id="tab-profile" class="tab-content hidden">
                 <div class="profile-header">
                     <div class="profile-avatar" id="profile-avatar">U</div>
@@ -222,11 +265,16 @@
                     <p style="margin-top:0.3rem;"><span id="profile-rank-text" class="badge-normal">Normal Client</span></p>
                 </div>
                 <div class="profile-card">
-                    <h4>Logged Hardware Device ID</h4>
+                    <h4>Current Hardware Device ID</h4>
                     <p id="profile-device-id" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</p>
                 </div>
                 <div class="profile-card">
-                    <h4>Bound Gmail Address</h4>
+                    <h4>All Bound Devices & Multi-Device Manager</h4>
+                    <div id="profile-all-devices" style="font-family: monospace; font-size:0.85rem; color:var(--accent-cyan); margin:0.5rem 0;">Loading...</div>
+                    <button onclick="requestAdditionalDevice()" style="width:auto; padding:0.4rem 0.8rem; background:var(--accent-purple); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem;">➕ Add Current Device to Account</button>
+                </div>
+                <div class="profile-card">
+                    <h4>Bound Gmail Address (TeraBox Linked)</h4>
                     <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
                         <input type="text" id="bind-email-input" placeholder="Enter gmail address" style="margin:0; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; flex:1;">
                         <button onclick="saveClientEmail()" style="width:auto; padding:0.5rem 1rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer;">Save Email</button>
@@ -238,21 +286,23 @@
                 </div>
             </div>
 
+            <!-- VAULT TAB -->
             <div id="tab-vault" class="tab-content hidden">
-                <h2>Cloud Vault Repository</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Browse, preview, and stream files directly from your cloud storage clusters cleanly.</p>
+                <h2>TeraBox 1TB Cloud Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream videos live or download high-capacity files instantly.</p>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>File / Game Name</th><th>Storage Pool</th><th>Actions</th></tr>
+                            <tr><th>File Name</th><th>Storage Node</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="file-list">
-                            <tr><td colspan="3" style="color: var(--text-muted);">Loading cloud nodes...</td></tr>
+                            <tr><td colspan="3" style="color: var(--text-muted);">Syncing TeraBox nodes...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- CHAT TAB -->
             <div id="tab-chat" class="tab-content hidden">
                 <h2>Client Community Chat</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem;">Live conversation channel for all registered server clients.</p>
@@ -265,14 +315,15 @@
                 </div>
             </div>
 
+            <!-- ADMIN TAB -->
             <div id="tab-admin" class="tab-content hidden">
-                <h2>Admin Multi-Cloud Dashboard</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings, VIP ranks, and backend cloud nodes.</p>
-                <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Hardware Devices</h3>
+                <h2>Admin Device & Account Approval Dashboard</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Approve new accounts and multiple bound device requests.</p>
+                <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Bound Devices</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Username</th><th>Bound Device ID</th><th>Email</th><th>Rank</th><th>Action</th></tr>
+                            <tr><th>Username</th><th>Bound Devices List</th><th>Email</th><th>Rank</th><th>Action</th></tr>
                         </thead>
                         <tbody id="admin-pending-table">
                             <tr><td colspan="5">Loading registered clients...</td></tr>
@@ -283,29 +334,29 @@
         </div>
     </div>
 
-    <!-- Cloud Link & Node Distributor Modal -->
+    <!-- Add File Modal -->
     <div id="link-share-modal" class="modal">
         <div class="modal-content" style="text-align: left;">
-            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">☁️ Add to Cloud Pool</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">System will auto-route to optimal multi-account storage pool (TeraBox, Drive, etc.)</p>
+            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">☁️ Add File to TeraBox Vault</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">Files route directly to your 1TB TeraBox storage node[cite: 5].</p>
             
             <label style="font-size:0.75rem; color:var(--text-muted);">File / Game Name:</label>
             <input type="text" id="share-name" placeholder="e.g. GTA IV Full Setup (19GB)" style="width:100%; padding:0.7rem; margin:0.3rem 0 1rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
 
-            <label style="font-size:0.75rem; color:var(--text-muted);">Cloud Storage Share Link:</label>
-            <input type="text" id="share-url" placeholder="Paste direct/shared link from your cloud node..." style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+            <label style="font-size:0.75rem; color:var(--text-muted);">TeraBox Cloud Direct / Share Link:</label>
+            <input type="text" id="share-url" placeholder="Paste TeraBox file link..." style="width:100%; padding:0.7rem; margin:0.3rem 0 1.2rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
 
             <div style="display:flex; gap:1rem;">
-                <button onclick="submitCloudNodeLink()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Deploy to Cloud</button>
+                <button onclick="submitCloudNodeLink()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Publish to Vault</button>
                 <button onclick="closeLinkShareModal()" style="flex:1; padding:0.7rem; background:var(--accent-red); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Media / Overview Player Modal -->
+    <!-- Media Player Modal -->
     <div id="media-modal" class="modal">
         <div class="modal-content" style="text-align:center;">
-            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Cloud Media Player & Overview</h3>
+            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">TeraBox Media Streamer</h3>
             <div id="media-container"></div>
             <button onclick="closeMediaModal()" style="margin-top: 1.25rem; padding: 0.5rem 1.25rem; background: var(--accent-red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Viewer</button>
         </div>
@@ -321,9 +372,9 @@
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
         let CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "admin_master", approved: true, email: "admin@server.com", otp: "" },
-            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevice: "", approved: true, email: "", otp: "" },
-            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevice: "", approved: true, email: "", otp: "" }
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevices: ["admin_master"], approved: true, email: "admin@server.com", otp: "" },
+            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevices: [], approved: true, email: "", otp: "" },
+            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevices: [], approved: true, email: "", otp: "" }
         };
 
         let usersFileSha = "";
@@ -348,6 +399,13 @@
                     const data = await res.json();
                     usersFileSha = data.sha;
                     const loadedDb = JSON.parse(atob(data.content));
+                    // Backward compatibility conversion for single allowedDevice to allowedDevices array
+                    for (let u in loadedDb) {
+                        if (loadedDb[u].allowedDevice && !loadedDb[u].allowedDevices) {
+                            loadedDb[u].allowedDevices = [loadedDb[u].allowedDevice];
+                        }
+                        if (!loadedDb[u].allowedDevices) loadedDb[u].allowedDevices = [];
+                    }
                     CLIENT_DATABASE = Object.assign({}, CLIENT_DATABASE, loadedDb);
                 }
             } catch (e) { }
@@ -375,6 +433,19 @@
             else document.getElementById("login-card").classList.remove("hidden");
         }
 
+        function toggleTbDropdown(event) {
+            event.stopPropagation();
+            const menu = document.getElementById("tb-dropdown-menu");
+            menu.classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.terabox-profile-widget')) {
+                const menu = document.getElementById("tb-dropdown-menu");
+                if (menu && menu.classList.contains('show')) menu.classList.remove('show');
+            }
+        };
+
         async function hashPassword(password) {
             const msgBuffer = new TextEncoder().encode(password);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -399,38 +470,44 @@
             if (!clientRecord.approved) { errorMsg.innerText = "Account pending approval by Admin."; return; }
 
             const currentDevice = getDeviceId();
-            if (clientRecord.role !== "admin" && clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
-                errorMsg.innerHTML = `Device not approved.<br>Current: <b>${currentDevice}</b><br>Registered: <b>${clientRecord.allowedDevice}</b>`;
+            if (clientRecord.role !== "admin" && clientRecord.allowedDevices.length > 0 && !clientRecord.allowedDevices.includes(currentDevice)) {
+                errorMsg.innerHTML = `Device not approved.<br>Current Device: <b>${currentDevice}</b>`;
                 pendingDeviceUser = username;
                 regDeviceBtn.classList.remove("hidden");
                 return;
             }
 
-            if (!clientRecord.allowedDevice) {
-                clientRecord.allowedDevice = currentDevice;
+            if (clientRecord.allowedDevices.length === 0) {
+                clientRecord.allowedDevices.push(currentDevice);
                 saveUsersToGithub();
             }
 
             document.getElementById("welcome-user").innerText = username;
+            document.getElementById("header-avatar-initial").innerText = username.charAt(0).toUpperCase();
+            document.getElementById("dropdown-avatar-lg").innerText = username.charAt(0).toUpperCase();
+            document.getElementById("dropdown-username").innerText = username;
+            
             document.getElementById("display-device-home").innerText = currentDevice;
+            document.getElementById("home-bound-devices-list").innerHTML = clientRecord.allowedDevices.map(d => `<div style="padding:0.2rem 0; font-family:monospace; color:var(--accent-cyan);">💻 ${d}</div>`).join('');
             
             document.getElementById("profile-username").innerText = username;
             document.getElementById("profile-avatar").innerText = username.charAt(0).toUpperCase();
             document.getElementById("profile-device-id").innerText = currentDevice;
+            document.getElementById("profile-all-devices").innerHTML = clientRecord.allowedDevices.map(d => `<div>💻 ${d} (Verified)</div>`).join('');
             document.getElementById("bind-email-input").value = clientRecord.email || "";
 
             const rankText = document.getElementById("profile-rank-text");
             const badgeRank = document.getElementById("profile-badge-rank");
+            const dropdownRank = document.getElementById("dropdown-rank-badge");
+
             if (clientRecord.vip || clientRecord.role === "admin") {
-                rankText.className = "badge-vip";
-                rankText.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
-                badgeRank.className = "badge-vip";
-                badgeRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+                rankText.className = "badge-vip"; rankText.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+                badgeRank.className = "badge-vip"; badgeRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+                dropdownRank.className = "badge-vip"; dropdownRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
             } else {
-                rankText.className = "badge-normal";
-                rankText.innerText = "Normal Client";
-                badgeRank.className = "badge-normal";
-                badgeRank.innerText = "Normal Client";
+                rankText.className = "badge-normal"; rankText.innerText = "Normal Client";
+                badgeRank.className = "badge-normal"; badgeRank.innerText = "Normal Client";
+                dropdownRank.className = "badge-normal"; dropdownRank.innerText = "Normal Client";
             }
 
             const ipAddress = await getClientIp();
@@ -453,12 +530,29 @@
             const errorMsg = document.getElementById("error-msg");
 
             await syncUsersFromGithub();
-            CLIENT_DATABASE[pendingDeviceUser].allowedDevice = currentDevice;
+            if (!CLIENT_DATABASE[pendingDeviceUser].allowedDevices.includes(currentDevice)) {
+                CLIENT_DATABASE[pendingDeviceUser].allowedDevices.push(currentDevice);
+            }
             CLIENT_DATABASE[pendingDeviceUser].approved = true;
             await saveUsersToGithub();
 
-            errorMsg.innerHTML = `<span class="success">✅ Device registration request sent! Awaiting Admin approval.</span>`;
+            errorMsg.innerHTML = `<span class="success">✅ Device registration request sent for ${currentDevice}! Awaiting Admin approval.</span>`;
             document.getElementById("register-device-btn").classList.add("hidden");
+        }
+
+        async function requestAdditionalDevice() {
+            const username = document.getElementById("profile-username").innerText;
+            const currentDevice = getDeviceId();
+
+            await syncUsersFromGithub();
+            if (!CLIENT_DATABASE[username].allowedDevices.includes(currentDevice)) {
+                CLIENT_DATABASE[username].allowedDevices.push(currentDevice);
+                await saveUsersToGithub();
+                alert("Device bind request sent for admin approval!");
+                location.reload();
+            } else {
+                alert("This device is already bound to your account.");
+            }
         }
 
         async function getClientIp() {
@@ -481,7 +575,7 @@
 
             const hash = await hashPassword(password);
             CLIENT_DATABASE[username] = {
-                passHash: hash, role: "client", vip: false, allowedDevice: getDeviceId(), approved: false, email: email, otp: ""
+                passHash: hash, role: "client", vip: false, allowedDevices: [getDeviceId()], approved: false, email: email, otp: ""
             };
 
             await saveUsersToGithub();
@@ -568,7 +662,7 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.remove('hidden');
-            element.classList.add('active');
+            if(element) element.classList.add('active');
             if (tabName === 'vault') fetchVaultFiles();
             if (tabName === 'admin') loadAdminScoreboard();
         }
@@ -578,13 +672,14 @@
             tableBody.innerHTML = "";
             for (let [user, data] of Object.entries(CLIENT_DATABASE)) {
                 if (data.role === "admin") continue;
+                let devicesHtml = (data.allowedDevices || []).map(d => `<div style="font-family:monospace; font-size:0.7rem;">💻 ${d}</div>`).join('');
                 tableBody.innerHTML += `
                     <tr>
                         <td><strong>${user}</strong></td>
-                        <td style="font-family:monospace; font-size:0.7rem; word-break:break-all;">${data.allowedDevice || 'Not bound'}</td>
+                        <td>${devicesHtml || 'No devices'}</td>
                         <td style="font-size:0.8rem;">${data.email || 'No email'}</td>
                         <td><button onclick="toggleVipStatus('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button></td>
-                        <td><button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Approve</button></td>
+                        <td><button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Approve All Devices</button></td>
                     </tr>`;
             }
         }
@@ -593,7 +688,7 @@
             if (CLIENT_DATABASE[username]) {
                 CLIENT_DATABASE[username].approved = true;
                 await saveUsersToGithub();
-                alert(`Approved for ${username}!`);
+                alert(`Approved all devices for ${username}!`);
                 loadAdminScoreboard();
             }
         }
@@ -606,10 +701,9 @@
             }
         }
 
-        // FETCH VAULT NODES CLEANLY (Hiding Backend Cloud Sources)
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
-            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Syncing with Cloud Storage Nodes...</td></tr>`;
+            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Syncing TeraBox 1TB Vault...</td></tr>`;
 
             let htmlContent = "";
             const linksUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
@@ -621,13 +715,13 @@
                     linksFileSha = data.sha;
                     const items = JSON.parse(atob(data.content));
                     
-                    items.forEach((item, index) => {
+                    items.forEach((item) => {
                         const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(item.name);
                         
                         htmlContent += `
                             <tr>
                                 <td style="word-break:break-all;">📄 ${item.name}</td>
-                                <td><span class="badge-normal">Cloud Storage Pool</span></td>
+                                <td><span class="badge-vip">TeraBox 1TB Node</span></td>
                                 <td>
                                     ${isVideo ? `<button onclick="playCloudMedia('${item.url}', '${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Stream ▶</button>` : ''}
                                     <button onclick="previewOverview('${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Overview 👁️</button>
@@ -638,7 +732,7 @@
                 }
             } catch (e) {}
 
-            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files found in cloud vault.</td></tr>`;
+            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files found in TeraBox vault.</td></tr>`;
         }
 
         function openLinkShareModal() { document.getElementById("link-share-modal").style.display = "flex"; }
@@ -666,10 +760,10 @@
             await fetch(apiUrl, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Add cloud storage node file", content: btoa(JSON.stringify(existingItems, null, 2)), sha: linksFileSha || undefined })
+                body: JSON.stringify({ message: "Add file to TeraBox storage", content: btoa(JSON.stringify(existingItems, null, 2)), sha: linksFileSha || undefined })
             });
 
-            alert("File successfully deployed to Cloud Storage Cluster!");
+            alert("File successfully added to TeraBox 1TB Vault!");
             closeLinkShareModal();
             document.getElementById("share-name").value = "";
             document.getElementById("share-url").value = "";
@@ -684,7 +778,7 @@
 
         function previewOverview(title) {
             document.getElementById("modal-title").innerText = title + " - Overview";
-            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">Cloud Storage Node Information</h3><p>File verified and optimized across multi-account cluster.</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Node Status: Secure & High-Speed Stream Ready</p></div>`;
+            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">TeraBox Cloud Storage Node</h3><p>File securely indexed on 1TB storage node[cite: 5].</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Stream Status: Ready & Optimized</p></div>`;
             document.getElementById("media-modal").style.display = "flex";
         }
 
@@ -729,7 +823,7 @@
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
-                    const data = var_data = await res.json();
+                    const data = await res.json();
                     sha = data.sha;
                     currentMessages = JSON.parse(atob(data.content));
                 }
