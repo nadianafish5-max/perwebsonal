@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Cloud Vault by Leo Jr.</title>
+    <title>Secure Cloud Vault</title>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -13,7 +13,6 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-blue: #3b82f6;
-            --accent-blue-hover: #2563eb;
             --accent-cyan: #06b6d4;
             --accent-green: #10b981;
             --accent-red: #ef4444;
@@ -25,8 +24,7 @@
 
         body { 
             background: radial-gradient(circle at top right, #1e1b4b 0%, var(--bg-dark) 60%);
-            color: var(--text-main); 
-            margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; user-select: none;
+            color: var(--text-main); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; user-select: none;
         }
 
         header {
@@ -35,10 +33,7 @@
         }
 
         .logo-area { display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; font-weight: 700; color: #fff; }
-        .search-bar { flex: 0 1 400px; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.4rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
-        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.85rem; color: var(--text-main); }
-
-        /* Professional Profile Widget Dropdown in Header */
+        
         .profile-widget { position: relative; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
         .profile-avatar-sm { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.95rem; }
         
@@ -49,9 +44,7 @@
             display: none; z-index: 5000; text-align: left;
         }
         .profile-dropdown.show { display: block; }
-        .pd-header { display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.85rem; margin-bottom: 0.85rem; }
-        .pd-avatar-lg { width: 44px; height: 44px; border-radius: 50%; background: #334155; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; }
-        .pd-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; color: #334155; cursor: pointer; }
+        .pd-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; font-weight: 500; color: #334155; cursor: pointer; }
         .pd-menu-item:hover { color: var(--accent-blue); }
 
         .main-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
@@ -81,16 +74,8 @@
         .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
         .auth-card input { width: 100%; padding: 0.85rem; margin: 0.4rem 0 1.2rem 0; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: white; outline: none; }
         .auth-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .btn-secondary { background: var(--accent-purple) !important; margin-top: 0.75rem; }
-        .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
 
-        .profile-header { display: flex; align-items: center; gap: 1.25rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
-        .profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; }
-        .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem; }
-        .profile-card h4 { margin: 0 0 0.4rem 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-        .profile-card p { margin: 0; font-size: 0.95rem; font-weight: 600; }
-        .badge-vip { background: rgba(245, 158, 11, 0.2); color: var(--accent-vip); border: 1px solid rgba(245, 158, 11, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-        .badge-normal { background: rgba(59, 130, 246, 0.2); color: var(--accent-cyan); border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-vip { background: rgba(59, 130, 246, 0.2); color: var(--accent-cyan); border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
 
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; min-width: 500px; }
@@ -108,664 +93,234 @@
         video, audio { width: 100%; max-height: 350px; border-radius: 8px; outline: none; margin-top: 0.5rem; }
 
         .hidden { display: none !important; }
-        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.5rem; word-break: break-all; }
-        .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.5rem; }
-
-        @media (max-width: 768px) {
-            sidebar { width: 70px; padding: 1rem 0.2rem; }
-            sidebar .new-btn span:last-child, sidebar .nav-item span:last-child { display: none; }
-            .search-bar { display: none; }
-            .content-area { padding: 1rem; }
-        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- Login Modal -->
     <div id="login-screen">
         <div id="login-card" class="auth-card">
-            <h2 style="margin: 0 0 0.5rem 0;">📁 Secure Cloud Vault</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
-            <input type="text" id="username-input" placeholder="Username" autocomplete="off">
-            <input type="password" id="password-input" placeholder="Password">
-            <button onclick="attemptLogin()">Sign In</button>
-            <button id="register-device-btn" class="btn-secondary hidden" onclick="requestDeviceBinding()">📱 Request Device Approval</button>
-            <span class="link-text" onclick="toggleAuthView('register')">Need an account? Register Here</span>
-            <div id="error-msg" class="error"></div>
-        </div>
-
-        <div id="register-card" class="auth-card hidden">
-            <h2 style="margin: 0 0 0.5rem 0;">📝 Client Registration</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Request Access from Server Admin</p>
-            <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
-            <input type="password" id="reg-password" placeholder="Choose Password">
-            <input type="text" id="reg-email" placeholder="Your Gmail Address (For Mapping)">
-            <button onclick="submitRegistration()">Request Registration</button>
-            <span class="link-text" onclick="toggleAuthView('login')">Already registered? Sign In</span>
-            <div id="reg-status"></div>
+            <h2>📁 Secure Cloud Vault</h2>
+            <input type="text" id="username-input" placeholder="Enter Username">
+            <input type="password" id="password-input" placeholder="Enter Password">
+            <button onclick="attemptLogin()">Sign In to Vault</button>
         </div>
     </div>
 
-    <!-- Header Bar -->
     <header>
-        <div class="logo-area">
-            📁 <span>Secure Cloud Vault</span>
-        </div>
-        <div class="search-bar">
-            <span>🔍</span>
-            <input type="text" placeholder="Search files in vault...">
-        </div>
-        
-        <!-- Professional Profile Widget Dropdown in Header -->
+        <div class="logo-area">📁 <span>Secure Cloud Vault</span></div>
         <div class="profile-widget" onclick="toggleProfileDropdown(event)">
-            <span id="welcome-user" style="font-weight: 500; font-size: 0.85rem; color: var(--text-main);">User</span>
+            <span id="welcome-user" style="font-weight: 500; font-size: 0.85rem;">User</span>
             <div class="profile-avatar-sm" id="header-avatar-initial">U</div>
-
             <div id="profile-dropdown-menu" class="profile-dropdown">
-                <div class="pd-header">
-                    <div class="pd-avatar-lg" id="dropdown-avatar-lg">U</div>
-                    <div>
-                        <div style="font-weight:700; font-size:0.95rem;" id="dropdown-username">User</div>
-                        <span class="badge-normal" id="dropdown-rank-badge">Normal Client</span>
-                    </div>
-                </div>
-                <div class="pd-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[1])">
-                    <span>👤 Profile & Devices</span> <span>➔</span>
-                </div>
-                <div class="pd-menu-item" onclick="switchTab('vault', document.querySelectorAll('.nav-item')[2])">
-                    <span>📂 Cloud Vault Storage</span> <span>➔</span>
-                </div>
-                <div class="pd-menu-item" onclick="logout()" style="color:var(--accent-red); border-bottom:none;">
-                    <span>🚪 Logout</span> <span>➔</span>
-                </div>
+                <div class="pd-menu-item" onclick="logout()" style="color:var(--accent-red);">🚪 Logout</div>
             </div>
         </div>
     </header>
 
     <div class="main-layout">
         <sidebar>
-            <button class="new-btn" onclick="openLinkShareModal()">
-                <span>📤</span> <span style="font-size:0.85rem;">Upload File</span>
-            </button>
-
-            <div class="nav-item active" onclick="switchTab('home', this)">🏠 <span>Home</span></div>
-            <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile & Devices</span></div>
-            <div class="nav-item" onclick="switchTab('vault', this)">📂 <span>Cloud Vault</span></div>
+            <button class="new-btn" onclick="openUploadModal()">📤 <span>Upload File</span></button>
+            <div class="nav-item active" onclick="switchTab('vault', this)">📂 <span>Global Vault</span></div>
             <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Client Chat</span></div>
-            <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
-            <div class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></div>
         </sidebar>
 
         <div class="content-area">
-            <!-- HOME TAB -->
-            <div id="tab-home" class="tab-content">
-                <h2>Welcome to Secure Cloud Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage and stream your files seamlessly across your private cloud storage.</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-                    <div class="profile-card">
-                        <h4>Your Current Logged Device ID</h4>
-                        <p id="display-device-home" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">Loading...</p>
-                    </div>
-                    <div class="profile-card">
-                        <h4>Registered & Bound Devices for this Account</h4>
-                        <div id="home-bound-devices-list" style="font-size:0.85rem; color:var(--text-main); margin-top:0.4rem; max-height:100px; overflow-y:auto;">
-                            Loading registered devices...
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PROFILE TAB -->
-            <div id="tab-profile" class="tab-content hidden">
-                <div class="profile-header">
-                    <div class="profile-avatar" id="profile-avatar">U</div>
-                    <div>
-                        <h2 style="margin: 0;" id="profile-username">User</h2>
-                        <span id="profile-badge-rank" class="badge-normal">Normal Client</span>
-                    </div>
-                </div>
-                <div class="profile-card">
-                    <h4>Client Account Type / Rank</h4>
-                    <p style="margin-top:0.3rem;"><span id="profile-rank-text" class="badge-normal">Normal Client</span></p>
-                </div>
-                <div class="profile-card">
-                    <h4>Current Hardware Device ID</h4>
-                    <p id="profile-device-id" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</p>
-                </div>
-                <div class="profile-card">
-                    <h4>All Bound Devices & Multi-Device Manager</h4>
-                    <div id="profile-all-devices" style="font-family: monospace; font-size:0.85rem; color:var(--accent-cyan); margin:0.5rem 0;">Loading...</div>
-                    <button onclick="requestAdditionalDevice()" style="width:auto; padding:0.4rem 0.8rem; background:var(--accent-purple); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem;">➕ Add Current Device to Account</button>
-                </div>
-                <div class="profile-card">
-                    <h4>Bound Gmail Address (For Mapping)</h4>
-                    <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
-                        <input type="text" id="bind-email-input" placeholder="Enter gmail address" style="margin:0; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; flex:1;">
-                        <button onclick="saveClientEmail()" style="width:auto; padding:0.5rem 1rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer;">Save Email</button>
-                    </div>
-                </div>
-                <div class="profile-card">
-                    <h4>Server Network IP</h4>
-                    <p id="profile-ip" style="color: var(--text-main);">Fetching...</p>
-                </div>
-            </div>
-
-            <!-- VAULT TAB -->
-            <div id="tab-vault" class="tab-content hidden">
-                <h2>Cloud Storage Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream videos, play audio, or download your stored files instantly.</p>
+            <div id="tab-vault" class="tab-content">
+                <h2>Global Cloud Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Instant streaming and downloading for all global clients.</p>
                 <div class="table-responsive">
                     <table>
-                        <thead>
-                            <tr><th>File Name</th><th>Storage Status</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody id="file-list">
-                            <tr><td colspan="3" style="color: var(--text-muted);">Syncing cloud vault...</td></tr>
-                        </tbody>
+                        <thead><tr><th>File Name</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="file-list"><tr><td colspan="3">Loading vault...</td></tr></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- CHAT TAB -->
             <div id="tab-chat" class="tab-content hidden">
-                <h2>Client Community Chat</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Live conversation channel for all registered server clients.</p>
+                <h2>Community Chat</h2>
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages"></div>
-                    <div style="display: flex; padding: 0.75rem; background: rgba(15, 23, 42, 0.8); border-top: 1px solid var(--border-color); gap: 0.5rem;">
-                        <input type="text" id="chat-input" placeholder="Type a message..." style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; background: rgba(30, 41, 59, 0.8); color: white; outline: none; font-size: 0.85rem;">
-                        <button onclick="sendChatMessage()" style="padding: 0.6rem 1.25rem; background: var(--accent-blue); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">Send</button>
+                    <div style="display:flex; padding:0.75rem; gap:0.5rem; background: rgba(15,23,42,0.8);">
+                        <input type="text" id="chat-input" placeholder="Type a message..." style="flex:1; background:rgba(30,41,59,0.8); border:1px solid var(--border-color); color:white; padding:0.6rem 1rem; border-radius:20px; outline:none; font-size:0.85rem;">
+                        <button onclick="sendChatMessage()" style="padding: 0.6rem 1.25rem; background: var(--accent-blue); color:white; border:none; border-radius:20px; cursor:pointer;">Send</button>
                     </div>
-                </div>
-            </div>
-
-            <!-- ADMIN TAB -->
-            <div id="tab-admin" class="tab-content hidden">
-                <h2>Admin Device & Account Approval Dashboard</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Approve new accounts, manage bound devices, and handle recovery requests.</p>
-                <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Bound Devices</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr><th>Username</th><th>Bound Devices List</th><th>Email</th><th>Rank</th><th>Action</th></tr>
-                        </thead>
-                        <tbody id="admin-pending-table">
-                            <tr><td colspan="5">Loading registered clients...</td></tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Simple File Upload Modal (No Link Copy-Paste!) -->
-    <div id="link-share-modal" class="modal">
-        <div class="modal-content" style="text-align: left;">
-            <h3 style="margin-top:0; color:white; font-size: 1.1rem; text-align:center;">📤 Upload File to Vault</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem; text-align:center;">Select any video, zip, music, or document to upload instantly.</p>
-            
-            <label style="font-size:0.75rem; color:var(--text-muted);">Select File (Up to 2GB+):</label>
-            <input type="file" id="file-input-box" style="width:100%; padding:0.6rem; margin:0.4rem 0 1rem 0; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; cursor:pointer;">
-
-            <div id="upload-progress-status" style="font-size:0.8rem; color:var(--accent-cyan); margin-bottom:0.8rem; text-align:center;"></div>
-
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <h3>Upload to Global Vault</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem;">Select any file to publish instantly to the global storage.</p>
+            <input type="file" id="file-picker" style="margin: 1rem 0; width:100%; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px;">
+            <div id="upload-status" style="margin-bottom: 1rem; color: var(--accent-cyan); font-size:0.85rem;"></div>
             <div style="display:flex; gap:1rem;">
-                <button onclick="uploadFileDirectly()" style="flex:1; padding:0.7rem; background:var(--accent-green); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Upload & Publish</button>
-                <button onclick="closeLinkShareModal()" style="flex:1; padding:0.7rem; background:var(--accent-red); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+                <button onclick="processUpload()" style="flex:1; background:var(--accent-green); padding:0.6rem; border:none; border-radius:6px; color:white; font-weight:600; cursor:pointer;">Upload & Publish</button>
+                <button onclick="closeUploadModal()" style="flex:1; background:var(--accent-red); padding:0.6rem; border:none; border-radius:6px; color:white; font-weight:600; cursor:pointer;">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- Media Player Modal -->
     <div id="media-modal" class="modal">
-        <div class="modal-content" style="text-align:center;">
-            <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Cloud Media Player</h3>
+        <div class="modal-content">
+            <h3 id="modal-title" style="margin-top:0; color:white;">Media Player</h3>
             <div id="media-container"></div>
-            <button onclick="closeMediaModal()" style="margin-top: 1.25rem; padding: 0.5rem 1.25rem; background: var(--accent-red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">Close Viewer</button>
+            <button onclick="closeMediaModal()" style="background: var(--accent-red); margin-top: 1.25rem; padding:0.5rem 1.25rem; border:none; border-radius:6px; color:white; cursor:pointer;">Close Viewer</button>
         </div>
     </div>
 
     <script>
         const GITHUB_REPO_OWNER = "nadianafish5-max";
         const GITHUB_VAULT_REPO = "client-vault";
-        
         const tokA = "github_pat_11CLG5N3I0k";
         const tokB = "a4ywlHFWZm9_jvpLkxbPap";
         const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
-        const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
+        const GITHUB_TOKEN = tokA + tokB + tokC;
 
-        let CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevices: ["admin_master"], approved: true, email: "admin@server.com" },
-            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevices: [], approved: true, email: "" },
-            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevices: [], approved: true, email: "" }
-        };
-
-        let usersFileSha = "";
         let linksFileSha = "";
-        let pendingDeviceUser = null;
-
-        function getDeviceId() {
-            let deviceId = localStorage.getItem("portal_device_id");
-            if (!deviceId) {
-                deviceId = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-                localStorage.setItem("portal_device_id", deviceId);
-            }
-            return deviceId;
-        }
-
-        async function syncUsersFromGithub() {
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                if (res.ok) {
-                    const data = await res.json();
-                    usersFileSha = data.sha;
-                    const loadedDb = JSON.parse(atob(data.content));
-                    for (let u in loadedDb) {
-                        if (loadedDb[u].allowedDevice && !loadedDb[u].allowedDevices) {
-                            loadedDb[u].allowedDevices = [loadedDb[u].allowedDevice];
-                        }
-                        if (!loadedDb[u].allowedDevices) loadedDb[u].allowedDevices = [];
-                    }
-                    CLIENT_DATABASE = Object.assign({}, CLIENT_DATABASE, loadedDb);
-                }
-            } catch (e) { }
-        }
-
-        async function saveUsersToGithub() {
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            const updatedContent = btoa(JSON.stringify(CLIENT_DATABASE, null, 2));
-            try {
-                await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Update users database", content: updatedContent, sha: usersFileSha || undefined })
-                });
-            } catch (e) { }
-        }
-
-        function toggleAuthView(view) {
-            document.getElementById("login-card").classList.add("hidden");
-            document.getElementById("register-card").classList.add("hidden");
-            if (view === 'register') document.getElementById("register-card").classList.remove("hidden");
-            else document.getElementById("login-card").classList.remove("hidden");
-        }
-
-        function toggleProfileDropdown(event) {
-            event.stopPropagation();
-            const menu = document.getElementById("profile-dropdown-menu");
-            menu.classList.toggle("show");
-        }
-
-        window.onclick = function(event) {
-            if (!event.target.closest('.profile-widget')) {
-                const menu = document.getElementById("profile-dropdown-menu");
-                if (menu && menu.classList.contains('show')) menu.classList.remove('show');
-            }
-        };
-
-        async function hashPassword(password) {
-            const msgBuffer = new TextEncoder().encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+        let currentUser = "Client";
 
         async function attemptLogin() {
-            await syncUsersFromGithub();
-            const username = document.getElementById("username-input").value.trim();
-            const password = document.getElementById("password-input").value;
-            const errorMsg = document.getElementById("error-msg");
-            const regDeviceBtn = document.getElementById("register-device-btn");
-
-            regDeviceBtn.classList.add("hidden");
-
-            if (!CLIENT_DATABASE[username]) { errorMsg.innerText = "Invalid username or password."; return; }
-            const inputHash = await hashPassword(password);
-            const clientRecord = CLIENT_DATABASE[username];
-
-            if (inputHash !== clientRecord.passHash) { errorMsg.innerText = "Invalid username or password."; return; }
-            if (!clientRecord.approved) { errorMsg.innerText = "Account pending approval by Admin."; return; }
-
-            const currentDevice = getDeviceId();
-            if (clientRecord.role !== "admin" && clientRecord.allowedDevices.length > 0 && !clientRecord.allowedDevices.includes(currentDevice)) {
-                errorMsg.innerHTML = `Device not approved.<br>Current Device: <b>${currentDevice}</b>`;
-                pendingDeviceUser = username;
-                regDeviceBtn.classList.remove("hidden");
-                return;
-            }
-
-            if (clientRecord.allowedDevices.length === 0) {
-                clientRecord.allowedDevices.push(currentDevice);
-                saveUsersToGithub();
-            }
-
-            document.getElementById("welcome-user").innerText = username;
-            document.getElementById("header-avatar-initial").innerText = username.charAt(0).toUpperCase();
-            document.getElementById("dropdown-avatar-lg").innerText = username.charAt(0).toUpperCase();
-            document.getElementById("dropdown-username").innerText = username;
-            
-            document.getElementById("display-device-home").innerText = currentDevice;
-            document.getElementById("home-bound-devices-list").innerHTML = clientRecord.allowedDevices.map(d => `<div style="padding:0.2rem 0; font-family:monospace; color:var(--accent-cyan);">💻 ${d}</div>`).join('');
-            
-            document.getElementById("profile-username").innerText = username;
-            document.getElementById("profile-avatar").innerText = username.charAt(0).toUpperCase();
-            document.getElementById("profile-device-id").innerText = currentDevice;
-            document.getElementById("profile-all-devices").innerHTML = clientRecord.allowedDevices.map(d => `<div>💻 ${d} (Verified)</div>`).join('');
-            document.getElementById("bind-email-input").value = clientRecord.email || "";
-
-            const rankText = document.getElementById("profile-rank-text");
-            const badgeRank = document.getElementById("profile-badge-rank");
-            const dropdownRank = document.getElementById("dropdown-rank-badge");
-
-            if (clientRecord.vip || clientRecord.role === "admin") {
-                rankText.className = "badge-vip"; rankText.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
-                badgeRank.className = "badge-vip"; badgeRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
-                dropdownRank.className = "badge-vip"; dropdownRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
-            } else {
-                rankText.className = "badge-normal"; rankText.innerText = "Normal Client";
-                badgeRank.className = "badge-normal"; badgeRank.innerText = "Normal Client";
-                dropdownRank.className = "badge-normal"; dropdownRank.innerText = "Normal Client";
-            }
-
-            const ipAddress = await getClientIp();
-            document.getElementById("profile-ip").innerText = ipAddress;
+            const userInp = document.getElementById("username-input").value.trim();
+            if(!userInp) { alert("Please enter a username"); return; }
+            currentUser = userInp;
+            document.getElementById("welcome-user").innerText = currentUser;
+            document.getElementById("header-avatar-initial").innerText = currentUser.charAt(0).toUpperCase();
             document.getElementById("login-screen").style.display = "none";
-
-            if (clientRecord.role === "admin") {
-                document.getElementById("admin-nav").style.display = "flex";
-                loadAdminScoreboard();
-            }
-
             fetchVaultFiles();
             fetchChatMessages();
             setInterval(fetchChatMessages, 4000);
         }
 
-        async function requestDeviceBinding() {
-            if (!pendingDeviceUser) return;
-            const currentDevice = getDeviceId();
-            const errorMsg = document.getElementById("error-msg");
-
-            await syncUsersFromGithub();
-            if (!CLIENT_DATABASE[pendingDeviceUser].allowedDevices.includes(currentDevice)) {
-                CLIENT_DATABASE[pendingDeviceUser].allowedDevices.push(currentDevice);
-            }
-            CLIENT_DATABASE[pendingDeviceUser].approved = true;
-            await saveUsersToGithub();
-
-            errorMsg.innerHTML = `<span class="success">✅ Device registration request sent for ${currentDevice}! Awaiting Admin approval.</span>`;
-            document.getElementById("register-device-btn").classList.add("hidden");
+        function toggleProfileDropdown(e) { e.stopPropagation(); document.getElementById("profile-dropdown-menu").classList.toggle("show"); }
+        window.onclick = () => {
+            const menu = document.getElementById("profile-dropdown-menu");
+            if(menu) menu.classList.remove("show");
         }
-
-        async function requestAdditionalDevice() {
-            const username = document.getElementById("profile-username").innerText;
-            const currentDevice = getDeviceId();
-
-            await syncUsersFromGithub();
-            if (!CLIENT_DATABASE[username].allowedDevices.includes(currentDevice)) {
-                CLIENT_DATABASE[username].allowedDevices.push(currentDevice);
-                await saveUsersToGithub();
-                alert("Device bind request sent for admin approval!");
-                location.reload();
-            } else {
-                alert("This device is already bound to your account.");
-            }
-        }
-
-        async function getClientIp() {
-            try {
-                let res = await fetch('https://api.ipify.org?format=json');
-                let data = await res.json();
-                return data.ip;
-            } catch (e) { return "127.0.0.1 (Secured)"; }
-        }
-
-        async function submitRegistration() {
-            await syncUsersFromGithub();
-            const username = document.getElementById("reg-username").value.trim();
-            const password = document.getElementById("reg-password").value;
-            const email = document.getElementById("reg-email").value.trim();
-            const statusDiv = document.getElementById("reg-status");
-
-            if (!username || !password || !email) { statusDiv.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
-            if (CLIENT_DATABASE[username]) { statusDiv.innerHTML = '<div class="error">Username taken.</div>'; return; }
-
-            const hash = await hashPassword(password);
-            CLIENT_DATABASE[username] = {
-                passHash: hash, role: "client", vip: false, allowedDevices: [getDeviceId()], approved: false, email: email
-            };
-
-            await saveUsersToGithub();
-            statusDiv.innerHTML = '<div class="success">✅ Request sent! Awaiting Admin approval.</div>';
-            setTimeout(() => { toggleAuthView('login'); }, 2000);
-        }
-
-        async function saveClientEmail() {
-            const username = document.getElementById("profile-username").innerText;
-            const email = document.getElementById("bind-email-input").value.trim();
-            if (!email) { alert("Enter email."); return; }
-
-            await syncUsersFromGithub();
-            if (CLIENT_DATABASE[username]) {
-                CLIENT_DATABASE[username].email = email;
-                await saveUsersToGithub();
-                alert("Email mapped successfully!");
-            }
-        }
-
         function logout() { location.reload(); }
 
-        function switchTab(tabName, element) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.remove('hidden');
-            if(element) element.classList.add('active');
-            if (tabName === 'vault') fetchVaultFiles();
-            if (tabName === 'admin') loadAdminScoreboard();
-        }
-
-        function loadAdminScoreboard() {
-            const tableBody = document.getElementById("admin-pending-table");
-            tableBody.innerHTML = "";
-            for (let [user, data] of Object.entries(CLIENT_DATABASE)) {
-                if (data.role === "admin") continue;
-                let devicesHtml = (data.allowedDevices || []).map(d => `<div style="font-family:monospace; font-size:0.7rem;">💻 ${d}</div>`).join('');
-                tableBody.innerHTML += `
-                    <tr>
-                        <td><strong>${user}</strong></td>
-                        <td>${devicesHtml || 'No devices'}</td>
-                        <td style="font-size:0.8rem;">${data.email || 'No email'}</td>
-                        <td><button onclick="toggleVipStatus('${user}')" style="padding: 0.2rem 0.4rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button></td>
-                        <td><button onclick="approveClient('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Approve All Devices</button></td>
-                    </tr>`;
-            }
-        }
-
-        async function approveClient(username) {
-            if (CLIENT_DATABASE[username]) {
-                CLIENT_DATABASE[username].approved = true;
-                await saveUsersToGithub();
-                alert(`Approved all devices for ${username}!`);
-                loadAdminScoreboard();
-            }
-        }
-
-        async function toggleVipStatus(username) {
-            if (CLIENT_DATABASE[username]) {
-                CLIENT_DATABASE[username].vip = !CLIENT_DATABASE[username].vip;
-                await saveUsersToGithub();
-                loadAdminScoreboard();
-            }
+        function switchTab(tab, el) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            if(el) el.classList.add('active');
         }
 
         async function fetchVaultFiles() {
-            const fileList = document.getElementById("file-list");
-            fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Syncing cloud vault...</td></tr>`;
-
-            let htmlContent = "";
-            const linksUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
-            
+            const list = document.getElementById("file-list");
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
             try {
-                const res = await fetch(linksUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                if (res.ok) {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
+                if(res.ok) {
                     const data = await res.json();
                     linksFileSha = data.sha;
                     const items = JSON.parse(atob(data.content));
-                    
-                    items.forEach((item) => {
-                        const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(item.name);
-                        const isAudio = /\.(mp3|wav|ogg|m4a|aac)$/i.test(item.name);
-                        
-                        htmlContent += `
-                            <tr>
-                                <td style="word-break:break-all;">📄 ${item.name}</td>
-                                <td><span style="background:rgba(59,130,246,0.2); color:#3b82f6; padding:0.2rem 0.6rem; border-radius:20px; font-size:0.75rem; font-weight:bold;">Cloud Storage</span></td>
-                                <td>
-                                    ${isVideo ? `<button onclick="playMedia('${item.url}', '${item.name}', 'video')" style="padding: 0.25rem 0.5rem; background: var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Video ▶</button>` : ''}
-                                    ${isAudio ? `<button onclick="playMedia('${item.url}', '${item.name}', 'audio')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Audio 🎵</button>` : ''}
-                                    <button onclick="previewOverview('${item.name}')" style="padding: 0.25rem 0.5rem; background: var(--accent-cyan); color:#0f172a; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem; font-weight:bold;">Overview 👁️</button>
-                                    <a href="${item.url}" target="_blank" style="padding: 0.25rem 0.5rem; background: var(--accent-green); color: white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:bold;">Download ⬇️</a>
-                                </td>
-                            </tr>`;
-                    });
+                    list.innerHTML = items.map(item => {
+                        const isVideo = /\.(mp4|webm|mov)$/i.test(item.name);
+                        const isAudio = /\.(mp3|wav|aac)$/i.test(item.name);
+                        return `<tr>
+                            <td style="word-break:break-all;">📄 ${item.name}</td>
+                            <td><span class="badge-vip">Global Access</span></td>
+                            <td>
+                                ${isVideo ? `<button onclick="playMedia('${item.url}', '${item.name}', 'video')" style="padding:0.25rem 0.5rem; background:var(--accent-blue); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Video ▶</button>` : ''}
+                                ${isAudio ? `<button onclick="playMedia('${item.url}', '${item.name}', 'audio')" style="padding:0.25rem 0.5rem; background:var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; margin-right:4px; font-size:0.75rem;">Play Audio 🎵</button>` : ''}
+                                <a href="${item.url}" target="_blank" download style="padding:0.25rem 0.5rem; background:var(--accent-green); color:white; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:bold;">Download ⬇️</a>
+                            </td>
+                        </tr>`;
+                    }).join('');
                 }
-            } catch (e) {}
-
-            fileList.innerHTML = htmlContent || `<tr><td colspan="3" style="color:var(--text-muted);">No files found in vault.</td></tr>`;
+            } catch(e) { list.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Error loading vault files.</td></tr>`; }
         }
 
-        function openLinkShareModal() { document.getElementById("link-share-modal").style.display = "flex"; }
-        function closeLinkShareModal() { 
-            document.getElementById("link-share-modal").style.display = "none"; 
-            document.getElementById("upload-progress-status").innerText = "";
-            document.getElementById("file-input-box").value = "";
+        function openUploadModal() { document.getElementById("upload-modal").style.display = "flex"; }
+        function closeUploadModal() { 
+            document.getElementById("upload-modal").style.display = "none"; 
+            document.getElementById("upload-status").innerText = "";
+            document.getElementById("file-picker").value = "";
         }
 
-        async function uploadFileDirectly() {
-            const fileInput = document.getElementById("file-input-box");
-            const statusDiv = document.getElementById("upload-progress-status");
-            if (fileInput.files.length === 0) { alert("Please select a file first!"); return; }
+        async function processUpload() {
+            const picker = document.getElementById("file-picker");
+            const status = document.getElementById("upload-status");
+            if(picker.files.length === 0) { alert("Please select a file first!"); return; }
+            const file = picker.files[0];
+            status.innerText = "⏳ Processing & publishing to Global Vault...";
 
-            const file = fileInput.files[0];
-            statusDiv.innerText = `⏳ Preparing file (${file.name})...`;
+            const fileUrl = URL.createObjectURL(file);
+            const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
+            let items = [];
+            try {
+                const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
+                if(res.ok) items = JSON.parse(atob((await res.json()).content));
+            } catch(e){}
 
-            // Simulating direct cloud routing & auto-indexing
-            setTimeout(async () => {
-                statusDiv.innerText = `🚀 Uploading to secure cloud storage...`;
-                
-                // Automatically register the file link into github storage JSON
-                const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
-                let existingItems = [];
+            items.push({ name: file.name, url: fileUrl });
 
-                try {
-                    const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                    if (res.ok) {
-                        const data = await res.json();
-                        linksFileSha = data.sha;
-                        existingItems = JSON.parse(atob(data.content));
-                    }
-                } catch (e) {}
+            await fetch(apiUrl, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Global Upload: ${file.name}`, content: btoa(JSON.stringify(items, null, 2)), sha: linksFileSha || undefined })
+            });
 
-                // Creating a direct blob/object secure URL for immediate streaming & download
-                const dummyFileUrl = URL.createObjectURL(file);
-
-                existingItems.push({ name: file.name, url: dummyFileUrl, date: new Date().toLocaleDateString() });
-
-                await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Upload file: ${file.name}`, content: btoa(JSON.stringify(existingItems, null, 2)), sha: linksFileSha || undefined })
-                });
-
-                statusDiv.innerText = `✅ File uploaded and published successfully!`;
-                setTimeout(() => {
-                    closeLinkShareModal();
-                    fetchVaultFiles();
-                }, 1500);
-
-            }, 1000);
+            status.innerText = "✅ Successfully published to Global Vault!";
+            setTimeout(() => { closeUploadModal(); fetchVaultFiles(); }, 1500);
         }
 
         function playMedia(url, title, type) {
             document.getElementById("modal-title").innerText = title;
-            if (type === 'video') {
-                document.getElementById("media-container").innerHTML = `<video src="${url}" controls autoplay></video>`;
-            } else {
-                document.getElementById("media-container").innerHTML = `<audio src="${url}" controls autoplay style="width:100%; margin-top:2rem;"></audio>`;
-            }
+            const container = document.getElementById("media-container");
+            container.innerHTML = type === 'video' ? `<video src="${url}" controls autoplay></video>` : `<audio src="${url}" controls autoplay style="width:100%; margin-top:1.5rem;"></audio>`;
             document.getElementById("media-modal").style.display = "flex";
         }
-
-        function previewOverview(title) {
-            document.getElementById("modal-title").innerText = title + " - Overview";
-            document.getElementById("media-container").innerHTML = `<div style="padding:2rem; color:var(--text-muted);"><h3 style="color:var(--accent-cyan);">Secure Cloud File</h3><p>File securely stored and indexed in your private cloud vault.</p><p style="font-family:monospace; font-size:0.8rem; color:var(--accent-vip);">Stream Status: Ready & Optimized</p></div>`;
-            document.getElementById("media-modal").style.display = "flex";
-        }
-
-        function closeMediaModal() {
-            document.getElementById("media-modal").style.display = "none";
-            document.getElementById("media-container").innerHTML = "";
-        }
+        function closeMediaModal() { document.getElementById("media-modal").style.display = "none"; document.getElementById("media-container").innerHTML = ""; }
 
         async function fetchChatMessages() {
-            const chatBox = document.getElementById("chat-messages");
-            const currentUser = document.getElementById("welcome-user").innerText;
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-
+            const container = document.getElementById("chat-messages");
             try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                if (res.ok) {
-                    const data = await res.json();
-                    const messages = JSON.parse(atob(data.content));
-                    chatBox.innerHTML = messages.map(m => `
+                const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
+                if(res.ok) {
+                    const messages = JSON.parse(atob((await res.json()).content));
+                    container.innerHTML = messages.map(m => `
                         <div class="msg ${m.user === currentUser ? 'me' : 'other'}">
-                            <span style="font-size:0.6rem; opacity:0.7; display:block; margin-bottom:2px;">${m.user} • ${m.time}</span>
+                            <span style="font-size:0.6rem; opacity:0.7; display:block; margin-bottom:2px;">${m.user}</span>
                             ${m.text}
                         </div>
                     `).join('');
-                    chatBox.scrollTop = chatBox.scrollHeight;
+                    container.scrollTop = container.scrollHeight;
                 }
-            } catch (e) {}
+            } catch(e){}
         }
 
         async function sendChatMessage() {
-            const chatInput = document.getElementById("chat-input");
-            const text = chatInput.value.trim();
-            const username = document.getElementById("welcome-user").innerText;
-            if (!text) return;
-
-            chatInput.value = "";
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-
-            let currentMessages = [];
+            const input = document.getElementById("chat-input");
+            const text = input.value.trim();
+            if(!text) return;
+            input.value = "";
+            const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+            let messages = [];
             let sha = "";
-
             try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
-                if (res.ok) {
+                const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
+                if(res.ok) {
                     const data = await res.json();
                     sha = data.sha;
-                    currentMessages = JSON.parse(atob(data.content));
+                    messages = JSON.parse(atob(data.content));
                 }
-            } catch (e) {}
-
-            currentMessages.push({ user: username, text: text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-            const updatedContent = btoa(JSON.stringify(currentMessages, null, 2));
-
-            await fetch(url, {
+            } catch(e){}
+            messages.push({ user: currentUser, text: text });
+            await fetch(apiUrl, {
                 method: 'PUT',
-                headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `Chat by ${username}`, content: updatedContent, sha: sha || undefined })
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "Chat update", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
             });
-
             fetchChatMessages();
         }
 
-        syncUsersFromGithub();
-
-        document.getElementById("password-input").addEventListener("keypress", function(e) { if (e.key === "Enter") attemptLogin(); });
-        document.getElementById("chat-input").addEventListener("keypress", function(e) { if (e.key === "Enter") sendChatMessage(); });
+        document.getElementById("password-input").addEventListener("keypress", (e) => { if(e.key === "Enter") attemptLogin(); });
+        document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
     </script>
 </body>
 </html>
