@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +18,7 @@
             --accent-green: #10b981;
             --accent-red: #ef4444;
             --accent-purple: #8b5cf6;
+            --accent-vip: #f59e0b;
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; transition: all 0.2s ease; }
@@ -47,7 +48,7 @@
             z-index: 10;
         }
 
-        .logo-area { display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+        .logo-area { display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; font-weight: 700; color: #fff; }
         .search-bar { flex: 0 1 400px; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.4rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); }
         .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.85rem; color: var(--text-main); }
 
@@ -94,6 +95,8 @@
         .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem; }
         .profile-card h4 { margin: 0 0 0.4rem 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
         .profile-card p { margin: 0; font-size: 0.95rem; font-weight: 600; }
+        .badge-vip { background: rgba(245, 158, 11, 0.2); color: var(--accent-vip); border: 1px solid rgba(245, 158, 11, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-normal { background: rgba(59, 130, 246, 0.2); color: var(--accent-cyan); border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
 
         /* Tables & Lists */
         .table-responsive { width: 100%; overflow-x: auto; }
@@ -140,6 +143,7 @@
 
     <!-- Login & Registration Modal Overlay -->
     <div id="login-screen">
+        <!-- Sign In View -->
         <div id="login-card" class="auth-card">
             <h2 style="margin: 0 0 0.5rem 0;">📁 Client's Vault</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure Server Portal by Leo Jr.</p>
@@ -147,9 +151,11 @@
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
             <span class="link-text" onclick="toggleAuthView('register')">Need an account? Register Here</span>
+            <span class="link-text" style="color:var(--accent-red);" onclick="toggleAuthView('forgot')">Forgot Password?</span>
             <div id="error-msg" class="error"></div>
         </div>
 
+        <!-- Registration Request View -->
         <div id="register-card" class="auth-card hidden">
             <h2 style="margin: 0 0 0.5rem 0;">📝 Client Registration</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Request Access from Server Admin</p>
@@ -158,6 +164,23 @@
             <button onclick="submitRegistration()">Request Registration</button>
             <span class="link-text" onclick="toggleAuthView('login')">Already registered? Sign In</span>
             <div id="reg-status"></div>
+        </div>
+
+        <!-- Forgot Password View -->
+        <div id="forgot-card" class="auth-card hidden">
+            <h2 style="margin: 0 0 0.5rem 0;">🔑 Password Recovery</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Enter username and bound email for OTP</p>
+            <input type="text" id="forgot-username" placeholder="Your Username" autocomplete="off">
+            <input type="text" id="forgot-email" placeholder="Bound Email Address">
+            <button onclick="requestPasswordReset()">Send Reset OTP</button>
+            
+            <div id="otp-section" class="hidden" style="margin-top:1rem;">
+                <input type="text" id="otp-input" placeholder="Enter 6-digit OTP">
+                <input type="password" id="new-password" placeholder="New Password">
+                <button onclick="verifyAndResetPassword()">Update Password</button>
+            </div>
+            <span class="link-text" onclick="toggleAuthView('login')">Back to Sign In</span>
+            <div id="forgot-status"></div>
         </div>
     </div>
 
@@ -197,7 +220,7 @@
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
                     <div class="profile-card">
-                        <h4>Your Profile Device ID</h4>
+                        <h4>Your Hardware / Device Model</h4>
                         <p id="display-device-home" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">Loading...</p>
                     </div>
                     <div class="profile-card">
@@ -207,23 +230,30 @@
                 </div>
             </div>
 
-            <!-- PROFILE TAB -->
+            <!-- PROFILE TAB (Dedicated Detailed View) -->
             <div id="tab-profile" class="tab-content hidden">
                 <div class="profile-header">
                     <div class="profile-avatar" id="profile-avatar">U</div>
                     <div>
                         <h2 style="margin: 0;" id="profile-username">User</h2>
-                        <span id="profile-role" style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: bold;">Client Account</span>
+                        <span id="profile-badge-rank" class="badge-normal">Normal Client</span>
                     </div>
                 </div>
 
                 <div class="profile-card">
-                    <h4>Logged Device ID (Bound Hardware)</h4>
+                    <h4>Client Account Type / Rank</h4>
+                    <p style="margin-top:0.3rem;"><span id="profile-rank-text" class="badge-normal">Normal Client</span></p>
+                </div>
+                <div class="profile-card">
+                    <h4>Logged Device Model (Hardware)</h4>
                     <p id="profile-device-id" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</p>
                 </div>
                 <div class="profile-card">
-                    <h4>Approval Status</h4>
-                    <p id="profile-status" style="color: var(--accent-green);">Approved & Active</p>
+                    <h4>Bound Email Address (For OTP & Recovery)</h4>
+                    <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
+                        <input type="text" id="bind-email-input" placeholder="Enter your email address" style="margin:0; padding:0.5rem; background:rgba(15,23,42,0.8); border:1px solid var(--border-color); color:white; border-radius:6px; flex:1;">
+                        <button onclick="saveClientEmail()" style="width:auto; padding:0.5rem 1rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer;">Save Email</button>
+                    </div>
                 </div>
                 <div class="profile-card">
                     <h4>Server Network IP</h4>
@@ -262,17 +292,17 @@
 
             <!-- ADMIN TAB -->
             <div id="tab-admin" class="tab-content hidden">
-                <h2>Admin Approval Dashboard</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings and approve registration requests.</p>
+                <h2>Admin Approval & Security Dashboard</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage client device bindings, rank status (VIP / Normal), and password alerts.</p>
                 
-                <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Accounts & Devices</h3>
+                <h3 style="margin-top:1.5rem; font-size:1rem;">Registered Clients & Hardware Devices</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Username</th><th>Registered Device ID</th><th>Action / Status</th></tr>
+                            <tr><th>Username</th><th>Device Model</th><th>Rank</th><th>Action / Status</th></tr>
                         </thead>
                         <tbody id="admin-pending-table">
-                            <tr><td colspan="3">Loading registered clients...</td></tr>
+                            <tr><td colspan="4">Loading registered clients...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -292,7 +322,7 @@
         <div id="widget-status-msg" style="font-size:0.75rem; color:var(--text-muted);">Transferring to Cloud Vault...</div>
     </div>
 
-    <!-- Media Player Modal (Video & Audio Support) -->
+    <!-- Media Player Modal -->
     <div id="media-modal" class="modal">
         <div class="modal-content">
             <h3 id="modal-title" style="margin-top:0; color:white; font-size: 1rem;">Stream Media</h3>
@@ -311,21 +341,37 @@
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
         let CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", allowedDevice: "admin_master", approved: true },
-            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", allowedDevice: "", approved: true },
-            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", allowedDevice: "", approved: true }
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "Admin Master Terminal", approved: true, email: "" },
+            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevice: "", approved: true, email: "" },
+            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevice: "", approved: true, email: "" }
         };
 
         let usersFileSha = "";
         let isUploadingActive = false;
+        let generatedOtp = null;
+        let resetTargetUser = null;
 
-        // Prevent accidental tab refresh during heavy upload
         window.addEventListener('beforeunload', function (e) {
             if (isUploadingActive) {
                 e.preventDefault();
-                e.returnValue = 'Upload in progress. Leaving will cancel the transfer!';
+                e.returnValue = 'Upload in progress!';
             }
         });
+
+        // Detect user device model cleanly (e.g. Samsung Galaxy, iPhone, Windows PC, etc.)
+        function getDeviceModel() {
+            const ua = navigator.userAgent;
+            if (/android/i.test(ua)) {
+                let match = ua.match(/;\s?([^;]+)\s?Build\//);
+                return match ? match[1].trim() : "Android Device";
+            }
+            if (/iphone/i.test(ua)) return "Apple iPhone";
+            if (/ipad/i.test(ua)) return "Apple iPad";
+            if (/windows nt/i.test(ua)) return "Windows PC Desktop";
+            if (/macintosh/i.test(ua)) return "Macintosh Computer";
+            if (/linux/i.test(ua)) return "Linux Workstation";
+            return "Custom Browser Terminal";
+        }
 
         async function syncUsersFromGithub() {
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
@@ -343,7 +389,6 @@
         async function saveUsersToGithub() {
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
             const updatedContent = btoa(JSON.stringify(CLIENT_DATABASE, null, 2));
-
             try {
                 await fetch(url, {
                     method: 'PUT',
@@ -354,30 +399,13 @@
         }
 
         function toggleAuthView(view) {
-            if (view === 'register') {
-                document.getElementById("login-card").classList.add("hidden");
-                document.getElementById("register-card").classList.remove("hidden");
-            } else {
-                document.getElementById("register-card").classList.add("hidden");
-                document.getElementById("login-card").classList.remove("hidden");
-            }
-        }
+            document.getElementById("login-card").classList.add("hidden");
+            document.getElementById("register-card").classList.add("hidden");
+            document.getElementById("forgot-card").classList.add("hidden");
 
-        function getDeviceId() {
-            let deviceId = localStorage.getItem("portal_device_id");
-            if (!deviceId) {
-                deviceId = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-                localStorage.setItem("portal_device_id", deviceId);
-            }
-            return deviceId;
-        }
-
-        async function getClientIp() {
-            try {
-                let res = await fetch('https://api.ipify.org?format=json');
-                let data = await res.json();
-                return data.ip;
-            } catch (e) { return "127.0.0.1 (Secured)"; }
+            if (view === 'register') document.getElementById("register-card").classList.remove("hidden");
+            else if (view === 'forgot') document.getElementById("forgot-card").classList.remove("hidden");
+            else document.getElementById("login-card").classList.remove("hidden");
         }
 
         async function hashPassword(password) {
@@ -404,9 +432,9 @@
                 return;
             }
 
-            const currentDevice = getDeviceId();
+            const currentDevice = getDeviceModel();
             if (clientRecord.role !== "admin" && clientRecord.allowedDevice && clientRecord.allowedDevice !== currentDevice) {
-                errorMsg.innerText = "Access denied: Device mismatched.";
+                errorMsg.innerText = `Device not approved. Registered device: ${clientRecord.allowedDevice}`;
                 return;
             }
 
@@ -418,11 +446,26 @@
             document.getElementById("welcome-user").innerText = username;
             document.getElementById("display-device-home").innerText = currentDevice;
             
+            // Populate Profile Details
             document.getElementById("profile-username").innerText = username;
             document.getElementById("profile-avatar").innerText = username.charAt(0).toUpperCase();
-            document.getElementById("profile-role").innerText = clientRecord.role === "admin" ? "Administrator Rank" : "Verified Client Rank";
             document.getElementById("profile-device-id").innerText = currentDevice;
-            
+            document.getElementById("bind-email-input").value = clientRecord.email || "";
+
+            const rankText = document.getElementById("profile-rank-text");
+            const badgeRank = document.getElementById("profile-badge-rank");
+            if (clientRecord.vip || clientRecord.role === "admin") {
+                rankText.className = "badge-vip";
+                rankText.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+                badgeRank.className = "badge-vip";
+                badgeRank.innerText = clientRecord.role === "admin" ? "Administrator VIP" : "VIP Client";
+            } else {
+                rankText.className = "badge-normal";
+                rankText.innerText = "Normal Client";
+                badgeRank.className = "badge-normal";
+                badgeRank.innerText = "Normal Client";
+            }
+
             const ipAddress = await getClientIp();
             document.getElementById("profile-ip").innerText = ipAddress;
 
@@ -438,36 +481,113 @@
             setInterval(fetchChatMessages, 4000);
         }
 
+        async function getClientIp() {
+            try {
+                let res = await fetch('https://api.ipify.org?format=json');
+                let data = await res.json();
+                return data.ip;
+            } catch (e) { return "127.0.0.1 (Secured)"; }
+        }
+
         async function submitRegistration() {
             await syncUsersFromGithub();
             const username = document.getElementById("reg-username").value.trim();
             const password = document.getElementById("reg-password").value;
             const statusDiv = document.getElementById("reg-status");
 
-            if (!username || !password) {
-                statusDiv.innerHTML = '<div class="error">Fill in all fields.</div>';
-                return;
-            }
-
-            if (CLIENT_DATABASE[username]) {
-                statusDiv.innerHTML = '<div class="error">Username already taken.</div>';
-                return;
-            }
+            if (!username || !password) { statusDiv.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
+            if (CLIENT_DATABASE[username]) { statusDiv.innerHTML = '<div class="error">Username taken.</div>'; return; }
 
             const hash = await hashPassword(password);
-            const currentDevice = getDeviceId();
-
             CLIENT_DATABASE[username] = {
                 passHash: hash,
                 role: "client",
-                allowedDevice: currentDevice,
-                approved: false
+                vip: false,
+                allowedDevice: getDeviceModel(),
+                approved: false,
+                email: ""
             };
 
             await saveUsersToGithub();
-
-            statusDiv.innerHTML = '<div class="success">✅ Registration request sent! Awaiting Admin approval.</div>';
+            statusDiv.innerHTML = '<div class="success">✅ Request sent! Awaiting Admin approval.</div>';
             setTimeout(() => { toggleAuthView('login'); }, 2000);
+        }
+
+        async function saveClientEmail() {
+            const username = document.getElementById("profile-username").innerText;
+            const email = document.getElementById("bind-email-input").value.trim();
+            if (!email) { alert("Enter a valid email address."); return; }
+
+            await syncUsersFromGithub();
+            if (CLIENT_DATABASE[username]) {
+                CLIENT_DATABASE[username].email = email;
+                await saveUsersToGithub();
+                alert("Email bound successfully to your profile!");
+            }
+        }
+
+        // FORGOT PASSWORD & OTP SYSTEM WITH ADMIN ALERT
+        async function requestPasswordReset() {
+            await syncUsersFromGithub();
+            const username = document.getElementById("forgot-username").value.trim();
+            const email = document.getElementById("forgot-email").value.trim();
+            const statusDiv = document.getElementById("forgot-status");
+
+            if (!CLIENT_DATABASE[username] || CLIENT_DATABASE[username].email !== email) {
+                statusDiv.innerHTML = '<div class="error">Username and bound email do not match.</div>';
+                return;
+            }
+
+            resetTargetUser = username;
+            generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            statusDiv.innerHTML = `<div class="success">✅ OTP Generated! Sent to email: ${email}<br><b style="color:var(--accent-yellow);">[Simulated OTP Code: ${generatedOtp}]</b></div>`;
+            document.getElementById("otp-section").classList.remove("hidden");
+
+            // Send Alert notification into Admin chat / system notification log
+            sendAdminAlert(`Password reset OTP requested for user: ${username} (Email: ${email})`);
+        }
+
+        async function verifyAndResetPassword() {
+            const enteredOtp = document.getElementById("otp-input").value.trim();
+            const newPassword = document.getElementById("new-password").value;
+            const statusDiv = document.getElementById("forgot-status");
+
+            if (enteredOtp !== generatedOtp) {
+                statusDiv.innerHTML = '<div class="error">Invalid OTP code.</div>';
+                return;
+            }
+
+            if (!newPassword) {
+                statusDiv.innerHTML = '<div class="error">Enter a new password.</div>';
+                return;
+            }
+
+            CLIENT_DATABASE[resetTargetUser].passHash = await hashPassword(newPassword);
+            await saveUsersToGithub();
+
+            alert("Password updated successfully! You can now log in.");
+            toggleAuthView('login');
+        }
+
+        async function sendAdminAlert(alertText) {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                let messages = [];
+                let sha = "";
+                if (res.ok) {
+                    const data = await res.json();
+                    sha = data.sha;
+                    messages = JSON.parse(atob(data.content));
+                }
+                messages.push({ user: "🛡️ SYSTEM ALERT", text: alertText, time: new Date().toLocaleTimeString() });
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Admin Alert Notification", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
+                });
+            } catch (e) {}
         }
 
         function logout() { location.reload(); }
@@ -489,10 +609,13 @@
                 tableBody.innerHTML += `
                     <tr>
                         <td><strong>${user}</strong></td>
-                        <td style="font-family:monospace; font-size:0.75rem;">${data.allowedDevice || 'Not bound'}</td>
+                        <td style="font-family:monospace; font-size:0.75rem;">${data.allowedDevice || 'Not logged in'}</td>
+                        <td>
+                            <button onclick="toggleVipStatus('${user}')" style="padding: 0.25rem 0.5rem; background: var(--accent-purple); color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button>
+                        </td>
                         <td>
                             ${data.approved ? 
-                                '<span class="success">Approved & Active</span>' : 
+                                '<span class="success">Approved</span>' : 
                                 `<button onclick="approveClient('${user}')" style="padding: 0.3rem 0.6rem; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Approve Account</button>`
                             }
                         </td>
@@ -509,7 +632,14 @@
             }
         }
 
-        // FETCH ALL FILES (Detect Audio, Video & Docs)
+        async function toggleVipStatus(username) {
+            if (CLIENT_DATABASE[username]) {
+                CLIENT_DATABASE[username].vip = !CLIENT_DATABASE[username].vip;
+                await saveUsersToGithub();
+                loadAdminScoreboard();
+            }
+        }
+
         async function fetchVaultFiles() {
             const fileList = document.getElementById("file-list");
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/uploads`;
@@ -519,7 +649,7 @@
                 if (res.ok) {
                     const files = await res.json();
                     if (files.length === 0) {
-                        fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">No files found in global vault.</td></tr>`;
+                        fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">No files found.</td></tr>`;
                         return;
                     }
 
@@ -544,23 +674,15 @@
                             </tr>
                         `;
                     }).join('');
-                } else {
-                    fileList.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">Global vault folder empty.</td></tr>`;
                 }
-            } catch (e) {
-                fileList.innerHTML = `<tr><td colspan="3" style="color:red;">Error loading files.</td></tr>`;
-            }
+            } catch (e) {}
         }
 
-        // STREAM MEDIA PLAYER (VIDEO & AUDIO)
         function playMedia(url, title, type) {
             document.getElementById("modal-title").innerText = title;
             const container = document.getElementById("media-container");
-            if (type === 'video') {
-                container.innerHTML = `<video src="${url}" controls autoplay></video>`;
-            } else if (type === 'audio') {
-                container.innerHTML = `<div style="padding:1.5rem 0;"><div style="font-size:3rem; margin-bottom:1rem;">🎵</div><audio src="${url}" controls autoplay></audio></div>`;
-            }
+            if (type === 'video') container.innerHTML = `<video src="${url}" controls autoplay></video>`;
+            else if (type === 'audio') container.innerHTML = `<div style="padding:1.5rem 0;"><div style="font-size:3rem; margin-bottom:1rem;">🎵</div><audio src="${url}" controls autoplay></audio></div>`;
             document.getElementById("media-modal").style.display = "flex";
         }
 
@@ -569,7 +691,6 @@
             document.getElementById("media-container").innerHTML = "";
         }
 
-        // FLOATING GLOBAL BACKGROUND UPLOADER WITH PERCENTAGE WIDGET
         async function startBackgroundUpload() {
             const fileInput = document.getElementById("file-picker");
             const widget = document.getElementById("upload-widget");
@@ -587,7 +708,7 @@
             widgetFileName.innerText = file.name.length > 20 ? file.name.substring(0, 18) + "..." : file.name;
             widgetPercent.innerText = "0%";
             widgetProgressFill.style.width = "0%";
-            widgetStatusMsg.innerText = "Encrypting & Uploading...";
+            widgetStatusMsg.innerText = "Uploading to server...";
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -613,7 +734,7 @@
                 xhr.onload = function() {
                     isUploadingActive = false;
                     if (xhr.status === 200 || xhr.status === 201) {
-                        widgetStatusMsg.innerText = "✅ Upload Completed!";
+                        widgetStatusMsg.innerText = "✅ Upload Successful!";
                         fileInput.value = "";
                         fetchVaultFiles();
                         setTimeout(() => { widget.style.display = "none"; }, 4000);
@@ -623,17 +744,10 @@
                     }
                 };
 
-                xhr.onerror = function() {
-                    isUploadingActive = false;
-                    widgetStatusMsg.innerText = "❌ Connection Error.";
-                    setTimeout(() => { widget.style.display = "none"; }, 5000);
-                };
-
                 xhr.send(JSON.stringify({ message: `Upload by ${username}`, content: base64Content }));
             };
         }
 
-        // CHAT SYSTEM
         async function fetchChatMessages() {
             const chatBox = document.getElementById("chat-messages");
             const currentUser = document.getElementById("welcome-user").innerText;
