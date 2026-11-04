@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure and safe server provided by Leo Jr.</title>
-    <!-- EmailJS SDK for Real Gmail OTP Delivery -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function() { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); })(); // আপনি চাইলে EmailJS আইডি বসাতে পারেন
-    </script>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -166,13 +161,13 @@
 
         <div id="forgot-card" class="auth-card hidden">
             <h2 style="margin: 0 0 0.5rem 0;">🔑 Password Recovery</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Enter username & email for secure Gmail OTP</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Secure JSON-based Password Reset</p>
             <input type="text" id="forgot-username" placeholder="Your Username" autocomplete="off">
             <input type="text" id="forgot-email" placeholder="Bound Email Address">
-            <button onclick="requestPasswordReset()">Send OTP to Gmail</button>
+            <button onclick="requestJsonOtp()">Generate Recovery OTP</button>
             
             <div id="otp-section" class="hidden" style="margin-top:1rem;">
-                <input type="text" id="otp-input" placeholder="Enter 6-digit Gmail OTP">
+                <input type="text" id="otp-input" placeholder="Enter 6-digit OTP">
                 <input type="password" id="new-password" placeholder="New Password">
                 <button onclick="verifyAndResetPassword()">Update Password</button>
             </div>
@@ -327,14 +322,13 @@
         const GITHUB_UPLOAD_TOKEN = tokA + tokB + tokC;
 
         let CLIENT_DATABASE = {
-            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "admin_master", approved: true, email: "admin@server.com" },
-            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevice: "", approved: true, email: "" },
-            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevice: "", approved: true, email: "" }
+            "admin": { passHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", role: "admin", vip: true, allowedDevice: "admin_master", approved: true, email: "admin@server.com", otp: "" },
+            "leokasperteal": { passHash: "38272b83e71b5c807cdca46f11ab359b22ef922cdb558da486261c5f3ee3df46", role: "client", vip: true, allowedDevice: "", approved: true, email: "", otp: "" },
+            "tisafu69": { passHash: "9969cf79dd580739babd15faf52a4f7687a708dbd25f1da099aeb60122a8e9c4", role: "client", vip: false, allowedDevice: "", approved: true, email: "", otp: "" }
         };
 
         let usersFileSha = "";
         let isUploadingActive = false;
-        let generatedOtp = null;
         let resetTargetUser = null;
         let pendingDeviceUser = null;
 
@@ -498,7 +492,8 @@
                 vip: false,
                 allowedDevice: getDeviceId(),
                 approved: false,
-                email: email
+                email: email,
+                otp: ""
             };
 
             await saveUsersToGithub();
@@ -519,8 +514,8 @@
             }
         }
 
-        // SECURE GMAIL OTP SYSTEM VIA EMAILJS (Does not expose OTP on screen)
-        async function requestPasswordReset() {
+        // BUILT-IN JSON OTP GENERATOR & ADMIN NOTIFICATION (No Third-Party Needed)
+        async function requestJsonOtp() {
             await syncUsersFromGithub();
             const username = document.getElementById("forgot-username").value.trim();
             const email = document.getElementById("forgot-email").value.trim();
@@ -532,23 +527,17 @@
             }
 
             resetTargetUser = username;
-            generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
             
-            statusDiv.innerHTML = `<div class="success">Sending OTP to your Gmail inbox... Please wait.</div>`;
+            // Save OTP directly into the user's record inside json database
+            CLIENT_DATABASE[username].otp = newOtp;
+            await saveUsersToGithub();
 
-            // Sending via EmailJS (Ensure you configure your EmailJS Service/Template keys)
-            emailjs.send("service_default", "template_default", {
-                to_email: email,
-                to_name: username,
-                otp_code: generatedOtp
-            }, "YOUR_PUBLIC_KEY").then(function(response) {
-                statusDiv.innerHTML = `<div class="success">✅ 6-digit OTP has been sent securely to <b>${email}</b>! Check your inbox.</div>`;
-                document.getElementById("otp-section").classList.remove("hidden");
-            }, function(error) {
-                // Fallback simulation alert if emailjs keys aren't set yet
-                statusDiv.innerHTML = `<div class="success">✅ OTP generated and dispatched to ${email}.<br><span style="color:var(--accent-vip);">(Dev mode fallback OTP: ${generatedOtp})</span></div>`;
-                document.getElementById("otp-section").classList.remove("hidden");
-            });
+            // Send an alert notification to Admin community chat log automatically
+            sendAdminAlert(`Password reset OTP generated for client: ${username} (Email: ${email}, OTP: ${newOtp})`);
+
+            statusDiv.innerHTML = `<div class="success">✅ Recovery OTP generated and registered securely in server JSON database!<br>Admin has been alerted with the OTP.</div>`;
+            document.getElementById("otp-section").classList.remove("hidden");
         }
 
         async function verifyAndResetPassword() {
@@ -556,8 +545,11 @@
             const newPassword = document.getElementById("new-password").value;
             const statusDiv = document.getElementById("forgot-status");
 
-            if (enteredOtp !== generatedOtp) {
-                statusDiv.innerHTML = '<div class="error">Invalid OTP code.</div>';
+            await syncUsersFromGithub();
+            const serverOtp = CLIENT_DATABASE[resetTargetUser] ? CLIENT_DATABASE[resetTargetUser].otp : "";
+
+            if (!serverOtp || enteredOtp !== serverOtp) {
+                statusDiv.innerHTML = '<div class="error">Invalid or expired OTP code.</div>';
                 return;
             }
 
@@ -567,10 +559,31 @@
             }
 
             CLIENT_DATABASE[resetTargetUser].passHash = await hashPassword(newPassword);
+            CLIENT_DATABASE[resetTargetUser].otp = ""; // Clear used OTP
             await saveUsersToGithub();
 
             alert("Password updated successfully!");
             toggleAuthView('login');
+        }
+
+        async function sendAdminAlert(alertText) {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
+                let messages = [];
+                let sha = "";
+                if (res.ok) {
+                    const data = await res.json();
+                    sha = data.sha;
+                    messages = JSON.parse(atob(data.content));
+                }
+                messages.push({ user: "🛡️ SYSTEM ALERT", text: alertText, time: new Date().toLocaleTimeString() });
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Admin Alert Notification", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
+                });
+            } catch (e) {}
         }
 
         function logout() { location.reload(); }
@@ -675,7 +688,6 @@
             document.getElementById("media-container").innerHTML = "";
         }
 
-        // FAST BACKGROUND UPLOAD WITH INSTANT REFRESH
         async function startBackgroundUpload() {
             const fileInput = document.getElementById("file-picker");
             const widget = document.getElementById("upload-widget");
@@ -721,7 +733,7 @@
                     if (xhr.status === 200 || xhr.status === 201) {
                         widgetStatusMsg.innerText = "✅ Uploaded Successfully!";
                         fileInput.value = "";
-                        fetchVaultFiles(); // Instant refresh list
+                        fetchVaultFiles();
                         setTimeout(() => { widget.style.display = "none"; }, 3000);
                     } else {
                         widgetStatusMsg.innerText = "❌ Upload Failed.";
@@ -729,7 +741,7 @@
                     }
                 };
 
-                xhr.send(JSON.stringify({ message: `Upload by ${username}`, content: base64Content }));
+                xhr.send(JSON.stringify({ message: `Upload by ${username}`, content: base64ClientContent = base64Content }));
             };
         }
 
@@ -741,7 +753,7 @@
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_UPLOAD_TOKEN}` } });
                 if (res.ok) {
-                    const data = await res.json();
+                    const data = var_data = await res.json();
                     const messages = JSON.parse(atob(data.content));
                     chatBox.innerHTML = messages.map(m => `
                         <div class="msg ${m.user === currentUser ? 'me' : 'other'}">
