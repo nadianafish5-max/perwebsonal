@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Cloud Vault - Enterprise Dashboard</title>
+    <title>Secure Cloud Vault - Enterprise Android Edition</title>
     <style>
         :root {
             --bg-dark: #090d16;
@@ -25,23 +25,24 @@
         
         #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #030712; display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 1rem; }
         .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
-        .auth-card input { width: 100%; padding: 0.75rem; margin: 0.4rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; }
-        .auth-card button { width: 100%; padding: 0.8rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .auth-card input { width: 100%; padding: 0.8rem; margin: 0.4rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.9rem; }
+        .auth-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.95rem; }
 
         .main-layout { display: flex; flex: 1; height: calc(100vh - 65px); overflow: hidden; }
         sidebar { width: 220px; background: #0b1120; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1.2rem 0.6rem; flex-shrink: 0; overflow-y: auto; }
-        .nav-item { padding: 0.65rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.25rem; text-decoration: none; }
+        .nav-item { padding: 0.7rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.3rem; text-decoration: none; }
         .nav-item:hover, .nav-item.active { background: rgba(37, 99, 235, 0.15); color: var(--accent-cyan); }
         .content-area { flex: 1; padding: 1.5rem; overflow-y: auto; background: rgba(3, 7, 18, 0.3); }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.85rem; min-width: 650px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.85rem; min-width: 600px; }
         th, td { border-bottom: 1px solid var(--border-color); padding: 0.8rem; text-align: left; }
         th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
         .table-responsive { width: 100%; overflow-x: auto; }
         .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.4rem; }
+        .badge-device { background: rgba(6, 182, 212, 0.15); color: #22d3ee; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-family: monospace; }
         
-        .badge-device { background: rgba(6, 182, 212, 0.15); color: #22d3ee; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-family: monospace; }
-        .msg-box { background: rgba(6, 182, 212, 0.1); color: #67e8f9; padding: 6px; border-radius: 6px; font-size: 0.8rem; margin-top: 4px; border-left: 3px solid var(--accent-cyan); }
+        .create-user-box { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+        .create-user-box input { padding: 0.6rem; margin-right: 0.5rem; background: #030712; border: 1px solid var(--border-color); color: white; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -50,16 +51,16 @@
     <div id="login-screen">
         <div class="auth-card">
             <h2>🌐 Secure Cloud Vault</h2>
-            <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">Enterprise Client Portal</p>
-            <input type="text" id="username-input" placeholder="Username" autocomplete="off">
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.2rem;">Enterprise Client Login</p>
+            <input type="text" id="username-input" placeholder="Assigned Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
-            <span style="font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block;" onclick="window.location.href='register.html'">New Client? Register Here</span>
+            <span style="font-size: 0.85rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1.2rem; display: block;" onclick="window.location.href='register.html'">New Device? Register Device Here</span>
             <div id="error-msg" class="error"></div>
         </div>
     </div>
 
-    <!-- Header Navigation -->
+    <!-- Header -->
     <header>
         <div class="logo-area">🌐 Secure Cloud Vault</div>
         <div id="user-display" style="font-size: 0.85rem; color: var(--accent-cyan);">User</div>
@@ -71,8 +72,8 @@
             <a class="nav-item" onclick="switchCategory('audio', this)">🎵 <span>Audio Vault</span></a>
             <a class="nav-item" onclick="switchCategory('files', this)">📁 <span>Documents</span></a>
             <a class="nav-item" onclick="switchCategory('chat', this)">💬 <span>Community Chat</span></a>
-            <a class="nav-item" onclick="window.location.href='profile.html'">👤 <span>Profile & Security</span></a>
-            <a class="nav-item" id="admin-menu" onclick="switchCategory('approval', this)" style="display:none; background:rgba(217, 119, 6, 0.2); color:#fbbf24; border:1px solid rgba(217, 119, 6, 0.4);">⏳ <span>Approval Center</span></a>
+            <a class="nav-item" onclick="window.location.href='profile.html'">👤 <span>Profile & Accounts</span></a>
+            <a class="nav-item" id="admin-menu" onclick="switchCategory('admin', this)" style="display:none; background:rgba(217, 119, 6, 0.2); color:#fbbf24; border:1px solid rgba(217, 119, 6, 0.4);">👑 <span>Admin Management</span></a>
             <a class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></a>
         </sidebar>
 
@@ -95,18 +96,25 @@
         let CLIENT_DB = {};
         let usersSha = "";
 
-        function getSpecificDeviceName() {
-            let savedName = localStorage.getItem("enterprise_device_id");
-            if (savedName) return savedName;
+        function utoa(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+        function atou(str) { return decodeURIComponent(escape(window.atob(str))); }
+
+        function getAndroidDeviceFingerprint() {
+            let saved = localStorage.getItem("vault_device_fingerprint");
+            if (saved) return saved;
             const ua = navigator.userAgent;
-            let deviceLabel = "Desktop Browser";
+            let label = "Android/Standard Device";
             if (/android/i.test(ua)) {
                 let match = ua.match(/;\s*([^;]+)\s+Build\//) || ua.match(/\(([^)]+)\)/);
-                deviceLabel = match && match[1] ? "Android: " + match[1].split(';').pop().trim() : "Android Device";
+                label = match && match[1] ? "Android: " + match[1].split(';').pop().trim() : "Android Mobile";
+            } else if (/iphone|ipad/i.test(ua)) {
+                label = "Apple iOS Device";
+            } else if (/win/i.test(ua)) {
+                label = "Windows Workstation";
             }
-            let finalName = deviceLabel + " (" + screen.width + "x" + screen.height + ")";
-            localStorage.setItem("enterprise_device_id", finalName);
-            return finalName;
+            let fingerprint = label + " (" + screen.width + "x" + screen.height + ")";
+            localStorage.setItem("vault_device_fingerprint", fingerprint);
+            return fingerprint;
         }
 
         window.onload = async function() {
@@ -131,14 +139,13 @@
                 if (res.ok) {
                     const data = await res.json();
                     usersSha = data.sha;
-                    CLIENT_DB = JSON.parse(atob(data.content));
+                    CLIENT_DB = JSON.parse(atou(data.content));
                 }
             } catch(e) {}
         }
 
         async function saveUsersDb() {
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            // Fetch fresh sha before saving to prevent 409 conflict
             try {
                 const resGet = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
                 if (resGet.ok) {
@@ -150,7 +157,7 @@
             const putRes = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Admin update users.json", content: btoa(JSON.stringify(CLIENT_DB, null, 2)), sha: usersSha })
+                body: JSON.stringify({ message: "Update users database", content: utoa(JSON.stringify(CLIENT_DB, null, 2)), sha: usersSha })
             });
             if (putRes.ok) {
                 const dataPut = await putRes.json();
@@ -160,7 +167,8 @@
 
         async function updateLiveDeviceStatus() {
             if (currentUser && CLIENT_DB[currentUser]) {
-                CLIENT_DB[currentUser].currentActiveDevice = getSpecificDeviceName();
+                let currentDev = getAndroidDeviceFingerprint();
+                CLIENT_DB[currentUser].currentActiveDevice = currentDev;
                 CLIENT_DB[currentUser].lastActiveTime = new Date().toLocaleString();
                 await saveUsersDb();
             }
@@ -173,11 +181,13 @@
             const err = document.getElementById("error-msg");
 
             if (!CLIENT_DB[user] || CLIENT_DB[user].passHash !== pass) {
-                err.innerText = "Invalid credentials.";
+                err.innerText = "Invalid credentials or username.";
                 return;
             }
-            if (!CLIENT_DB[user].approved) {
-                err.innerText = "Account pending Admin approval.";
+
+            let currentDev = getAndroidDeviceFingerprint();
+            if (CLIENT_DB[user].role !== "admin" && CLIENT_DB[user].allowedDevices.length > 0 && !CLIENT_DB[user].allowedDevices.includes(currentDev)) {
+                err.innerText = "Device not bound! Please register this device first using the link below.";
                 return;
             }
 
@@ -218,9 +228,16 @@
                         </div>
                     </div>`;
                 fetchChatMessages();
-            } else if (cat === 'approval') {
-                container.innerHTML = `<h2>⏳ New User Approval Center</h2><p style="color:var(--text-muted); font-size:0.85rem;">Review new client registrations, read their messages, and approve access.</p><div class="table-responsive"><div id="approval-table-view">Loading approval requests...</div></div>`;
-                loadApprovalCenter();
+            } else if (cat === 'admin') {
+                container.innerHTML = `<h2>👑 Admin Account & Device Management</h2>
+                    <div class="create-user-box">
+                        <h3>Create New Client Account</h3>
+                        <input type="text" id="new-user" placeholder="Username">
+                        <input type="password" id="new-pass" placeholder="Password">
+                        <button onclick="createNewAccount()" style="padding:0.6rem 1.2rem; background:var(--accent-green); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Create Account</button>
+                    </div>
+                    <div class="table-responsive"><div id="admin-table-view">Loading accounts registry...</div></div>`;
+                loadAdminRegistry();
             }
         }
 
@@ -231,7 +248,7 @@
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
                 if (res.ok) {
                     const data = await res.json();
-                    let items = JSON.parse(atob(data.content));
+                    let items = JSON.parse(atou(data.content));
                     let html = `<table><thead><tr><th>Name</th><th>Action</th></tr></thead><tbody>`;
                     let found = false;
                     items.forEach(item => {
@@ -257,7 +274,7 @@
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
                 if (res.ok) {
                     const data = await res.json();
-                    let messages = JSON.parse(atob(data.content));
+                    let messages = JSON.parse(atou(data.content));
                     chatContainer.innerHTML = messages.map(m => `<div style="background:${m.user === currentUser ? '#2563eb' : '#374151'}; padding:0.5rem 0.8rem; border-radius:8px; max-width:75%; align-self:${m.user === currentUser ? 'flex-end' : 'flex-start'};"><b style="font-size:0.7rem; display:block; opacity:0.8;">${m.user}</b>${m.text}</div>`).join('');
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }
@@ -275,55 +292,66 @@
                 if (res.ok) {
                     const data = await res.json();
                     sha = data.sha;
-                    messages = JSON.parse(atob(data.content));
+                    messages = JSON.parse(atou(data.content));
                 }
                 messages.push({ user: currentUser, text: text });
                 await fetch(url, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Chat Update", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
+                    body: JSON.stringify({ message: "Chat Update", content: utoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
                 });
                 fetchChatMessages();
             } catch(e) {}
         }
 
-        async function loadApprovalCenter() {
+        async function loadAdminRegistry() {
             await fetchUsersDb();
-            let view = document.getElementById("approval-table-view");
-            let html = `<table><thead><tr><th>Username</th><th>Client Registration Message</th><th>Device Fingerprint</th><th>Status & Action</th></tr></thead><tbody>`;
-            let pendingCount = 0;
-
+            let view = document.getElementById("admin-table-view");
+            let html = `<table><thead><tr><th>Username</th><th>Assigned Email</th><th>Live Active Device</th><th>Bound Devices Count</th><th>Action</th></tr></thead><tbody>`;
             for (let [u, data] of Object.entries(CLIENT_DB)) {
-                if (!data.approved) {
-                    pendingCount++;
-                    html += `<tr>
-                        <td><b>${u}</b></td>
-                        <td><div class="msg-box">💬 "${data.adminMsg || 'No message provided'}"</div></td>
-                        <td><span class="badge-device">📱 ${(data.allowedDevices || []).join(', ')}</span></td>
-                        <td>
-                            <div style="display:flex; gap:6px;">
-                                <button onclick="adminApprove('${u}')" style="background:var(--accent-green); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">Approve ✅</button>
-                                <button onclick="adminDelete('${u}')" style="background:var(--accent-red); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Decline ❌</button>
-                            </div>
-                        </td>
-                    </tr>`;
-                }
+                let activeDev = data.currentActiveDevice ? `<span class="badge-device">📱 ${data.currentActiveDevice}</span>` : '<span style="color:var(--text-muted);">Offline</span>';
+                html += `<tr>
+                    <td><b>${u}</b> ${data.role === 'admin' ? '👑' : ''}</td>
+                    <td>${data.email || 'N/A'}</td>
+                    <td>${activeDev}<br><small style="color:var(--text-muted);">${data.lastActiveTime || ''}</small></td>
+                    <td>${(data.allowedDevices || []).length} device(s)</td>
+                    <td>
+                        ${data.role !== 'admin' ? `<button onclick="adminDelete('${u}')" style="background:var(--accent-red); color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Delete Account 🗑️</button>` : 'N/A'}
+                    </td>
+                </tr>`;
             }
             html += `</tbody></table>`;
-            view.innerHTML = pendingCount > 0 ? html : `<p style="color:var(--text-muted); padding:1rem 0;">🎉 No pending approval requests at the moment.</p>`;
+            view.innerHTML = html;
         }
 
-        async function adminApprove(u) {
-            CLIENT_DB[u].approved = true;
+        async function createNewAccount() {
+            let u = document.getElementById("new-user").value.trim();
+            let p = document.getElementById("new-pass").value;
+            if(!u || !p) return alert("Enter username and password!");
+            await fetchUsersDb();
+            if(CLIENT_DB[u]) return alert("Username already exists!");
+
+            CLIENT_DB[u] = {
+                passHash: p,
+                role: "client",
+                vip: false,
+                allowedDevices: [],
+                approved: true,
+                email: u + "@client.com",
+                adminMsg: "Admin created account",
+                currentActiveDevice: "Not Bound",
+                lastActiveTime: "Never"
+            };
             await saveUsersDb();
-            loadApprovalCenter();
+            alert(`Account ${u} created successfully!`);
+            loadAdminRegistry();
         }
 
         async function adminDelete(u) {
-            if(confirm(`Are you sure you want to decline/delete registration for ${u}?`)) {
+            if(confirm(`Delete account ${u}?`)) {
                 delete CLIENT_DB[u];
                 await saveUsersDb();
-                loadApprovalCenter();
+                loadAdminRegistry();
             }
         }
     </script>
