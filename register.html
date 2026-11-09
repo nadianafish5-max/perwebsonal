@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global Client Registration - Secure Vault</title>
+    <title>Device Binding & Registration - Secure Vault</title>
     <style>
         :root {
             --bg-dark: #030712;
@@ -19,24 +19,24 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%); color: var(--text-main); height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 1rem; }
         .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
-        input, textarea { width: 100%; padding: 0.75rem; margin: 0.4rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.85rem; }
-        textarea { resize: none; height: 80px; }
-        button { width: 100%; padding: 0.8rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
-        .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
+        input, textarea { width: 100%; padding: 0.8rem; margin: 0.4rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.9rem; }
+        textarea { resize: none; height: 75px; }
+        button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.95rem; }
+        .link-text { font-size: 0.85rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
         .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.4rem; }
         .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.4rem; }
     </style>
 </head>
 <body>
     <div class="auth-card">
-        <h2>📝 Global Client Registration</h2>
-        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">Direct Android Hardware Binding & Admin Note</p>
-        <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
-        <input type="password" id="reg-password" placeholder="Choose Password">
-        <textarea id="reg-admin-msg" placeholder="Message directly to Admin (e.g. Help me out, Purpose)..."></textarea>
-        <button onclick="submitRegistration()">Submit Registration</button>
-        <span class="link-text" onclick="window.location.href='index.html'">Already registered? Sign In</span>
-        <div id="reg-status"></div>
+        <h2>📱 Device Binding Portal</h2>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.2rem;">Register your device using your assigned ID</p>
+        <input type="text" id="bind-username" placeholder="Assigned Username" autocomplete="off">
+        <input type="password" id="bind-password" placeholder="Assigned Password">
+        <textarea id="bind-note" placeholder="Device Note (e.g., My Android Phone)..."></textarea>
+        <button onclick="registerDevice()">Bind Device & Verify</button>
+        <span class="link-text" onclick="window.location.href='index.html'">Already bound? Back to Login</span>
+        <div id="bind-status"></div>
     </div>
 
     <script>
@@ -47,80 +47,75 @@
         const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
         const GITHUB_TOKEN = tokA + tokB + tokC;
 
-        function getSpecificDeviceName() {
-            let savedName = localStorage.getItem("enterprise_device_id");
-            if (savedName) return savedName;
+        function utoa(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+        function atou(str) { return decodeURIComponent(escape(window.atob(str))); }
+
+        function getAndroidDeviceFingerprint() {
+            let saved = localStorage.getItem("vault_device_fingerprint");
+            if (saved) return saved;
             const ua = navigator.userAgent;
-            let deviceLabel = "Desktop Browser";
+            let label = "Android/Standard Device";
             if (/android/i.test(ua)) {
                 let match = ua.match(/;\s*([^;]+)\s+Build\//) || ua.match(/\(([^)]+)\)/);
-                deviceLabel = match && match[1] ? "Android: " + match[1].split(';').pop().trim() : "Android Device";
+                label = match && match[1] ? "Android: " + match[1].split(';').pop().trim() : "Android Mobile";
+            } else if (/iphone|ipad/i.test(ua)) {
+                label = "Apple iOS Device";
+            } else if (/win/i.test(ua)) {
+                label = "Windows Workstation";
             }
-            let finalName = deviceLabel + " (" + screen.width + "x" + screen.height + ")";
-            localStorage.setItem("enterprise_device_id", finalName);
-            return finalName;
+            let fingerprint = label + " (" + screen.width + "x" + screen.height + ")";
+            localStorage.setItem("vault_device_fingerprint", fingerprint);
+            return fingerprint;
         }
 
-        async function submitRegistration() {
-            const user = document.getElementById("reg-username").value.trim();
-            const pass = document.getElementById("reg-password").value;
-            const adminMsg = document.getElementById("reg-admin-msg").value.trim();
-            const status = document.getElementById("reg-status");
+        async function registerDevice() {
+            const user = document.getElementById("bind-username").value.trim();
+            const pass = document.getElementById("bind-password").value;
+            const note = document.getElementById("bind-note").value.trim();
+            const status = document.getElementById("bind-status");
 
-            if (!user || !pass || !adminMsg) {
-                status.innerHTML = '<div class="error">Please fill in all required fields.</div>';
+            if (!user || !pass) {
+                status.innerHTML = '<div class="error">Please enter your username and password.</div>';
                 return;
             }
 
-            status.innerHTML = '<div style="color:var(--accent-cyan);">⏳ Submitting registration...</div>';
+            status.innerHTML = '<div style="color:var(--accent-cyan);">⏳ Verifying and binding device...</div>';
 
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
             
-            for (let attempt = 0; attempt < 3; attempt++) {
+            for (let i = 0; i < 3; i++) {
                 try {
                     const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                    let db = {}, sha = "";
-                    if (res.ok) {
-                        const data = await res.json();
-                        sha = data.sha;
-                        db = JSON.parse(atob(data.content));
-                    }
+                    if (!res.ok) throw new Error("Fetch failed");
+                    const data = await res.json();
+                    let sha = data.sha;
+                    let db = JSON.parse(atou(data.content));
 
-                    if (db[user]) {
-                        status.innerHTML = '<div class="error">Username already taken. Choose another.</div>';
+                    if (!db[user] || db[user].passHash !== pass) {
+                        status.innerHTML = '<div class="error">Invalid username or password provided by admin.</div>';
                         return;
                     }
 
-                    let currentDev = getSpecificDeviceName();
-
-                    db[user] = {
-                        passHash: pass,
-                        role: "client",
-                        vip: false,
-                        allowedDevices: [currentDev],
-                        currentActiveDevice: currentDev,
-                        lastActiveTime: new Date().toLocaleString(),
-                        approved: false,
-                        email: "Not Bound Yet",
-                        adminMsg: adminMsg
-                    };
+                    let currentDev = getAndroidDeviceFingerprint();
+                    if (!db[user].allowedDevices.includes(currentDev)) {
+                        db[user].allowedDevices.push(currentDev);
+                    }
+                    db[user].currentActiveDevice = currentDev;
+                    if (note) db[user].adminMsg = note;
 
                     const putRes = await fetch(url, {
                         method: 'PUT',
                         headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: `Registration request: ${user}`, content: btoa(JSON.stringify(db, null, 2)), sha: sha || undefined })
+                        body: JSON.stringify({ message: `Device binding for ${user}`, content: utoa(JSON.stringify(db, null, 2)), sha: sha })
                     });
 
-                    if (putRes.ok || putRes.status === 201 || putRes.status === 200) {
-                        status.innerHTML = '<div class="success">✅ Registration submitted successfully! Message sent to Admin.</div>';
-                        setTimeout(() => window.location.href = 'index.html', 2500);
+                    if (putRes.ok || putRes.status === 200 || putRes.status === 201) {
+                        status.innerHTML = '<div class="success">✅ Device bound successfully! Redirecting to login...</div>';
+                        setTimeout(() => window.location.href = 'index.html', 2000);
                         return;
-                    } else if (putRes.status === 409 || putRes.status === 422) {
-                        continue; // Retry loop if SHA conflict
                     }
                 } catch (e) {}
             }
-
             status.innerHTML = '<div class="error">Network error. Please check your connection and retry.</div>';
         }
     </script>
