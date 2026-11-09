@@ -33,7 +33,7 @@
         <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">Direct Android Hardware Binding & Admin Note</p>
         <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
         <input type="password" id="reg-password" placeholder="Choose Password">
-        <textarea id="reg-admin-msg" placeholder="Message directly to Admin..."></textarea>
+        <textarea id="reg-admin-msg" placeholder="Message directly to Admin (e.g. Help me out, Purpose)..."></textarea>
         <button onclick="submitRegistration()">Submit Registration</button>
         <span class="link-text" onclick="window.location.href='index.html'">Already registered? Sign In</span>
         <div id="reg-status"></div>
@@ -72,53 +72,56 @@
                 return;
             }
 
-            status.innerHTML = '<div style="color:var(--accent-cyan);">⏳ Saving registration...</div>';
+            status.innerHTML = '<div style="color:var(--accent-cyan);">⏳ Submitting registration...</div>';
 
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                let db = {}, sha = "";
-                if (res.ok) {
-                    const data = await res.json();
-                    sha = data.sha;
-                    db = JSON.parse(atob(data.content));
-                }
+            
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                    let db = {}, sha = "";
+                    if (res.ok) {
+                        const data = await res.json();
+                        sha = data.sha;
+                        db = JSON.parse(atob(data.content));
+                    }
 
-                if (db[user]) {
-                    status.innerHTML = '<div class="error">Username already taken.</div>';
-                    return;
-                }
+                    if (db[user]) {
+                        status.innerHTML = '<div class="error">Username already taken. Choose another.</div>';
+                        return;
+                    }
 
-                let currentDev = getSpecificDeviceName();
+                    let currentDev = getSpecificDeviceName();
 
-                db[user] = {
-                    passHash: pass,
-                    role: "client",
-                    vip: false,
-                    allowedDevices: [currentDev],
-                    currentActiveDevice: currentDev,
-                    lastActiveTime: new Date().toLocaleString(),
-                    approved: false,
-                    email: "Not Bound Yet",
-                    adminMsg: adminMsg
-                };
+                    db[user] = {
+                        passHash: pass,
+                        role: "client",
+                        vip: false,
+                        allowedDevices: [currentDev],
+                        currentActiveDevice: currentDev,
+                        lastActiveTime: new Date().toLocaleString(),
+                        approved: false,
+                        email: "Not Bound Yet",
+                        adminMsg: adminMsg
+                    };
 
-                const putRes = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `New Client Registration: ${user}`, content: btoa(JSON.stringify(db, null, 2)), sha: sha || undefined })
-                });
+                    const putRes = await fetch(url, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: `Registration request: ${user}`, content: btoa(JSON.stringify(db, null, 2)), sha: sha || undefined })
+                    });
 
-                if (putRes.ok || putRes.status === 201 || putRes.status === 200) {
-                    status.innerHTML = '<div class="success">✅ Registered successfully! Awaiting Admin approval.</div>';
-                    setTimeout(() => window.location.href = 'index.html', 2200);
-                } else {
-                    status.innerHTML = '<div class="success">✅ Registration queued! Redirecting...</div>';
-                    setTimeout(() => window.location.href = 'index.html', 2000);
-                }
-            } catch (e) {
-                status.innerHTML = '<div class="error">Network glitch. Please try again.</div>';
+                    if (putRes.ok || putRes.status === 201 || putRes.status === 200) {
+                        status.innerHTML = '<div class="success">✅ Registration submitted successfully! Message sent to Admin.</div>';
+                        setTimeout(() => window.location.href = 'index.html', 2500);
+                        return;
+                    } else if (putRes.status === 409 || putRes.status === 422) {
+                        continue; // Retry loop if SHA conflict
+                    }
+                } catch (e) {}
             }
+
+            status.innerHTML = '<div class="error">Network error. Please check your connection and retry.</div>';
         }
     </script>
 </body>
