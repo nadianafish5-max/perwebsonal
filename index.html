@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Cloud Vault - Enterprise Android & Global Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Cloud Vault - Enterprise Dashboard</title>
     <style>
         :root {
             --bg-dark: #090d16;
-            --bg-sidebar: #111827;
             --bg-card: rgba(17, 24, 39, 0.95);
             --border-color: rgba(55, 65, 81, 0.6);
             --text-main: #f3f4f6;
@@ -19,278 +18,67 @@
             --accent-purple: #7c3aed;
             --accent-vip: #d97706;
         }
-
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; transition: all 0.2s ease; }
-
-        body { 
-            background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%);
-            color: var(--text-main); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; user-select: none;
-        }
-
-        header {
-            height: 65px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.2rem; z-index: 10; flex-shrink: 0;
-        }
-
-        .logo-area { display: flex; align-items: center; gap: 0.6rem; font-size: 1.1rem; font-weight: 700; color: #fff; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%); color: var(--text-main); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .profile-widget { position: relative; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; background: rgba(255,255,255,0.05); padding: 0.3rem 0.8rem; border-radius: 30px; border: 1px solid var(--border-color); }
-        .profile-avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; flex-shrink: 0; }
+        header { height: 65px; background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.2rem; }
+        .logo-area { font-size: 1.1rem; font-weight: 700; color: #fff; }
         
-        .profile-dropdown {
-            position: absolute; top: 52px; right: 0; width: 240px;
-            background: #111827; color: #f3f4f6; border: 1px solid var(--border-color); border-radius: 14px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6); padding: 0.8rem;
-            display: none; z-index: 5000; text-align: left;
-        }
-        .profile-dropdown.show { display: block; }
-        .pd-header { display: flex; align-items: center; gap: 0.6rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.6rem; margin-bottom: 0.6rem; }
-        .pd-avatar-lg { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-purple); color: white; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold; }
-        .pd-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); cursor: pointer; }
-        .pd-menu-item:hover { color: #fff; }
+        #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #030712; display: flex; justify-content: center; align-items: center; z-index: 3000; }
+        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
+        .auth-card input { width: 100%; padding: 0.75rem; margin: 0.4rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; }
+        .auth-card button { width: 100%; padding: 0.8rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
 
-        .main-layout { display: flex; flex: 1; height: calc(100vh - 65px); overflow: hidden; position: relative; }
+        .main-layout { display: flex; flex: 1; height: calc(100vh - 65px); overflow: hidden; }
+        sidebar { width: 220px; background: #0b1120; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1.2rem 0.6rem; }
+        .nav-item { padding: 0.65rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.25rem; text-decoration: none; }
+        .nav-item:hover, .nav-item.active { background: rgba(37, 99, 235, 0.15); color: var(--accent-cyan); }
+        .content-area { flex: 1; padding: 1.5rem; overflow-y: auto; background: rgba(3, 7, 18, 0.3); }
 
-        sidebar {
-            width: 220px; background: rgba(11, 17, 32, 0.98); border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; padding: 1.2rem 0.6rem; flex-shrink: 0; z-index: 5; overflow-y: auto;
-        }
-
-        .new-btn { 
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: white; border: none; 
-            padding: 0.75rem; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); flex-shrink: 0;
-        }
-
-        .nav-item { padding: 0.65rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.25rem; }
-        .nav-item:hover, .nav-item.active { background: rgba(37, 99, 235, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
-
-        .content-area { flex: 1; padding: 1.5rem; overflow-y: auto; background: rgba(3, 7, 18, 0.3); -webkit-overflow-scrolling: touch; }
-
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle, #0f172a 0%, #030712 100%); backdrop-filter: blur(16px); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 1rem; overflow-y: auto;
-        }
-        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem 1.5rem; border-radius: 20px; width: 100%; max-width: 440px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); text-align: center; }
-        .auth-card input, .auth-card textarea { width: 100%; padding: 0.75rem; margin: 0.3rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.85rem; }
-        .auth-card textarea { resize: none; height: 75px; }
-        .auth-card button { width: 100%; padding: 0.8rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
-        .btn-secondary { background: var(--accent-purple) !important; margin-top: 0.6rem; }
-        .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 0.8rem; display: block; text-decoration: underline; }
-
-        .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: 14px; margin-bottom: 1rem; }
-        .profile-card h4 { margin: 0 0 0.4rem 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-        
-        .badge-vip { background: rgba(217, 119, 6, 0.2); color: #fbbf24; border: 1px solid rgba(217, 119, 6, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-        .badge-normal { background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.4); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.85rem; min-width: 600px; }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 0.8rem 0.5rem; text-align: left; color: var(--text-main); }
+        table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.85rem; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 0.8rem; text-align: left; }
         th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
-
-        .chat-container { display: flex; flex-direction: column; height: 400px; border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; background: rgba(17, 24, 39, 0.6); }
-        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.7rem; }
-        .msg { padding: 0.6rem 0.9rem; border-radius: 12px; max-width: 80%; font-size: 0.85rem; }
-        .msg.me { align-self: flex-end; background: var(--accent-blue); color: white; }
-        .msg.other { align-self: flex-start; background: #374151; color: white; }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 4000; padding: 1rem; }
-        .modal-content { background: #111827; border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 18px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
-        
-        video { width: 100%; max-height: 340px; border-radius: 10px; outline: none; background: #000; object-fit: contain; margin-top: 0.5rem; }
-        audio { width: 100%; margin-top: 1.2rem; outline: none; }
-
         .hidden { display: none !important; }
-        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.4rem; word-break: break-all; }
-        .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.4rem; }
-
-        @media (max-width: 768px) {
-            sidebar { width: 60px; padding: 1rem 0.2rem; }
-            sidebar .new-btn span:last-child, sidebar .nav-item span:last-child { display: none; }
-            .new-btn { padding: 0.7rem 0.4rem; justify-content: center; }
-            .content-area { padding: 1rem; }
-            header { padding: 0 1rem; }
-            .logo-area span { font-size: 0.95rem; }
-            .auth-card { padding: 1.5rem 1rem; max-width: 94vw; }
-            .modal-content { max-width: 95vw; padding: 1.2rem; }
-        }
+        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.4rem; }
     </style>
 </head>
-<body oncontextmenu="return false;" oncopy="logViolation('Tried to Copy Content')">
+<body>
 
-    <!-- Auth System -->
+    <!-- Login Screen -->
     <div id="login-screen">
-        <div id="login-card" class="auth-card">
-            <h2 style="margin: 0 0 0.4rem 0; color: #fff;">🌐 Secure Cloud Vault</h2>
-            <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">Android & Global Enterprise Edition</p>
+        <div class="auth-card">
+            <h2>🌐 Secure Cloud Vault</h2>
+            <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">Enterprise Client Portal</p>
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
-            <button id="register-device-btn" class="btn-secondary hidden" onclick="requestDeviceBinding()">📱 Register This Device</button>
-            <span class="link-text" onclick="toggleAuthView('register')">New International Client? Register Here</span>
+            <span style="font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block;" onclick="window.location.href='register.html'">New Client? Register Here</span>
             <div id="error-msg" class="error"></div>
-        </div>
-
-        <div id="register-card" class="auth-card hidden">
-            <h2 style="margin: 0 0 0.3rem 0; color: #fff;">📝 Global Device Registration</h2>
-            <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.8rem;">Automatic Android/PC Fingerprint & Admin Approval</p>
-            <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
-            <input type="password" id="reg-password" placeholder="Choose Password">
-            <input type="text" id="reg-email" placeholder="Professional Email (Gmail/Outlook)">
-            <textarea id="reg-admin-msg" placeholder="Message directly to Admin (e.g., Purpose of access, company name)..."></textarea>
-            <button onclick="submitRegistration()">Submit Registration & Device</button>
-            <span class="link-text" onclick="toggleAuthView('login')">Already registered? Sign In</span>
-            <div id="reg-status"></div>
         </div>
     </div>
 
-    <!-- Header Navigation -->
+    <!-- Main Navigation Header -->
     <header>
-        <div class="logo-area">🌐 <span>Secure Cloud Vault (Enterprise)</span></div>
-        <div class="profile-widget" onclick="toggleProfileDropdown(event)">
-            <span id="welcome-user" style="font-size:0.85rem; font-weight:500;">User</span>
-            <div class="profile-avatar-sm" id="header-avatar-initial">U</div>
-            <div id="profile-dropdown-menu" class="profile-dropdown">
-                <div class="pd-header">
-                    <div class="pd-avatar-lg" id="dropdown-avatar-lg">U</div>
-                    <div>
-                        <div style="font-weight:700; font-size:0.9rem;" id="dropdown-username">User</div>
-                        <span class="badge-normal" id="dropdown-rank-badge">Client</span>
-                    </div>
-                </div>
-                <div class="pd-menu-item" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[3])">👤 Profile & Devices</div>
-                <div class="pd-menu-item" onclick="logout()" style="color:var(--accent-red);">🚪 Logout</div>
-            </div>
-        </div>
+        <div class="logo-area">🌐 Secure Cloud Vault</div>
+        <div id="user-display" style="font-size: 0.85rem; color: var(--accent-cyan);">User</div>
     </header>
 
     <div class="main-layout">
         <sidebar>
-            <button class="new-btn hidden" id="admin-upload-btn" onclick="openUploadModal()">📤 <span>Upload</span></button>
-            <div class="nav-item active" onclick="switchTab('videos', this)">🎬 <span>Videos</span></div>
-            <div class="nav-item" onclick="switchTab('audio', this)">🎵 <span>Audio</span></div>
-            <div class="nav-item" onclick="switchTab('files', this)">📁 <span>Files</span></div>
-            <div class="nav-item" onclick="switchTab('profile', this)">👤 <span>Profile</span></div>
-            <div class="nav-item" onclick="switchTab('chat', this)">💬 <span>Chat</span></div>
-            <div class="nav-item" id="admin-nav" onclick="switchTab('admin', this)" style="display:none;">👑 <span>Admin</span></div>
-            <div class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></div>
+            <a class="nav-item active" onclick="switchCategory('videos', this)">🎬 Videos Vault</a>
+            <a class="nav-item" onclick="switchCategory('audio', this)">🎵 Audio Vault</a>
+            <a class="nav-item" onclick="switchCategory('files', this)">📁 Documents & Files</a>
+            <a class="nav-item" onclick="switchCategory('chat', this)">💬 Global Community Chat</a>
+            <a class="nav-item" onclick="switchCategory('profile', this)">👤 Account & Profile</a>
+            <a class="nav-item" id="admin-menu" onclick="switchCategory('admin', this)" style="display:none;">👑 Admin Control Center</a>
+            <a class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 Logout</a>
         </sidebar>
 
         <div class="content-area">
-            <!-- Videos Tab -->
-            <div id="tab-videos" class="tab-content">
-                <h2>🎬 International Video Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">High-speed global content streaming via browser.</p>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Video Name</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="video-list"><tr><td colspan="3">Loading videos...</td></tr></tbody>
-                    </table>
-                </div>
+            <!-- Dynamic Category Content Container -->
+            <div id="dynamic-content">
+                <h2>Loading Vault...</h2>
             </div>
-
-            <!-- Audio Tab -->
-            <div id="tab-audio" class="tab-content hidden">
-                <h2>🎵 Audio Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">High-fidelity background streaming and audio files.</p>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Audio Name</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="audio-list"><tr><td colspan="3">Loading audio...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Files Tab -->
-            <div id="tab-files" class="tab-content hidden">
-                <h2>📁 Document & File Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Secure international document distribution.</p>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>File Name</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="file-list"><tr><td colspan="3">Loading files...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Profile & Device Manager -->
-            <div id="tab-profile" class="tab-content hidden">
-                <h2>Account & Specific Device Security</h2>
-                <div class="profile-card">
-                    <h4>Account Rank</h4>
-                    <span id="profile-rank-text" class="badge-normal">Normal Client</span>
-                </div>
-                <div class="profile-card">
-                    <h4>Your Specific Hardware / Device Name</h4>
-                    <p id="profile-device-name" style="font-family: monospace; color: var(--accent-cyan); font-size:0.85rem; word-break: break-all;">-</p>
-                </div>
-                <div class="profile-card">
-                    <h4>All Bound & Approved Devices</h4>
-                    <div id="profile-all-devices" style="font-family: monospace; font-size:0.8rem; color: var(--accent-cyan); margin-top:0.4rem;">Loading...</div>
-                </div>
-            </div>
-
-            <!-- Chat -->
-            <div id="tab-chat" class="tab-content hidden">
-                <h2>Global Client Community Chat</h2>
-                <div class="chat-container">
-                    <div class="chat-messages" id="chat-messages"></div>
-                    <div style="display:flex; padding:0.6rem; gap:0.5rem; background:rgba(17,24,39,0.8);">
-                        <input type="text" id="chat-input" placeholder="Type message..." style="flex:1; background:rgba(3,7,18,0.8); border:1px solid var(--border-color); color:white; padding:0.6rem 1rem; border-radius:20px; outline:none; font-size:0.85rem;">
-                        <button onclick="sendChatMessage()" style="padding:0.6rem 1.2rem; background:var(--accent-blue); color:white; border:none; border-radius:20px; cursor:pointer; font-size:0.85rem;">Send</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Control Dashboard -->
-            <div id="tab-admin" class="tab-content hidden">
-                <h2>Enterprise Admin Command Center</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Monitor specific Android/PC device fingerprints, review violation logs, approve accounts, and manage VIP tiers.</p>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Username</th><th>Bound Devices</th><th>Email & Admin Note</th><th>Violation & Activity Logs</th><th>Status & Actions</th></tr></thead>
-                        <tbody id="admin-pending-table"><tr><td colspan="5">Loading secure enterprise registry...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Change Password Modal -->
-    <div id="pwd-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top:0;">Change Client Password</h3>
-            <p id="pwd-target-user" style="color:var(--accent-cyan); font-size:0.85rem; margin-bottom:1rem;"></p>
-            <input type="password" id="new-password-input" placeholder="Enter New Password" style="width:100%; padding:0.8rem; margin-bottom:1.2rem; border:1px solid var(--border-color); border-radius:10px; background:rgba(3,7,18,0.8); color:white; outline:none;">
-            <div style="display:flex; gap:1rem;">
-                <button onclick="saveNewPassword()" style="flex:1; background:var(--accent-green); padding:0.7rem; border:none; border-radius:8px; color:white; font-weight:600; cursor:pointer;">Update Password</button>
-                <button onclick="closePwdModal()" style="flex:1; background:var(--accent-red); padding:0.7rem; border:none; border-radius:8px; color:white; font-weight:600; cursor:pointer;">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Upload Modal (Admin Only) -->
-    <div id="upload-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top:0;">Global Enterprise Cloud Vault Upload</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem;">Select video, audio, or document files to publish securely.</p>
-            <input type="file" id="file-picker" style="margin: 1rem 0; width:100%; padding:0.5rem; background:rgba(3,7,18,0.8); border:1px solid var(--border-color); color:white; border-radius:8px; font-size:0.85rem;">
-            <div id="upload-status" style="margin-bottom:1rem; color:var(--accent-cyan); font-size:0.85rem;"></div>
-            <div style="display:flex; gap:1rem;">
-                <button onclick="processUpload()" style="flex:1; background:var(--accent-green); padding:0.7rem; border:none; border-radius:8px; color:white; font-weight:600; cursor:pointer;">Upload & Publish</button>
-                <button onclick="closeUploadModal()" style="flex:1; background:var(--accent-red); padding:0.7rem; border:none; border-radius:8px; color:white; font-weight:600; cursor:pointer;">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Media Player Modal -->
-    <div id="media-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title" style="margin-top:0; color:white; font-size:1rem;">Secure Enterprise Player</h3>
-            <div id="media-container"></div>
-            <button onclick="closeMediaModal()" style="background: var(--accent-red); margin-top: 1.2rem; padding:0.6rem 1.4rem; border:none; border-radius:8px; color:white; cursor:pointer; font-size:0.85rem;">Close Viewer</button>
         </div>
     </div>
 
@@ -302,544 +90,230 @@
         const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
         const GITHUB_TOKEN = tokA + tokB + tokC;
 
-        let CLIENT_DB = {
-            "admin": { passHash: "admin69", role: "admin", vip: true, allowedDevices: ["Master Enterprise Workstation"], approved: true, email: "admin@server.com", adminMsg: "System Admin Account", violations: [] }
-        };
-        let usersFileSha = "";
-        let linksFileSha = "";
-        let pendingUser = null;
         let currentUser = null;
-        let editingUser = null;
+        let CLIENT_DB = {};
 
-        // Specific Android & Hardware Device Fingerprint Detector
-        function getSpecificDeviceName() {
-            let savedName = localStorage.getItem("enterprise_specific_device_id");
-            if (savedName) return savedName;
-
-            const ua = navigator.userAgent;
-            let deviceLabel = "Enterprise PC/Browser";
-
-            if (/android/i.test(ua)) {
-                let match = ua.match(/;\s*([^;]+)\s+Build\//) || ua.match(/\(([^)]+)\)/);
-                if (match && match[1]) {
-                    let parts = match[1].split(';');
-                    deviceLabel = "Android: " + parts[parts.length - 1].trim();
-                } else {
-                    deviceLabel = "Android Mobile Device";
-                }
-            } else if (/iphone|ipad|ipod/i.test(ua)) {
-                deviceLabel = "Apple iOS Device";
-            } else if (/win/i.test(ua)) {
-                deviceLabel = "Windows PC (" + (navigator.platform || "Desktop") + ")";
-            } else if (/mac/i.test(ua)) {
-                deviceLabel = "Macintosh System";
-            } else if (/linux/i.test(ua)) {
-                deviceLabel = "Linux Workstation";
-            }
-
-            // Add unique screen and hardware renderer signature for precision
-            let canvasHash = "";
-            try {
-                const canvas = document.createElement('canvas');
-                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                if (gl) {
-                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                    if (debugInfo) {
-                        canvasHash = " [" + gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).split('(')[0].trim() + "]";
+        // Auto-Session Recovery on page reload
+        window.onload = async function() {
+            let savedUser = localStorage.getItem("enterprise_active_user");
+            if (savedUser) {
+                await fetchUsersDb();
+                if (CLIENT_DB[savedUser]) {
+                    currentUser = savedUser;
+                    document.getElementById("login-screen").style.display = "none";
+                    document.getElementById("user-display").innerText = "Logged in as: " + currentUser;
+                    if (CLIENT_DB[currentUser].role === "admin") {
+                        document.getElementById("admin-menu").style.display = "flex";
                     }
+                    switchCategory('videos');
                 }
-            } catch(e) {}
-
-            let finalName = deviceLabel + " - " + screen.width + "x" + screen.height + canvasHash;
-            localStorage.setItem("enterprise_specific_device_id", finalName);
-            return finalName;
-        }
-
-        // Rule Violation Tracker
-        async function logViolation(actionDesc) {
-            if (!currentUser || currentUser === "admin") return;
-            await syncUsers();
-            if (CLIENT_DB[currentUser]) {
-                if (!CLIENT_DB[currentUser].violations) CLIENT_DB[currentUser].violations = [];
-                let timestamp = new Date().toLocaleTimeString();
-                CLIENT_DB[currentUser].violations.push(`[${timestamp}] ⚠️ ${actionDesc}`);
-                await saveUsers();
             }
-        }
+        };
 
-        // Security monitors for rule violations
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden && currentUser && currentUser !== "admin") {
-                logViolation("Switched tab / minimized browser");
-            }
-        });
-
-        window.addEventListener("blur", () => {
-            if (currentUser && currentUser !== "admin") {
-                logViolation("Lost window focus");
-            }
-        });
-
-        async function syncUsers() {
-            let localCache = localStorage.getItem("enterprise_db_cache");
-            if (localCache) {
-                try { CLIENT_DB = Object.assign({}, CLIENT_DB, JSON.parse(localCache)); } catch(e) {}
-            }
-
+        async function fetchUsersDb() {
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
                 if (res.ok) {
                     const data = await res.json();
-                    usersFileSha = data.sha;
-                    const loadedDb = JSON.parse(atob(data.content));
-                    if (loadedDb && Object.keys(loadedDb).length > 0) {
-                        CLIENT_DB = Object.assign({}, CLIENT_DB, loadedDb);
-                        localStorage.setItem("enterprise_db_cache", JSON.stringify(CLIENT_DB));
-                    }
-                } else if (res.status === 404) {
-                    usersFileSha = "";
-                    await saveUsers();
+                    CLIENT_DB = JSON.parse(atob(data.content));
                 }
-            } catch (e) {}
-        }
-
-        async function saveUsers() {
-            localStorage.setItem("enterprise_db_cache", JSON.stringify(CLIENT_DB));
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            try {
-                const getRes = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (getRes.ok) {
-                    const getData = await getRes.json();
-                    usersFileSha = getData.sha;
-                    const serverDb = JSON.parse(atob(getData.content));
-                    CLIENT_DB = Object.assign({}, serverDb, CLIENT_DB);
-                } else {
-                    usersFileSha = "";
-                }
-            } catch (e) {
-                usersFileSha = "";
-            }
-
-            for (let attempt = 0; attempt < 3; attempt++) {
-                try {
-                    const bodyData = { 
-                        message: "Enterprise DB Sync Update", 
-                        content: btoa(JSON.stringify(CLIENT_DB, null, 2))
-                    };
-                    if (usersFileSha) {
-                        bodyData.sha = usersFileSha;
-                    }
-
-                    const res = await fetch(url, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify(bodyData)
-                    });
-
-                    if (res.ok) {
-                        const data = await res.json();
-                        usersFileSha = data.content.sha;
-                        return true;
-                    } else if (res.status === 409 || res.status === 422) {
-                        const retryGet = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                        if (retryGet.ok) {
-                            const retryData = await retryGet.json();
-                            usersFileSha = retryData.sha;
-                            const remoteDb = JSON.parse(atob(retryData.content));
-                            CLIENT_DB = Object.assign({}, remoteDb, CLIENT_DB);
-                        } else {
-                            usersFileSha = "";
-                        }
-                    }
-                } catch (e) {}
-            }
-            return true;
+            } catch(e) {}
         }
 
         async function attemptLogin() {
-            await syncUsers();
+            await fetchUsersDb();
             const user = document.getElementById("username-input").value.trim();
             const pass = document.getElementById("password-input").value;
             const err = document.getElementById("error-msg");
-            const regBtn = document.getElementById("register-device-btn");
 
-            regBtn.classList.add("hidden");
-            if (!CLIENT_DB[user]) { err.innerText = "Invalid credentials or username."; return; }
-
-            const account = CLIENT_DB[user];
-            if (pass !== account.passHash) { err.innerText = "Incorrect password."; return; }
-            if (!account.approved) { err.innerText = "Account pending Admin approval."; return; }
-
-            const currentDev = getSpecificDeviceName();
-            if (account.role !== "admin" && account.allowedDevices.length > 0 && !account.allowedDevices.includes(currentDev)) {
-                err.innerHTML = `Unregistered Specific Device Detected!<br>Device ID: <b>${currentDev}</b><br>Click below to request device binding approval.`;
-                pendingUser = user;
-                regBtn.classList.remove("hidden");
+            if (!CLIENT_DB[user] || CLIENT_DB[user].passHash !== pass) {
+                err.innerText = "Invalid credentials.";
+                return;
+            }
+            if (!CLIENT_DB[user].approved) {
+                err.innerText = "Account pending Admin approval.";
                 return;
             }
 
-            if (account.allowedDevices.length === 0) {
-                account.allowedDevices.push(currentDev);
-                await saveUsers();
-            }
-
             currentUser = user;
-            document.getElementById("welcome-user").innerText = user;
-            document.getElementById("header-avatar-initial").innerText = user.charAt(0).toUpperCase();
-            document.getElementById("dropdown-username").innerText = user;
-            document.getElementById("dropdown-avatar-lg").innerText = user.charAt(0).toUpperCase();
-            document.getElementById("profile-device-name").innerText = currentDev;
-            document.getElementById("profile-all-devices").innerHTML = (account.allowedDevices || []).map(d => `<div>💻 ${d}</div>`).join('');
-            
-            const rankText = document.getElementById("profile-rank-text");
-            const dropRank = document.getElementById("dropdown-rank-badge");
-            if(account.vip || account.role === "admin") {
-                rankText.className = "badge-vip"; rankText.innerText = account.role === "admin" ? "Administrator" : "VIP Enterprise Client";
-                dropRank.className = "badge-vip"; dropRank.innerText = account.role === "admin" ? "Administrator" : "VIP Client";
-            } else {
-                rankText.className = "badge-normal"; rankText.innerText = "Normal Enterprise Client";
-                dropRank.className = "badge-normal"; dropRank.innerText = "Normal Client";
-            }
-
+            localStorage.setItem("enterprise_active_user", currentUser);
             document.getElementById("login-screen").style.display = "none";
-            
-            if (account.role === "admin") {
-                document.getElementById("admin-nav").style.display = "flex";
-                document.getElementById("admin-upload-btn").classList.remove("hidden");
-                loadAdminPanel();
-            }
+            document.getElementById("user-display").innerText = "Logged in as: " + currentUser;
 
-            fetchVaultFiles();
-            fetchChatMessages();
-            setInterval(fetchChatMessages, 4000);
+            if (CLIENT_DB[currentUser].role === "admin") {
+                document.getElementById("admin-menu").style.display = "flex";
+            }
+            switchCategory('videos');
         }
 
-        async function requestDeviceBinding() {
-            if (!pendingUser) return;
-            const currentDev = getSpecificDeviceName();
-            await syncUsers();
-            if (!CLIENT_DB[pendingUser].allowedDevices.includes(currentDev)) {
-                CLIENT_DB[pendingUser].allowedDevices.push(currentDev);
-            }
-            await saveUsers();
-            document.getElementById("error-msg").innerHTML = `<span class="success">✅ Specific Device bound! Awaiting Enterprise Admin approval.</span>`;
-            document.getElementById("register-device-btn").classList.add("hidden");
+        function logout() {
+            localStorage.removeItem("enterprise_active_user");
+            location.reload();
         }
 
-        async function submitRegistration() {
-            await syncUsers();
-            const user = document.getElementById("reg-username").value.trim();
-            const pass = document.getElementById("reg-password").value;
-            const email = document.getElementById("reg-email").value.trim();
-            const adminMsg = document.getElementById("reg-admin-msg").value.trim();
-            const status = document.getElementById("reg-status");
-
-            if (!user || !pass || !email || !adminMsg) { 
-                status.innerHTML = '<div class="error">Please fill in all fields including the message to Admin.</div>'; 
-                return; 
+        // Category Switcher Function
+        async function switchCategory(cat, el) {
+            if (el) {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
             }
-            if (CLIENT_DB[user]) { 
-                status.innerHTML = '<div class="error">Username already taken globally.</div>'; 
-                return; 
-            }
+            const container = document.getElementById("dynamic-content");
 
-            CLIENT_DB[user] = {
-                passHash: pass,
-                role: "client",
-                vip: false,
-                allowedDevices: [getSpecificDeviceName()],
-                approved: false,
-                email: email,
-                adminMsg: adminMsg,
-                violations: ["Account Registered Successfully"]
-            };
-
-            const success = await saveUsers();
-            if (success) {
-                status.innerHTML = '<div class="success">✅ Registration & Specific Device fingerprint submitted! Awaiting Admin approval.</div>';
-                setTimeout(() => toggleAuthView('login'), 3000);
-            } else {
-                status.innerHTML = '<div class="error">Registration server sync failed. Please try again.</div>';
+            if (cat === 'videos' || cat === 'audio' || cat === 'files') {
+                container.innerHTML = `<h2>📁 ${cat.toUpperCase()} Vault</h2><div id="file-table-view">Loading items...</div>`;
+                fetchVaultFiles(cat);
+            } else if (cat === 'chat') {
+                container.innerHTML = `<h2>💬 Global Community Chat</h2>
+                    <div style="display:flex; flex-direction:column; height:400px; border:1px solid var(--border-color); border-radius:14px; background:rgba(17,24,39,0.6); overflow:hidden;">
+                        <div id="chat-msgs" style="flex:1; padding:1rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.5rem;">Loading chat...</div>
+                        <div style="display:flex; padding:0.6rem; background:#111827;">
+                            <input type="text" id="chat-box-input" placeholder="Type message..." style="flex:1; padding:0.6rem; background:#030712; border:1px solid var(--border-color); color:white; border-radius:10px; outline:none;">
+                            <button onclick="sendChatMessage()" style="margin-left:0.5rem; padding:0.6rem 1.2rem; background:var(--accent-blue); color:white; border:none; border-radius:10px; cursor:pointer;">Send</button>
+                        </div>
+                    </div>`;
+                fetchChatMessages();
+                setInterval(fetchChatMessages, 4000);
+            } else if (cat === 'profile') {
+                let userObj = CLIENT_DB[currentUser] || {};
+                container.innerHTML = `<h2>👤 Account & Profile Security</h2>
+                    <div style="background:var(--bg-card); padding:1rem; border-radius:10px; border:1px solid var(--border-color); margin-bottom:1rem;">
+                        <h4>Username: ${currentUser}</h4>
+                        <p>Role: <b>${userObj.role}</b></p>
+                        <p>Bound Devices: ${(userObj.allowedDevices || []).join(', ')}</p>
+                        <p>Email: <span id="user-email-text">${userObj.email || 'Not Bound'}</span></p>
+                        <input type="text" id="bind-email-input" placeholder="Enter your professional email to bind" style="padding:0.5rem; width:250px; background:#030712; border:1px solid var(--border-color); color:white; border-radius:6px;">
+                        <button onclick="bindUserEmail()" style="padding:0.5rem 1rem; background:var(--accent-green); border:none; color:white; border-radius:6px; cursor:pointer;">Bind Email</button>
+                    </div>`;
+            } else if (cat === 'admin') {
+                container.innerHTML = `<h2>👑 Enterprise Admin Control Center</h2><div id="admin-table-view">Loading admin registry...</div>`;
+                loadAdminRegistry();
             }
         }
 
-        function toggleAuthView(v) {
-            document.getElementById("login-card").classList.add("hidden");
-            document.getElementById("register-card").classList.add("hidden");
-            document.getElementById(v + "-card").classList.remove("hidden");
-        }
-
-        function toggleProfileDropdown(e) { e.stopPropagation(); document.getElementById("profile-dropdown-menu").classList.toggle("show"); }
-        window.onclick = () => document.getElementById("profile-dropdown-menu").classList.remove("show");
-        function logout() { location.reload(); }
-
-        function switchTab(t, el) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('tab-' + t).classList.remove('hidden');
-            if (el) el.classList.add('active');
-            if (t === 'admin') loadAdminPanel();
-        }
-
-        async function loadAdminPanel() {
-            await syncUsers();
-            const table = document.getElementById("admin-pending-table");
-            table.innerHTML = "";
-            for (let [u, data] of Object.entries(CLIENT_DB)) {
-                let devs = (data.allowedDevices || []).map((d, idx) => `
-                    <div style="font-size:0.75rem; font-family:monospace; display:flex; justify-content:space-between; align-items:center; margin-bottom:3px; background:rgba(0,0,0,0.3); padding:3px; border-radius:4px;">
-                        <span>📱 ${d}</span>
-                        <button onclick="removeDevice('${u}', ${idx})" style="background:var(--accent-red); color:white; border:none; border-radius:3px; padding:2px 5px; font-size:0.65rem; cursor:pointer;" title="Remove device">✖</button>
-                    </div>
-                `).join('');
-
-                let violationsList = (data.violations || []).map(v => `<div style="font-size:0.75rem; color:#f87171; background:rgba(220,38,38,0.1); padding:2px 4px; border-radius:3px; margin-bottom:2px;">${v}</div>`).join('') || '<span style="color:var(--text-muted); font-size:0.75rem;">No violations recorded</span>';
-
-                table.innerHTML += `
-                    <tr>
-                        <td><strong>${u}</strong> ${data.role === 'admin' ? '👑' : ''}</td>
-                        <td>${devs || 'No devices bound'}</td>
-                        <td style="font-size:0.8rem;">
-                            <div>📧 <b>${data.email || 'N/A'}</b></div>
-                            <div style="margin-top:4px; color:var(--accent-cyan); background:rgba(6,182,212,0.1); padding:4px; border-radius:4px;">💬 "${data.adminMsg || 'No message provided'}"</div>
-                        </td>
-                        <td>
-                            <div style="max-height:80px; overflow-y:auto; padding-right:4px;">${violationsList}</div>
-                        </td>
-                        <td>
-                            <span class="${data.approved ? 'success' : 'error'}" style="display:block; font-size:0.75rem; font-weight:bold; margin-bottom:4px;">${data.approved ? 'Approved ✅' : 'Pending Approval ⏳'}</span>
-                            <span class="${data.vip ? 'badge-vip' : 'badge-normal'}" style="display:inline-block; margin-bottom:6px;">${data.vip ? 'VIP Client' : 'Normal'}</span>
-                            <div style="display:flex; flex-direction:column; gap:5px;">
-                                ${!data.approved ? `<button onclick="approveUser('${u}')" style="background:var(--accent-green); color:white; border:none; border-radius:4px; padding:4px 8px; font-size:0.75rem; font-weight:bold; cursor:pointer;">Approve Account</button>` : ''}
-                                <button onclick="toggleVip('${u}')" style="background:var(--accent-purple); color:white; border:none; border-radius:4px; padding:4px 8px; font-size:0.75rem; cursor:pointer;">${data.vip ? 'Remove VIP' : 'Make VIP'}</button>
-                                <button onclick="openPwdModal('${u}')" style="background:var(--accent-blue); color:white; border:none; border-radius:4px; padding:4px 8px; font-size:0.75rem; cursor:pointer;">Change Password 🔑</button>
-                                ${data.role !== 'admin' ? `<button onclick="deleteUser('${u}')" style="background:var(--accent-red); color:white; border:none; border-radius:4px; padding:4px 8px; font-size:0.75rem; cursor:pointer;">Delete User 🗑️</button>` : ''}
-                            </div>
-                        </td>
-                    </tr>`;
-            }
-        }
-
-        function openPwdModal(username) {
-            editingUser = username;
-            document.getElementById("pwd-target-user").innerText = `Target User: ${username}`;
-            document.getElementById("new-password-input").value = "";
-            document.getElementById("pwd-modal").style.display = "flex";
-        }
-
-        function closePwdModal() {
-            document.getElementById("pwd-modal").style.display = "none";
-            editingUser = null;
-        }
-
-        async function saveNewPassword() {
-            const newPass = document.getElementById("new-password-input").value;
-            if (!newPass) { alert("Please enter a new password!"); return; }
-            if (editingUser && CLIENT_DB[editingUser]) {
-                CLIENT_DB[editingUser].passHash = newPass;
-                const success = await saveUsers();
-                if (success) {
-                    alert(`Password successfully updated for ${editingUser}!`);
-                    closePwdModal();
-                    loadAdminPanel();
-                } else {
-                    alert("Failed to update password on server.");
-                }
-            }
-        }
-
-        async function approveUser(u) {
-            await syncUsers();
-            if (CLIENT_DB[u]) { 
-                CLIENT_DB[u].approved = true; 
-                const success = await saveUsers(); 
-                if (success) {
-                    loadAdminPanel(); 
-                    alert(`Approved account for ${u}! Specific device access granted.`); 
-                } else {
-                    alert(`Failed to save approval to server. Please try again.`);
-                }
-            }
-        }
-
-        async function toggleVip(u) {
-            await syncUsers();
-            if (CLIENT_DB[u]) { 
-                CLIENT_DB[u].vip = !CLIENT_DB[u].vip; 
-                const success = await saveUsers(); 
-                if(success) loadAdminPanel(); 
-                else alert("Failed to update VIP status.");
-            }
-        }
-
-        async function deleteUser(u) {
-            if (confirm(`Are you sure you want to delete client ${u}?`)) {
-                await syncUsers();
-                delete CLIENT_DB[u];
-                const success = await saveUsers();
-                if(success) loadAdminPanel();
-                else alert("Failed to delete user on server.");
-            }
-        }
-
-        async function removeDevice(u, index) {
-            await syncUsers();
-            if (CLIENT_DB[u] && CLIENT_DB[u].allowedDevices) {
-                CLIENT_DB[u].allowedDevices.splice(index, 1);
-                const success = await saveUsers();
-                if(success) loadAdminPanel();
-                else alert("Failed to remove device on server.");
-            }
-        }
-
-        async function fetchVaultFiles() {
-            const videoList = document.getElementById("video-list");
-            const audioList = document.getElementById("audio-list");
-            const fileList = document.getElementById("file-list");
-
+        async function fetchVaultFiles(categoryFilter) {
+            const view = document.getElementById("file-table-view");
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
             try {
                 const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
                 if (res.ok) {
                     const data = await res.json();
-                    linksFileSha = data.sha;
-                    const items = JSON.parse(atob(data.content));
-
-                    let videoHTML = "";
-                    let audioHTML = "";
-                    let fileHTML = "";
-
+                    let items = JSON.parse(atob(data.content));
+                    let html = `<table><thead><tr><th>Name</th><th>Action</th></tr></thead><tbody>`;
+                    let found = false;
                     items.forEach(item => {
-                        const isVideo = /\.(mp4|webm|mov|mkv)$/i.test(item.name) || item.category === 'video';
-                        const isAudio = /\.(mp3|wav|aac|m4a)$/i.test(item.name) || item.category === 'audio';
-
-                        const row = `<tr>
-                            <td style="word-break:break-all;">📄 ${item.name}</td>
-                            <td><span class="badge-vip">Enterprise Ready</span></td>
-                            <td>
-                                ${isVideo ? `<button onclick="playMedia('${item.url}', '${item.name}', 'video')" style="padding:0.3rem 0.6rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem; margin-right:4px;">Play ▶</button>` : ''}
-                                ${isAudio ? `<button onclick="playMedia('${item.url}', '${item.name}', 'audio')" style="padding:0.3rem 0.6rem; background:var(--accent-purple); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem; margin-right:4px;">Audio 🎵</button>` : ''}
-                                <a href="${item.url}" target="_blank" download style="padding:0.3rem 0.6rem; background:var(--accent-green); color:white; text-decoration:none; border-radius:6px; font-size:0.75rem; font-weight:bold;">Download ⬇️</a>
-                            </td>
-                        </tr>`;
-
-                        if (isVideo) videoHTML += row;
-                        else if (isAudio) audioHTML += row;
-                        else fileHTML += row;
+                        let isVid = /\.(mp4|webm|mkv)$/i.test(item.name);
+                        let isAud = /\.(mp3|wav|aac)$/i.test(item.name);
+                        let match = (categoryFilter === 'videos' && isVid) || (categoryFilter === 'audio' && isAud) || (categoryFilter === 'files' && !isVid && !isAud);
+                        if (match) {
+                            found = true;
+                            html += `<tr><td>${item.name}</td><td><a href="${item.url}" target="_blank" download style="color:var(--accent-cyan); text-decoration:none; font-weight:bold;">Download / Stream ⬇️</a></td></tr>`;
+                        }
                     });
-
-                    videoList.innerHTML = videoHTML || `<tr><td colspan="3" style="color:var(--text-muted);">No videos available.</td></tr>`;
-                    audioList.innerHTML = audioHTML || `<tr><td colspan="3" style="color:var(--text-muted);">No audio files available.</td></tr>`;
-                    fileList.innerHTML = fileHTML || `<tr><td colspan="3" style="color:var(--text-muted);">No documents or files available.</td></tr>`;
+                    html += `</tbody></table>`;
+                    view.innerHTML = found ? html : `<p style="color:var(--text-muted);">No items found in this category.</p>`;
                 }
-            } catch (e) {
-                videoList.innerHTML = `<tr><td colspan="3">Error loading videos.</td></tr>`;
-                audioList.innerHTML = `<tr><td colspan="3">Error loading audio.</td></tr>`;
-                fileList.innerHTML = `<tr><td colspan="3">Error loading files.</td></tr>`;
-            }
-        }
-
-        function openUploadModal() { document.getElementById("upload-modal").style.display = "flex"; }
-        function closeUploadModal() { document.getElementById("upload-modal").style.display = "none"; document.getElementById("upload-status").innerText = ""; }
-
-        async function processUpload() {
-            const picker = document.getElementById("file-picker");
-            const status = document.getElementById("upload-status");
-            if (picker.files.length === 0) return alert("Select a file first!");
-            const file = picker.files[0];
-            status.innerText = "⏳ Processing & publishing to Enterprise Cloud Vault...";
-
-            let category = "file";
-            if (/\.(mp4|webm|mov|mkv)$/i.test(file.name)) category = "video";
-            else if (/\.(mp3|wav|aac|m4a)$/i.test(file.name)) category = "audio";
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64Data = e.target.result;
-                const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
-                let items = [];
-                try {
-                    const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                    if (res.ok) {
-                        const data = await res.json();
-                        linksFileSha = data.sha;
-                        items = JSON.parse(atob(data.content));
-                    }
-                } catch (e) {}
-
-                items.push({ name: file.name, url: base64Data, category: category });
-
-                const putRes = await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Enterprise Upload: ${file.name}`, content: btoa(JSON.stringify(items, null, 2)), sha: linksFileSha || undefined })
-                });
-                if(putRes.ok) {
-                    const putData = await putRes.json();
-                    linksFileSha = putData.content.sha;
-                }
-
-                status.innerText = "✅ Successfully published globally!";
-                setTimeout(() => { closeUploadModal(); fetchVaultFiles(); }, 1200);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function playMedia(url, title, type) {
-            document.getElementById("modal-title").innerText = title;
-            const container = document.getElementById("media-container");
-            if (type === 'video') {
-                container.innerHTML = `<video src="${url}" controls autoplay playsinline controlsList="nodownload"></video>`;
-            } else {
-                container.innerHTML = `<audio src="${url}" controls autoplay></audio><p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">🎵 Enterprise Audio Playback Active</p>`;
-            }
-            document.getElementById("media-modal").style.display = "flex";
-        }
-
-        function closeMediaModal() { 
-            document.getElementById("media-modal").style.display = "none"; 
-            document.getElementById("media-container").innerHTML = ""; 
+            } catch(e) { view.innerHTML = "Error loading category files."; }
         }
 
         async function fetchChatMessages() {
-            const container = document.getElementById("chat-messages");
+            const chatContainer = document.getElementById("chat-msgs");
+            if (!chatContainer) return;
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
             try {
-                const res = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-                const chatRes = await fetch(res, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (chatRes.ok) {
-                    const data = await chatRes.json();
-                    const messages = JSON.parse(atob(data.content));
-                    container.innerHTML = messages.map(m => `<div class="msg ${m.user === currentUser ? 'me' : 'other'}"><b style="font-size:0.7rem; display:block; opacity:0.8;">${m.user}</b>${m.text}</div>`).join('');
-                    container.scrollTop = container.scrollHeight;
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                if (res.ok) {
+                    const data = await res.json();
+                    let messages = JSON.parse(atob(data.content));
+                    chatContainer.innerHTML = messages.map(m => `<div style="background:${m.user === currentUser ? '#2563eb' : '#374151'}; padding:0.5rem 0.8rem; border-radius:8px; max-width:75%; align-self:${m.user === currentUser ? 'flex-end' : 'flex-start'};"><b style="font-size:0.7rem; display:block; opacity:0.8;">${m.user}</b>${m.text}</div>`).join('');
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
                 }
-            } catch (e) {}
+            } catch(e) {}
         }
 
         async function sendChatMessage() {
-            const input = document.getElementById("chat-input");
+            const input = document.getElementById("chat-box-input");
             if (!input.value.trim()) return;
             const text = input.value; input.value = "";
-            const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-            let messages = [], sha = "";
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
             try {
-                const res = await fetch(apiUrl, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                let messages = [], sha = "";
                 if (res.ok) {
                     const data = await res.json();
                     sha = data.sha;
                     messages = JSON.parse(atob(data.content));
                 }
-            } catch (e) {}
-            messages.push({ user: currentUser, text: text });
-            await fetch(apiUrl, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Enterprise Chat update", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
-            });
-            fetchChatMessages();
+                messages.push({ user: currentUser, text: text });
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Chat Update", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
+                });
+                fetchChatMessages();
+            } catch(e) {}
         }
 
-        syncUsers();
+        async function bindUserEmail() {
+            let email = document.getElementById("bind-email-input").value.trim();
+            if(!email) return alert("Enter a valid email!");
+            await fetchUsersDb();
+            CLIENT_DB[currentUser].email = email;
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+            const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
+            const data = await res.json();
+            await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "Bind Email", content: btoa(JSON.stringify(CLIENT_DB, null, 2)), sha: data.sha })
+            });
+            document.getElementById("user-email-text").innerText = email;
+            alert("Email successfully bound!");
+        }
+
+        async function loadAdminRegistry() {
+            await fetchUsersDb();
+            let view = document.getElementById("admin-table-view");
+            let html = `<table><thead><tr><th>User</th><th>Email & Message</th><th>Devices & Status</th><th>Action</th></tr></thead><tbody>`;
+            for (let [u, data] of Object.entries(CLIENT_DB)) {
+                html += `<tr>
+                    <td><b>${u}</b></td>
+                    <td style="font-size:0.8rem;">📧 ${data.email || 'N/A'}<br>💬 "${data.adminMsg || ''}"</td>
+                    <td style="font-size:0.8rem;">📱 ${(data.allowedDevices || []).join(', ')}<br><b>${data.approved ? 'Approved ✅' : 'Pending ⏳'}</b></td>
+                    <td>
+                        ${!data.approved ? `<button onclick="adminApprove('${u}')" style="background:var(--accent-green); color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Approve</button>` : ''}
+                        <button onclick="adminDelete('${u}')" style="background:var(--accent-red); color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button>
+                    </td>
+                </tr>`;
+            }
+            html += `</tbody></table>`;
+            view.innerHTML = html;
+        }
+
+        async function adminApprove(u) {
+            CLIENT_DB[u].approved = true;
+            await saveRegistry();
+            loadAdminRegistry();
+        }
+
+        async function adminDelete(u) {
+            if(confirm("Delete user?")) {
+                delete CLIENT_DB[u];
+                await saveRegistry();
+                loadAdminRegistry();
+            }
+        }
+
+        async function saveRegistry() {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+            const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
+            const data = await res.json();
+            await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "Admin update registry", content: btoa(JSON.stringify(CLIENT_DB, null, 2)), sha: data.sha })
+            });
+        }
     </script>
 </body>
 </html>
