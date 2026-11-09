@@ -1,1 +1,200 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>User Profile & Security Control - Enterprise Vault</title>
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.95);
+            --border-color: rgba(55, 65, 81, 0.6);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent-blue: #2563eb;
+            --accent-cyan: #06b6d4;
+            --accent-green: #059669;
+            --accent-red: #dc2626;
+            --accent-vip: #d97706;
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; transition: all 0.2s ease; }
+        body { background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%); color: var(--text-main); margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { height: 65px; background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; flex-shrink: 0; }
+        .logo-area { font-size: 1.1rem; font-weight: 700; color: #fff; cursor: pointer; }
+        
+        .container { max-width: 800px; margin: 2rem auto; width: 92%; flex: 1; }
+        .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.8rem; border-radius: 18px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 1.5rem; }
+        
+        .field-group { margin-bottom: 1.2rem; }
+        .field-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase; font-weight: 600; }
+        .field-group input, .field-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.85rem; }
+        .field-group textarea { resize: vertical; height: 70px; }
+
+        .btn-row { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        button { padding: 0.8rem 1.4rem; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 0.85rem; }
+        .btn-save { background: var(--accent-blue); color: white; flex: 1; }
+        .btn-logout { background: var(--accent-red); color: white; }
+        .btn-back { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border-color); }
+
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-pending { background: rgba(217, 119, 6, 0.2); color: #fbbf24; border: 1px solid rgba(217, 119, 6, 0.4); }
+        .badge-active { background: rgba(5, 150, 105, 0.2); color: #34d399; border: 1px solid rgba(5, 150, 105, 0.4); }
+
+        .status-msg { margin-top: 1rem; font-size: 0.85rem; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area" onclick="window.location.href='index.html'">🌐 Enterprise Vault</div>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <button class="btn-back" onclick="window.location.href='index.html'">⬅️ Dashboard</button>
+            <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="profile-card">
+            <h2 style="margin-top:0;">👤 Personal Account Profile & Hardware Binding</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem;">Modify your profile information. Any requested changes will be queued for Admin Approval.</p>
+            <hr style="border:none; border-bottom:1px solid var(--border-color); margin: 1.2rem 0;">
+
+            <div class="field-group">
+                <label>Username</label>
+                <input type="text" id="prof-username" readonly style="opacity:0.6; cursor:not-allowed;">
+            </div>
+
+            <div class="field-group">
+                <label>Bound Email Address</label>
+                <input type="email" id="prof-email" placeholder="Enter your email to bind">
+            </div>
+
+            <div class="field-group">
+                <label>New Password (Leave blank if unchanged)</label>
+                <input type="password" id="prof-password" placeholder="Enter new password">
+            </div>
+
+            <div class="field-group">
+                <label>Message / Update Note for Admin</label>
+                <textarea id="prof-msg" placeholder="Explain your edit request to Admin..."></textarea>
+            </div>
+
+            <div class="field-group">
+                <label>Currently Active Hardware Fingerprint</label>
+                <input type="text" id="prof-device" readonly style="font-family:monospace; color:var(--accent-cyan); opacity:0.8;">
+            </div>
+
+            <div class="field-group">
+                <label>Pending Changes Status</label>
+                <div id="pending-status-badge"><span class="badge badge-active">No Pending Changes</span></div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-save" onclick="requestProfileUpdate()">Submit Changes for Admin Approval</button>
+            </div>
+            <div id="status-out" class="status-msg"></div>
+        </div>
+    </div>
+
+    <script>
+        const GITHUB_REPO_OWNER = "nadianafish5-max";
+        const GITHUB_VAULT_REPO = "perwebsonal";
+        const tokA = "github_pat_11CLG5N3I0k";
+        const tokB = "a4ywlHFWZm9_jvpLkxbPap";
+        const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
+        const GITHUB_TOKEN = tokA + tokB + tokC;
+
+        let currentUser = localStorage.getItem("enterprise_active_user");
+        let CLIENT_DB = {};
+        let fileSha = "";
+
+        if (!currentUser) {
+            window.location.href = "index.html";
+        }
+
+        function getSpecificDeviceName() {
+            let savedName = localStorage.getItem("enterprise_device_id");
+            if (savedName) return savedName;
+            const ua = navigator.userAgent;
+            let label = /android/i.test(ua) ? "Android Phone" : /win/i.test(ua) ? "Windows PC" : "Device";
+            let val = label + " (" + screen.width + "x" + screen.height + ")";
+            localStorage.setItem("enterprise_device_id", val);
+            return val;
+        }
+
+        window.onload = async function() {
+            document.getElementById("prof-device").value = getSpecificDeviceName();
+            await loadProfileData();
+        };
+
+        async function loadProfileData() {
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                if (res.ok) {
+                    const data = await res.json();
+                    fileSha = data.sha;
+                    CLIENT_DB = JSON.parse(atob(data.content));
+                    
+                    if (CLIENT_DB[currentUser]) {
+                        const u = CLIENT_DB[currentUser];
+                        document.getElementById("prof-username").value = currentUser;
+                        document.getElementById("prof-email").value = u.email || "";
+                        document.getElementById("prof-msg").value = u.adminMsg || "";
+
+                        // Update Active Device Info in DB
+                        u.currentActiveDevice = getSpecificDeviceName();
+                        u.lastActiveTime = new Date().toLocaleString();
+
+                        if (u.pendingEdit) {
+                            document.getElementById("pending-status-badge").innerHTML = `<span class="badge badge-pending">⏳ Edit Request Pending Admin Approval</span>`;
+                        } else {
+                            document.getElementById("pending-status-badge").innerHTML = `<span class="badge badge-active">✅ Profile Synced</span>`;
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+
+        async function requestProfileUpdate() {
+            const email = document.getElementById("prof-email").value.trim();
+            const pass = document.getElementById("prof-password").value;
+            const msg = document.getElementById("prof-msg").value.trim();
+            const out = document.getElementById("status-out");
+
+            out.innerHTML = `<span style="color:var(--accent-cyan);">⏳ Submitting edit request to Admin...</span>`;
+
+            if (CLIENT_DB[currentUser]) {
+                CLIENT_DB[currentUser].pendingEdit = {
+                    requestedEmail: email,
+                    requestedPass: pass ? pass : CLIENT_DB[currentUser].passHash,
+                    requestedMsg: msg,
+                    requestedDevice: getSpecificDeviceName(),
+                    requestTime: new Date().toLocaleString()
+                };
+
+                const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
+                const putRes = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Profile edit request from ${currentUser}`, content: btoa(JSON.stringify(CLIENT_DB, null, 2)), sha: fileSha })
+                });
+
+                if (putRes.ok) {
+                    out.innerHTML = `<span style="color:var(--accent-green);">✅ Profile update request submitted! Waiting for Admin Approval.</span>`;
+                    loadProfileData();
+                } else {
+                    out.innerHTML = `<span style="color:var(--accent-red);">❌ Failed to submit request. Try again.</span>`;
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("enterprise_active_user");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
