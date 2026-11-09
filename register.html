@@ -30,10 +30,10 @@
 <body>
     <div class="auth-card">
         <h2>📝 Global Client Registration</h2>
-        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">Direct Hardware Binding & Admin Message</p>
+        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">Direct Android Hardware Binding & Admin Note</p>
         <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
         <input type="password" id="reg-password" placeholder="Choose Password">
-        <textarea id="reg-admin-msg" placeholder="Message directly to Admin (Purpose of access, inquiry)..."></textarea>
+        <textarea id="reg-admin-msg" placeholder="Message directly to Admin..."></textarea>
         <button onclick="submitRegistration()">Submit Registration</button>
         <span class="link-text" onclick="window.location.href='index.html'">Already registered? Sign In</span>
         <div id="reg-status"></div>
@@ -55,8 +55,6 @@
             if (/android/i.test(ua)) {
                 let match = ua.match(/;\s*([^;]+)\s+Build\//) || ua.match(/\(([^)]+)\)/);
                 deviceLabel = match && match[1] ? "Android: " + match[1].split(';').pop().trim() : "Android Device";
-            } else if (/iphone|ipad/i.test(ua)) {
-                deviceLabel = "Apple iOS Device";
             }
             let finalName = deviceLabel + " (" + screen.width + "x" + screen.height + ")";
             localStorage.setItem("enterprise_device_id", finalName);
@@ -74,7 +72,7 @@
                 return;
             }
 
-            status.innerHTML = '<div style="color:var(--accent-cyan);">⏳ Processing registration...</div>';
+            status.innerHTML = '<div style="color:var(--accent-cyan);">⏳ Saving registration...</div>';
 
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
             try {
@@ -91,19 +89,19 @@
                     return;
                 }
 
+                let currentDev = getSpecificDeviceName();
+
                 db[user] = {
                     passHash: pass,
                     role: "client",
                     vip: false,
-                    allowedDevices: [getSpecificDeviceName()],
+                    allowedDevices: [currentDev],
+                    currentActiveDevice: currentDev,
+                    lastActiveTime: new Date().toLocaleString(),
                     approved: false,
                     email: "Not Bound Yet",
-                    adminMsg: adminMsg,
-                    violations: []
+                    adminMsg: adminMsg
                 };
-
-                // Save locally too for Android fallback sync
-                localStorage.setItem("enterprise_db_cache", JSON.stringify(db));
 
                 const putRes = await fetch(url, {
                     method: 'PUT',
@@ -112,16 +110,14 @@
                 });
 
                 if (putRes.ok || putRes.status === 201 || putRes.status === 200) {
-                    status.innerHTML = '<div class="success">✅ Registration successful! Awaiting Admin approval.</div>';
-                    setTimeout(() => window.location.href = 'index.html', 2500);
+                    status.innerHTML = '<div class="success">✅ Registered successfully! Awaiting Admin approval.</div>';
+                    setTimeout(() => window.location.href = 'index.html', 2200);
                 } else {
-                    status.innerHTML = '<div class="success">✅ Saved successfully! Redirecting...</div>';
+                    status.innerHTML = '<div class="success">✅ Registration queued! Redirecting...</div>';
                     setTimeout(() => window.location.href = 'index.html', 2000);
                 }
             } catch (e) {
-                // Android Network fallback bypass
-                status.innerHTML = '<div class="success">✅ Registered locally! Redirecting to login...</div>';
-                setTimeout(() => window.location.href = 'index.html', 2000);
+                status.innerHTML = '<div class="error">Network glitch. Please try again.</div>';
             }
         }
     </script>
