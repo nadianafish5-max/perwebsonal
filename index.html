@@ -347,7 +347,6 @@
                     usersFileSha = data.sha;
                     const loadedDb = JSON.parse(atob(data.content));
                     if (loadedDb && Object.keys(loadedDb).length > 0) {
-                        // Merge loaded database while preserving local fallback
                         CLIENT_DB = Object.assign({}, CLIENT_DB, loadedDb);
                     }
                 } else if (res.status === 404) {
@@ -356,28 +355,43 @@
             } catch (e) {}
         }
 
+        // Robust saveUsers with automatic retry and conflict handling (SHA mismatch fix)
         async function saveUsers() {
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            try {
-                const checkRes = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if(checkRes.ok) {
-                    const checkData = await checkRes.json();
-                    usersFileSha = checkData.sha;
-                    const serverDb = JSON.parse(atob(checkData.content));
-                    // Safely merge server records with local updates
-                    CLIENT_DB = Object.assign({}, serverDb, CLIENT_DB);
-                }
-            } catch(e) {}
+            
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const checkRes = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                    let currentSha = undefined;
+                    if (checkRes.ok) {
+                        const checkData = await checkRes.json();
+                        currentSha = checkData.sha;
+                        usersFileSha = checkData.sha;
+                        const serverDb = JSON.parse(atob(checkData.content));
+                        CLIENT_DB = Object.assign({}, serverDb, CLIENT_DB);
+                    }
 
-            const res = await fetch(url, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Sync Database Update", content: btoa(JSON.stringify(CLIENT_DB, null, 2)), sha: usersFileSha || undefined })
-            });
-            if(res.ok) {
-                const data = await res.json();
-                usersFileSha = data.content.sha;
+                    const res = await fetch(url, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            message: "Sync Database Update", 
+                            content: btoa(JSON.stringify(CLIENT_DB, null, 2)), 
+                            sha: currentSha 
+                        })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        usersFileSha = data.content.sha;
+                        return true;
+                    } else if (res.status === 409) {
+                        // Conflict occurred, retry with fresh SHA
+                        continue;
+                    }
+                } catch (e) {}
             }
+            return false;
         }
 
         async function attemptLogin() {
@@ -460,7 +474,6 @@
             if (!user || !pass || !email) { status.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
             if (CLIENT_DB[user]) { status.innerHTML = '<div class="error">Username already taken.</div>'; return; }
 
-            // Force push new registration directly into global database and GitHub users.json
             CLIENT_DB[user] = {
                 passHash: pass,
                 role: "client",
@@ -470,9 +483,13 @@
                 email: email
             };
 
-            await saveUsers();
-            status.innerHTML = '<div class="success">✅ Registration submitted successfully! Awaiting Admin approval.</div>';
-            setTimeout(() => toggleAuthView('login'), 2500);
+            const success = await saveUsers();
+            if (success) {
+                status.innerHTML = '<div class="success">✅ Registration submitted successfully! Awaiting Admin approval.</div>';
+                setTimeout(() => toggleAuthView('login'), 2500);
+            } else {
+                status.innerHTML = '<div class="error">Registration failed to save on server. Please try again.</div>';
+            }
         }
 
         function toggleAuthView(v) {
@@ -553,9 +570,13 @@
         async function approveUser(u) {
             if (CLIENT_DB[u]) { 
                 CLIENT_DB[u].approved = true; 
-                await saveUsers(); 
-                loadAdminPanel(); 
-                alert(`Approved account for ${u}! Now they can log in successfully.`); 
+                const success = await saveUsers(); 
+                if (success) {
+                    loadAdminPanel(); 
+                    alert(`Approved account for ${u}! Now they can log in successfully.`); 
+                } else {
+                    alert(`Failed to save approval to GitHub. Please try again.`);
+                }
             }
         }
 
