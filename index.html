@@ -355,29 +355,28 @@
             } catch (e) {}
         }
 
-        // Robust saveUsers with automatic retry and conflict handling (SHA mismatch fix)
+        // Direct fetch & save engine with fresh SHA retrieval
         async function saveUsers() {
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            
+            try {
+                const getRes = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                if (getRes.ok) {
+                    const getData = await getRes.json();
+                    usersFileSha = getData.sha;
+                    const serverDb = JSON.parse(atob(getData.content));
+                    CLIENT_DB = Object.assign({}, serverDb, CLIENT_DB);
+                }
+            } catch (e) {}
+
             for (let attempt = 0; attempt < 3; attempt++) {
                 try {
-                    const checkRes = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                    let currentSha = undefined;
-                    if (checkRes.ok) {
-                        const checkData = await checkRes.json();
-                        currentSha = checkData.sha;
-                        usersFileSha = checkData.sha;
-                        const serverDb = JSON.parse(atob(checkData.content));
-                        CLIENT_DB = Object.assign({}, serverDb, CLIENT_DB);
-                    }
-
                     const res = await fetch(url, {
                         method: 'PUT',
                         headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
-                            message: "Sync Database Update", 
+                            message: "Database Update", 
                             content: btoa(JSON.stringify(CLIENT_DB, null, 2)), 
-                            sha: currentSha 
+                            sha: usersFileSha || undefined 
                         })
                     });
 
@@ -386,8 +385,14 @@
                         usersFileSha = data.content.sha;
                         return true;
                     } else if (res.status === 409) {
-                        // Conflict occurred, retry with fresh SHA
-                        continue;
+                        // If conflict occurs, fetch latest SHA and retry immediately
+                        const retryGet = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                        if (retryGet.ok) {
+                            const retryData = await retryGet.json();
+                            usersFileSha = retryData.sha;
+                            const remoteDb = JSON.parse(atob(retryData.content));
+                            CLIENT_DB = Object.assign({}, remoteDb, CLIENT_DB);
+                        }
                     }
                 } catch (e) {}
             }
@@ -560,14 +565,19 @@
             if (!newPass) { alert("Please enter a new password!"); return; }
             if (editingUser && CLIENT_DB[editingUser]) {
                 CLIENT_DB[editingUser].passHash = newPass;
-                await saveUsers();
-                alert(`Password successfully updated for ${editingUser}!`);
-                closePwdModal();
-                loadAdminPanel();
+                const success = await saveUsers();
+                if (success) {
+                    alert(`Password successfully updated for ${editingUser}!`);
+                    closePwdModal();
+                    loadAdminPanel();
+                } else {
+                    alert("Failed to update password on server.");
+                }
             }
         }
 
         async function approveUser(u) {
+            await syncUsers();
             if (CLIENT_DB[u]) { 
                 CLIENT_DB[u].approved = true; 
                 const success = await saveUsers(); 
@@ -581,22 +591,32 @@
         }
 
         async function toggleVip(u) {
-            if (CLIENT_DB[u]) { CLIENT_DB[u].vip = !CLIENT_DB[u].vip; await saveUsers(); loadAdminPanel(); }
+            await syncUsers();
+            if (CLIENT_DB[u]) { 
+                CLIENT_DB[u].vip = !CLIENT_DB[u].vip; 
+                const success = await saveUsers(); 
+                if(success) loadAdminPanel(); 
+                else alert("Failed to update VIP status.");
+            }
         }
 
         async function deleteUser(u) {
             if (confirm(`Are you sure you want to delete client ${u}?`)) {
+                await syncUsers();
                 delete CLIENT_DB[u];
-                await saveUsers();
-                loadAdminPanel();
+                const success = await saveUsers();
+                if(success) loadAdminPanel();
+                else alert("Failed to delete user on server.");
             }
         }
 
         async function removeDevice(u, index) {
+            await syncUsers();
             if (CLIENT_DB[u] && CLIENT_DB[u].allowedDevices) {
                 CLIENT_DB[u].allowedDevices.splice(index, 1);
-                await saveUsers();
-                loadAdminPanel();
+                const success = await saveUsers();
+                if(success) loadAdminPanel();
+                else alert("Failed to remove device on server.");
             }
         }
 
