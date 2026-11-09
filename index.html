@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Cloud Vault - Pro Edition</title>
+    <title>Secure Cloud Vault - International Enterprise Edition</title>
     <style>
         :root {
             --bg-dark: #090d16;
             --bg-sidebar: #111827;
-            --bg-card: rgba(17, 24, 39, 0.9);
+            --bg-card: rgba(17, 24, 39, 0.95);
             --border-color: rgba(55, 65, 81, 0.6);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
@@ -70,13 +70,14 @@
 
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle, #0f172a 0%, #030712 100%); backdrop-filter: blur(16px); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 1rem;
+            background: radial-gradient(circle, #0f172a 0%, #030712 100%); backdrop-filter: blur(16px); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 1rem; overflow-y: auto;
         }
-        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2.2rem 1.6rem; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); text-align: center; }
-        .auth-card input { width: 100%; padding: 0.8rem; margin: 0.4rem 0 1rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.9rem; }
+        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem 1.5rem; border-radius: 20px; width: 100%; max-width: 440px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); text-align: center; }
+        .auth-card input, .auth-card textarea { width: 100%; padding: 0.75rem; margin: 0.3rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.85rem; }
+        .auth-card textarea { resize: none; height: 75px; }
         .auth-card button { width: 100%; padding: 0.8rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
         .btn-secondary { background: var(--accent-purple) !important; margin-top: 0.6rem; }
-        .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1rem; display: block; text-decoration: underline; }
+        .link-text { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; margin-top: 0.8rem; display: block; text-decoration: underline; }
 
         .profile-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: 14px; margin-bottom: 1rem; }
         .profile-card h4 { margin: 0 0 0.4rem 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
@@ -102,8 +103,8 @@
         audio { width: 100%; margin-top: 1.2rem; outline: none; }
 
         .hidden { display: none !important; }
-        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.5rem; word-break: break-all; }
-        .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.5rem; }
+        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.4rem; word-break: break-all; }
+        .success { color: var(--accent-green); font-size: 0.85rem; margin-top: 0.4rem; }
 
         @media (max-width: 768px) {
             sidebar { width: 60px; padding: 1rem 0.2rem; }
@@ -112,7 +113,7 @@
             .content-area { padding: 1rem; }
             header { padding: 0 1rem; }
             .logo-area span { font-size: 0.95rem; }
-            .auth-card { padding: 1.8rem 1.2rem; max-width: 92vw; }
+            .auth-card { padding: 1.5rem 1rem; max-width: 94vw; }
             .modal-content { max-width: 95vw; padding: 1.2rem; }
         }
     </style>
@@ -122,23 +123,24 @@
     <!-- Auth System -->
     <div id="login-screen">
         <div id="login-card" class="auth-card">
-            <h2 style="margin: 0 0 0.5rem 0; color: #fff;">📁 Secure Cloud Vault</h2>
-            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.2rem;">Device-Secured Enterprise Portal</p>
+            <h2 style="margin: 0 0 0.4rem 0; color: #fff;">🌐 Secure Cloud Vault</h2>
+            <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">International Enterprise Portal</p>
             <input type="text" id="username-input" placeholder="Username" autocomplete="off">
             <input type="password" id="password-input" placeholder="Password">
             <button onclick="attemptLogin()">Sign In</button>
             <button id="register-device-btn" class="btn-secondary hidden" onclick="requestDeviceBinding()">📱 Register This Device</button>
-            <span class="link-text" onclick="toggleAuthView('register')">Need an account? Register Here</span>
+            <span class="link-text" onclick="toggleAuthView('register')">New International Client? Register Here</span>
             <div id="error-msg" class="error"></div>
         </div>
 
         <div id="register-card" class="auth-card hidden">
-            <h2 style="margin: 0 0 0.5rem 0; color: #fff;">📝 Client Registration</h2>
-            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.2rem;">Automatic Detection & Admin Approval Request</p>
+            <h2 style="margin: 0 0 0.3rem 0; color: #fff;">📝 Global Client Registration</h2>
+            <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.8rem;">Automatic Device Check & Admin Approval</p>
             <input type="text" id="reg-username" placeholder="Choose Username" autocomplete="off">
             <input type="password" id="reg-password" placeholder="Choose Password">
-            <input type="text" id="reg-email" placeholder="Gmail Address">
-            <button onclick="submitRegistration()">Register Account & Device</button>
+            <input type="text" id="reg-email" placeholder="Professional Email (Gmail/Outlook)">
+            <textarea id="reg-admin-msg" placeholder="Message directly to Admin (e.g., Purpose of access, company name, inquiry)..."></textarea>
+            <button onclick="submitRegistration()">Submit Registration & Message</button>
             <span class="link-text" onclick="toggleAuthView('login')">Already registered? Sign In</span>
             <div id="reg-status"></div>
         </div>
@@ -146,7 +148,7 @@
 
     <!-- Header Navigation -->
     <header>
-        <div class="logo-area">📁 <span>Secure Cloud Vault</span></div>
+        <div class="logo-area">🌐 <span>Secure Cloud Vault (Global)</span></div>
         <div class="profile-widget" onclick="toggleProfileDropdown(event)">
             <span id="welcome-user" style="font-size:0.85rem; font-weight:500;">User</span>
             <div class="profile-avatar-sm" id="header-avatar-initial">U</div>
@@ -166,7 +168,6 @@
 
     <div class="main-layout">
         <sidebar>
-            <!-- Upload button visible ONLY for Admin -->
             <button class="new-btn hidden" id="admin-upload-btn" onclick="openUploadModal()">📤 <span>Upload</span></button>
             <div class="nav-item active" onclick="switchTab('videos', this)">🎬 <span>Videos</span></div>
             <div class="nav-item" onclick="switchTab('audio', this)">🎵 <span>Audio</span></div>
@@ -180,8 +181,8 @@
         <div class="content-area">
             <!-- Videos Tab -->
             <div id="tab-videos" class="tab-content">
-                <h2>🎬 Video Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Stream and watch your videos instantly via browser.</p>
+                <h2>🎬 International Video Vault</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">High-speed global content streaming via browser.</p>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>Video Name</th><th>Status</th><th>Actions</th></tr></thead>
@@ -193,7 +194,7 @@
             <!-- Audio Tab -->
             <div id="tab-audio" class="tab-content hidden">
                 <h2>🎵 Audio Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Listen to background music and audio files via browser.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">High-fidelity background streaming and audio files.</p>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>Audio Name</th><th>Status</th><th>Actions</th></tr></thead>
@@ -205,7 +206,7 @@
             <!-- Files Tab -->
             <div id="tab-files" class="tab-content hidden">
                 <h2>📁 Document & File Vault</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">View and download secure files and documents.</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Secure international document distribution.</p>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>File Name</th><th>Status</th><th>Actions</th></tr></thead>
@@ -216,7 +217,7 @@
 
             <!-- Profile & Device Manager -->
             <div id="tab-profile" class="tab-content hidden">
-                <h2>Account & Device Manager</h2>
+                <h2>Account & Global Device Security</h2>
                 <div class="profile-card">
                     <h4>Account Rank</h4>
                     <span id="profile-rank-text" class="badge-normal">Normal Client</span>
@@ -233,7 +234,7 @@
 
             <!-- Chat -->
             <div id="tab-chat" class="tab-content hidden">
-                <h2>Client Community Chat</h2>
+                <h2>Global Client Community Chat</h2>
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages"></div>
                     <div style="display:flex; padding:0.6rem; gap:0.5rem; background:rgba(17,24,39,0.8);">
@@ -245,12 +246,12 @@
 
             <!-- Admin Control Dashboard -->
             <div id="tab-admin" class="tab-content hidden">
-                <h2>Powerful Admin Command Center</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Automatically detects new users. Approve accounts/devices, change passwords, or manage VIP ranks.</p>
+                <h2>Global Admin Command Center</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Manage international users, review registration messages, approve devices, and control VIP tiers.</p>
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Username</th><th>Registered Devices</th><th>Email</th><th>Approval Status</th><th>Admin Actions</th></tr></thead>
-                        <tbody id="admin-pending-table"><tr><td colspan="5">Loading registry from users.json...</td></tr></tbody>
+                        <thead><tr><th>Username</th><th>Registered Devices</th><th>Email & Initial Message</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="admin-pending-table"><tr><td colspan="5">Loading secure database...</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -273,8 +274,8 @@
     <!-- Upload Modal (Admin Only) -->
     <div id="upload-modal" class="modal">
         <div class="modal-content">
-            <h3 style="margin-top:0;">Upload to Cloud Vault</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem;">Select video, audio, or document files to publish for clients.</p>
+            <h3 style="margin-top:0;">Global Cloud Vault Upload</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem;">Select video, audio, or document files to publish globally.</p>
             <input type="file" id="file-picker" style="margin: 1rem 0; width:100%; padding:0.5rem; background:rgba(3,7,18,0.8); border:1px solid var(--border-color); color:white; border-radius:8px; font-size:0.85rem;">
             <div id="upload-status" style="margin-bottom:1rem; color:var(--accent-cyan); font-size:0.85rem;"></div>
             <div style="display:flex; gap:1rem;">
@@ -287,7 +288,7 @@
     <!-- Media Player Modal -->
     <div id="media-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="margin-top:0; color:white; font-size:1rem;">Cloud Player</h3>
+            <h3 id="modal-title" style="margin-top:0; color:white; font-size:1rem;">Global Cloud Player</h3>
             <div id="media-container"></div>
             <button onclick="closeMediaModal()" style="background: var(--accent-red); margin-top: 1.2rem; padding:0.6rem 1.4rem; border:none; border-radius:8px; color:white; cursor:pointer; font-size:0.85rem;">Close Viewer</button>
         </div>
@@ -302,7 +303,7 @@
         const GITHUB_TOKEN = tokA + tokB + tokC;
 
         let CLIENT_DB = {
-            "admin": { passHash: "admin69", role: "admin", vip: true, allowedDevices: ["Master PC"], approved: true, email: "admin@server.com" }
+            "admin": { passHash: "admin69", role: "admin", vip: true, allowedDevices: ["Master PC"], approved: true, email: "admin@server.com", adminMsg: "System Admin Account" }
         };
         let usersFileSha = "";
         let linksFileSha = "";
@@ -315,23 +316,19 @@
             if (savedName) return savedName;
 
             const ua = navigator.userAgent;
-            let name = "Standard Device";
+            let name = "Global Standard Device";
 
             if (/android/i.test(ua)) {
                 let match = ua.match(/;\s*([^;]+)\s+Build\//) || ua.match(/\(([^)]+)\)/);
-                if (match && match[1]) {
-                    name = match[1].split(';').pop().trim();
-                } else {
-                    name = "Android Phone";
-                }
+                name = (match && match[1]) ? match[1].split(';').pop().trim() : "Android Mobile Device";
             } else if (/iphone|ipad|ipod/i.test(ua)) {
-                name = "iOS Apple Device";
+                name = "Apple iOS Device";
             } else if (/win/i.test(ua)) {
-                name = "Windows PC";
+                name = "Windows Workstation";
             } else if (/mac/i.test(ua)) {
-                name = "Macintosh PC";
+                name = "Macintosh Workstation";
             } else if (/linux/i.test(ua)) {
-                name = "Linux System";
+                name = "Linux Server / Desktop";
             }
 
             localStorage.setItem("portal_device_real_name", name);
@@ -350,12 +347,12 @@
                         CLIENT_DB = Object.assign({}, CLIENT_DB, loadedDb);
                     }
                 } else if (res.status === 404) {
+                    usersFileSha = "";
                     await saveUsers();
                 }
             } catch (e) {}
         }
 
-        // Direct fetch & save engine with fresh SHA retrieval
         async function saveUsers() {
             const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
             try {
@@ -365,19 +362,27 @@
                     usersFileSha = getData.sha;
                     const serverDb = JSON.parse(atob(getData.content));
                     CLIENT_DB = Object.assign({}, serverDb, CLIENT_DB);
+                } else {
+                    usersFileSha = "";
                 }
-            } catch (e) {}
+            } catch (e) {
+                usersFileSha = "";
+            }
 
             for (let attempt = 0; attempt < 3; attempt++) {
                 try {
+                    const bodyData = { 
+                        message: "Secure Global DB Sync", 
+                        content: btoa(JSON.stringify(CLIENT_DB, null, 2))
+                    };
+                    if (usersFileSha) {
+                        bodyData.sha = usersFileSha;
+                    }
+
                     const res = await fetch(url, {
                         method: 'PUT',
                         headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            message: "Database Update", 
-                            content: btoa(JSON.stringify(CLIENT_DB, null, 2)), 
-                            sha: usersFileSha || undefined 
-                        })
+                        body: JSON.stringify(bodyData)
                     });
 
                     if (res.ok) {
@@ -385,7 +390,6 @@
                         usersFileSha = data.content.sha;
                         return true;
                     } else if (res.status === 409) {
-                        // If conflict occurs, fetch latest SHA and retry immediately
                         const retryGet = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
                         if (retryGet.ok) {
                             const retryData = await retryGet.json();
@@ -393,6 +397,8 @@
                             const remoteDb = JSON.parse(atob(retryData.content));
                             CLIENT_DB = Object.assign({}, remoteDb, CLIENT_DB);
                         }
+                    } else if (res.status === 422) {
+                        usersFileSha = "";
                     }
                 } catch (e) {}
             }
@@ -437,10 +443,10 @@
             const rankText = document.getElementById("profile-rank-text");
             const dropRank = document.getElementById("dropdown-rank-badge");
             if(account.vip || account.role === "admin") {
-                rankText.className = "badge-vip"; rankText.innerText = account.role === "admin" ? "Administrator" : "VIP Client";
+                rankText.className = "badge-vip"; rankText.innerText = account.role === "admin" ? "Administrator" : "VIP International Client";
                 dropRank.className = "badge-vip"; dropRank.innerText = account.role === "admin" ? "Administrator" : "VIP Client";
             } else {
-                rankText.className = "badge-normal"; rankText.innerText = "Normal Client";
+                rankText.className = "badge-normal"; rankText.innerText = "Normal International Client";
                 dropRank.className = "badge-normal"; dropRank.innerText = "Normal Client";
             }
 
@@ -465,7 +471,7 @@
                 CLIENT_DB[pendingUser].allowedDevices.push(currentDev);
             }
             await saveUsers();
-            document.getElementById("error-msg").innerHTML = `<span class="success">✅ Device (${currentDev}) registered! Awaiting Admin approval in panel.</span>`;
+            document.getElementById("error-msg").innerHTML = `<span class="success">✅ Device (${currentDev}) registered! Awaiting Global Admin approval.</span>`;
             document.getElementById("register-device-btn").classList.add("hidden");
         }
 
@@ -474,10 +480,17 @@
             const user = document.getElementById("reg-username").value.trim();
             const pass = document.getElementById("reg-password").value;
             const email = document.getElementById("reg-email").value.trim();
+            const adminMsg = document.getElementById("reg-admin-msg").value.trim();
             const status = document.getElementById("reg-status");
 
-            if (!user || !pass || !email) { status.innerHTML = '<div class="error">Fill all fields.</div>'; return; }
-            if (CLIENT_DB[user]) { status.innerHTML = '<div class="error">Username already taken.</div>'; return; }
+            if (!user || !pass || !email || !adminMsg) { 
+                status.innerHTML = '<div class="error">Please fill in all fields including the message to Admin.</div>'; 
+                return; 
+            }
+            if (CLIENT_DB[user]) { 
+                status.innerHTML = '<div class="error">Username already taken globally.</div>'; 
+                return; 
+            }
 
             CLIENT_DB[user] = {
                 passHash: pass,
@@ -485,15 +498,16 @@
                 vip: false,
                 allowedDevices: [getDeviceName()],
                 approved: false,
-                email: email
+                email: email,
+                adminMsg: adminMsg
             };
 
             const success = await saveUsers();
             if (success) {
-                status.innerHTML = '<div class="success">✅ Registration submitted successfully! Awaiting Admin approval.</div>';
-                setTimeout(() => toggleAuthView('login'), 2500);
+                status.innerHTML = '<div class="success">✅ Registration submitted successfully! Your message was sent to Admin for review.</div>';
+                setTimeout(() => toggleAuthView('login'), 3000);
             } else {
-                status.innerHTML = '<div class="error">Registration failed to save on server. Please try again.</div>';
+                status.innerHTML = '<div class="error">Registration server sync failed. Please try again.</div>';
             }
         }
 
@@ -531,7 +545,10 @@
                     <tr>
                         <td><strong>${u}</strong> ${data.role === 'admin' ? '👑' : ''}</td>
                         <td>${devs || 'No devices'}</td>
-                        <td style="font-size:0.8rem;">${data.email || 'N/A'}</td>
+                        <td style="font-size:0.8rem;">
+                            <div>📧 <b>${data.email || 'N/A'}</b></div>
+                            <div style="margin-top:4px; color:var(--accent-cyan); background:rgba(6,182,212,0.1); padding:4px; border-radius:4px;">💬 "${data.adminMsg || 'No message provided'}"</div>
+                        </td>
                         <td>
                             <span class="${data.approved ? 'success' : 'error'}" style="display:block; font-size:0.75rem; font-weight:bold;">${data.approved ? 'Approved ✅' : 'Pending Approval ⏳'}</span>
                             <span class="${data.vip ? 'badge-vip' : 'badge-normal'}">${data.vip ? 'VIP Client' : 'Normal'}</span>
@@ -583,9 +600,9 @@
                 const success = await saveUsers(); 
                 if (success) {
                     loadAdminPanel(); 
-                    alert(`Approved account for ${u}! Now they can log in successfully.`); 
+                    alert(`Approved account for ${u}! Global international access granted.`); 
                 } else {
-                    alert(`Failed to save approval to GitHub. Please try again.`);
+                    alert(`Failed to save approval to server. Please try again.`);
                 }
             }
         }
@@ -643,7 +660,7 @@
 
                         const row = `<tr>
                             <td style="word-break:break-all;">📄 ${item.name}</td>
-                            <td><span class="badge-vip">Vault Ready</span></td>
+                            <td><span class="badge-vip">Global Ready</span></td>
                             <td>
                                 ${isVideo ? `<button onclick="playMedia('${item.url}', '${item.name}', 'video')" style="padding:0.3rem 0.6rem; background:var(--accent-blue); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem; margin-right:4px;">Play ▶</button>` : ''}
                                 ${isAudio ? `<button onclick="playMedia('${item.url}', '${item.name}', 'audio')" style="padding:0.3rem 0.6rem; background:var(--accent-purple); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem; margin-right:4px;">Audio 🎵</button>` : ''}
@@ -675,7 +692,7 @@
             const status = document.getElementById("upload-status");
             if (picker.files.length === 0) return alert("Select a file first!");
             const file = picker.files[0];
-            status.innerText = "⏳ Processing & publishing to Cloud Vault...";
+            status.innerText = "⏳ Processing & publishing to Global Cloud Vault...";
 
             let category = "file";
             if (/\.(mp4|webm|mov|mkv)$/i.test(file.name)) category = "video";
@@ -700,14 +717,14 @@
                 const putRes = await fetch(apiUrl, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Upload: ${file.name}`, content: btoa(JSON.stringify(items, null, 2)), sha: linksFileSha || undefined })
+                    body: JSON.stringify({ message: `Global Upload: ${file.name}`, content: btoa(JSON.stringify(items, null, 2)), sha: linksFileSha || undefined })
                 });
                 if(putRes.ok) {
                     const putData = await putRes.json();
                     linksFileSha = putData.content.sha;
                 }
 
-                status.innerText = "✅ Successfully published to Vault!";
+                status.innerText = "✅ Successfully published globally!";
                 setTimeout(() => { closeUploadModal(); fetchVaultFiles(); }, 1200);
             };
             reader.readAsDataURL(file);
@@ -719,7 +736,7 @@
             if (type === 'video') {
                 container.innerHTML = `<video src="${url}" controls autoplay playsinline controlsList="nodownload"></video>`;
             } else {
-                container.innerHTML = `<audio src="${url}" controls autoplay></audio><p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">🎵 Background Audio Playback Active</p>`;
+                container.innerHTML = `<audio src="${url}" controls autoplay></audio><p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">🎵 Global Audio Playback Active</p>`;
             }
             document.getElementById("media-modal").style.display = "flex";
         }
@@ -732,9 +749,10 @@
         async function fetchChatMessages() {
             const container = document.getElementById("chat-messages");
             try {
-                const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (res.ok) {
-                    const data = await res.json();
+                const res = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
+                const chatRes = await fetch(res, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+                if (chatRes.ok) {
+                    const data = await chatRes.json();
                     const messages = JSON.parse(atob(data.content));
                     container.innerHTML = messages.map(m => `<div class="msg ${m.user === currentUser ? 'me' : 'other'}"><b style="font-size:0.7rem; display:block; opacity:0.8;">${m.user}</b>${m.text}</div>`).join('');
                     container.scrollTop = container.scrollHeight;
@@ -760,7 +778,7 @@
             await fetch(apiUrl, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Chat update", content: btoa(JSON.stringify(messages, null, 2)), sha: sha })
+                body: JSON.stringify({ message: "Global Chat update", content: btoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
             });
             fetchChatMessages();
         }
