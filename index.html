@@ -1,359 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Cloud Vault - Enterprise Android Edition</title>
-    <style>
-        :root {
-            --bg-dark: #090d16;
-            --bg-card: rgba(17, 24, 39, 0.95);
-            --border-color: rgba(55, 65, 81, 0.6);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --accent-blue: #2563eb;
-            --accent-cyan: #06b6d4;
-            --accent-green: #059669;
-            --accent-red: #dc2626;
-            --accent-purple: #7c3aed;
-        }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%); color: var(--text-main); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
-        header { height: 65px; background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.2rem; flex-shrink: 0; }
-        .logo-area { font-size: 1.1rem; font-weight: 700; color: #fff; }
-        
-        #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #030712; display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 1rem; }
-        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
-        .auth-card input { width: 100%; padding: 0.8rem; margin: 0.4rem 0 0.8rem 0; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(3, 7, 18, 0.7); color: white; outline: none; font-size: 0.9rem; }
-        .auth-card button { width: 100%; padding: 0.85rem; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.95rem; }
-
-        .main-layout { display: flex; flex: 1; height: calc(100vh - 65px); overflow: hidden; }
-        sidebar { width: 220px; background: #0b1120; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1.2rem 0.6rem; flex-shrink: 0; overflow-y: auto; }
-        .nav-item { padding: 0.7rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.3rem; text-decoration: none; }
-        .nav-item:hover, .nav-item.active { background: rgba(37, 99, 235, 0.15); color: var(--accent-cyan); }
-        .content-area { flex: 1; padding: 1.5rem; overflow-y: auto; background: rgba(3, 7, 18, 0.3); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.85rem; min-width: 600px; }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 0.8rem; text-align: left; }
-        th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
-        .table-responsive { width: 100%; overflow-x: auto; }
-        .error { color: var(--accent-red); font-size: 0.85rem; margin-top: 0.4rem; }
-        .badge-device { background: rgba(6, 182, 212, 0.15); color: #22d3ee; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-family: monospace; }
-        
-        .create-user-box { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: 12px; margin-bottom: 1.5rem; }
-        .create-user-box input { padding: 0.6rem; margin-right: 0.5rem; background: #030712; border: 1px solid var(--border-color); color: white; border-radius: 8px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src https://*.supabase.co wss://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Secure Client Vault</title>
+<style>
+:root{--bg:#0b1020;--card:#131a2e;--line:#26304d;--tx:#e8ecf6;--mut:#8f9bb8;--ac:#4f8cff;--ok:#22c55e;--bad:#ef4444}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--bg);color:var(--tx);min-height:100vh}
+.hide{display:none!important}
+.center{min-height:100vh;display:grid;place-items:center;padding:1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.5rem;width:100%;max-width:400px}
+h1,h2,h3{margin:.2rem 0 .8rem}
+input,select{width:100%;padding:.7rem;margin:.3rem 0 .7rem;background:#0b1020;border:1px solid var(--line);border-radius:9px;color:var(--tx);font-size:.9rem}
+button{padding:.65rem 1rem;border:0;border-radius:9px;background:var(--ac);color:#fff;font-weight:600;cursor:pointer}
+button.s{background:#2a3555}button.d{background:var(--bad)}button.g{background:var(--ok)}
+.full{width:100%}.mut{color:var(--mut);font-size:.85rem}.lnk{color:var(--ac);cursor:pointer;font-size:.85rem;display:block;margin-top:.8rem;text-align:center}
+#msg{margin-top:.6rem;font-size:.85rem;min-height:1.2em}
+header{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1.2rem;border-bottom:1px solid var(--line);background:var(--card)}
+nav{display:flex;gap:.4rem;padding:.7rem 1.2rem;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+nav button{background:transparent;color:var(--mut)}nav button.on{background:#1b2848;color:var(--ac)}
+main{max-width:900px;margin:1.2rem auto;padding:0 1rem}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{padding:.65rem;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mut);font-size:.75rem;text-transform:uppercase}
+.wrap{overflow-x:auto}
+#chat{height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:.4rem;background:#0b1020;border:1px solid var(--line);border-radius:10px;padding:.8rem}
+.m{background:#1d2745;padding:.45rem .7rem;border-radius:8px;max-width:78%;word-break:break-word}.m.me{background:#27479b;align-self:flex-end}
+.m b{display:block;font-size:.7rem;opacity:.75}
+.row{display:flex;gap:.5rem}.row input{margin:0}
+</style>
 </head>
 <body>
 
-    <!-- Login Screen -->
-    <div id="login-screen">
-        <div class="auth-card">
-            <h2>🌐 Secure Cloud Vault</h2>
-            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.2rem;">Enterprise Client Login</p>
-            <input type="text" id="username-input" placeholder="Assigned Username" autocomplete="off">
-            <input type="password" id="password-input" placeholder="Password">
-            <button onclick="attemptLogin()">Sign In</button>
-            <span style="font-size: 0.85rem; color: var(--accent-cyan); cursor: pointer; margin-top: 1.2rem; display: block;" onclick="window.location.href='register.html'">New Device? Register Device Here</span>
-            <div id="error-msg" class="error"></div>
-        </div>
-    </div>
+<!-- Auth -->
+<div id="auth" class="center hide"><div class="card">
+  <h1>🔐 Client Vault</h1>
+  <p class="mut" id="auth-sub">Sign in to continue</p>
+  <input id="a-user" class="hide" placeholder="Username" maxlength="30" autocomplete="username">
+  <input id="a-email" type="email" placeholder="Email" autocomplete="email">
+  <input id="a-pass" type="password" placeholder="Password (min 10 characters)" autocomplete="current-password">
+  <button class="full" id="a-go">Sign in</button>
+  <span class="lnk" id="a-toggle">No account? Request access</span>
+  <span class="lnk" id="a-reset">Forgot password?</span>
+  <div id="msg"></div>
+</div></div>
 
-    <!-- Header -->
-    <header>
-        <div class="logo-area">🌐 Secure Cloud Vault</div>
-        <div id="user-display" style="font-size: 0.85rem; color: var(--accent-cyan);">User</div>
-    </header>
+<!-- Pending approval -->
+<div id="pending" class="center hide"><div class="card" style="text-align:center">
+  <h2>⏳ Awaiting approval</h2>
+  <p class="mut">Your account was created. The administrator must approve it before you can access the vault.</p>
+  <button class="s" onclick="sb.auth.signOut()">Sign out</button>
+</div></div>
 
-    <div class="main-layout">
-        <sidebar>
-            <a class="nav-item active" onclick="switchCategory('videos', this)">🎬 <span>Videos Vault</span></a>
-            <a class="nav-item" onclick="switchCategory('audio', this)">🎵 <span>Audio Vault</span></a>
-            <a class="nav-item" onclick="switchCategory('files', this)">📁 <span>Documents</span></a>
-            <a class="nav-item" onclick="switchCategory('chat', this)">💬 <span>Community Chat</span></a>
-            <a class="nav-item" onclick="window.location.href='profile.html'">👤 <span>Profile & Accounts</span></a>
-            <a class="nav-item" id="admin-menu" onclick="switchCategory('admin', this)" style="display:none; background:rgba(217, 119, 6, 0.2); color:#fbbf24; border:1px solid rgba(217, 119, 6, 0.4);">👑 <span>Admin Management</span></a>
-            <a class="nav-item" onclick="logout()" style="color: var(--accent-red); margin-top: auto;">🚪 <span>Logout</span></a>
-        </sidebar>
+<!-- App -->
+<div id="app" class="hide">
+  <header><b>🔐 Client Vault</b><span><span class="mut" id="who"></span> <button class="s" onclick="sb.auth.signOut()">Sign out</button></span></header>
+  <nav id="nav"></nav>
+  <main id="view"></main>
+</div>
 
-        <div class="content-area">
-            <div id="dynamic-content">
-                <h2>Loading Vault...</h2>
-            </div>
-        </div>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+// 1) Paste your values from Supabase -> Project Settings -> API. Use the "anon / public" key ONLY. Never the service_role key.
+const SUPABASE_URL = "https://ivsevllqlzgoopgxecup.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_5V2h-PYn7rjY_Ax186rZkw_8ZY4sfSw";
 
-    <script>
-        const GITHUB_REPO_OWNER = "nadianafish5-max";
-        const GITHUB_VAULT_REPO = "perwebsonal";
-        const tokA = "github_pat_11CLG5N3I0k";
-        const tokB = "a4ywlHFWZm9_jvpLkxbPap";
-        const tokC = "vBQlncSmFNVt6gNeQBkqRjI6Gh53drCUBPGR4ZTTYamYub8Sq";
-        const GITHUB_TOKEN = tokA + tokB + tokC;
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let me = null, chan = null, signup = false;
 
-        let currentUser = null;
-        let CLIENT_DB = {};
-        let usersSha = "";
+function say(t, ok) { const m = $("msg"); m.textContent = t; m.style.color = ok ? "var(--ok)" : "var(--bad)"; }
+function show(id) { ["auth","pending","app"].forEach(x => $(x).classList.toggle("hide", x !== id)); }
 
-        function utoa(str) { return window.btoa(unescape(encodeURIComponent(str))); }
-        function atou(str) { return decodeURIComponent(escape(window.atob(str))); }
+// ---------- Auth ----------
+$("a-toggle").onclick = () => {
+  signup = !signup;
+  $("a-user").classList.toggle("hide", !signup);
+  $("a-go").textContent = signup ? "Request access" : "Sign in";
+  $("a-toggle").textContent = signup ? "Already have an account? Sign in" : "No account? Request access";
+  $("auth-sub").textContent = signup ? "Create your account (admin approval required)" : "Sign in to continue";
+  $("a-pass").autocomplete = signup ? "new-password" : "current-password"; say("");
+};
+$("a-go").onclick = async () => {
+  const email = $("a-email").value.trim(), password = $("a-pass").value, username = $("a-user").value.trim();
+  if (!email || !password) return say("Enter email and password.");
+  if (signup) {
+    if (password.length < 10) return say("Password must be at least 10 characters.");
+    if (username.length < 2) return say("Choose a username (2+ characters).");
+    const { error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
+    return error ? say(error.message) : say("Account created. Check your email if confirmation is required, then sign in.", true);
+  }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) say("Invalid email or password.");
+};
+$("a-reset").onclick = async () => {
+  const email = $("a-email").value.trim();
+  if (!email) return say("Enter your email first.");
+  await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+  say("If that email exists, a reset link was sent.", true);
+};
 
-        function getAndroidDeviceFingerprint() {
-            let saved = localStorage.getItem("vault_device_fingerprint");
-            if (saved) return saved;
-            const ua = navigator.userAgent;
-            let label = "Android/Standard Device";
-            if (/android/i.test(ua)) {
-                let match = ua.match(/;\s*([^;]+)\s+Build\//) || ua.match(/\(([^)]+)\)/);
-                label = match && match[1] ? "Android: " + match[1].split(';').pop().trim() : "Android Mobile";
-            } else if (/iphone|ipad/i.test(ua)) {
-                label = "Apple iOS Device";
-            } else if (/win/i.test(ua)) {
-                label = "Windows Workstation";
-            }
-            let fingerprint = label + " (" + screen.width + "x" + screen.height + ")";
-            localStorage.setItem("vault_device_fingerprint", fingerprint);
-            return fingerprint;
-        }
+sb.auth.onAuthStateChange((ev, session) => {
+  if (ev === "PASSWORD_RECOVERY") {
+    const p = prompt("Enter your new password (min 10 characters):");
+    if (p && p.length >= 10) sb.auth.updateUser({ password: p }).then(r => alert(r.error ? r.error.message : "Password updated."));
+  }
+  setTimeout(() => boot(session), 0);
+});
 
-        window.onload = async function() {
-            await fetchUsersDb();
-            let savedUser = localStorage.getItem("enterprise_active_user");
-            if (savedUser && CLIENT_DB[savedUser]) {
-                currentUser = savedUser;
-                document.getElementById("login-screen").style.display = "none";
-                document.getElementById("user-display").innerText = "Logged in: " + currentUser;
-                if (CLIENT_DB[currentUser].role === "admin") {
-                    document.getElementById("admin-menu").style.display = "flex";
-                }
-                updateLiveDeviceStatus();
-                switchCategory('videos');
-            }
-        };
+async function boot(session) {
+  if (chan) { sb.removeChannel(chan); chan = null; }
+  if (!session) { me = null; return show("auth"); }
+  const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+  me = data && { ...data, email: session.user.email };
+  if (!me) return show("auth");
+  if (!me.approved) return show("pending");
+  $("who").textContent = me.username + (me.role === "admin" ? " 👑" : "");
+  const tabs = [["videos","🎬 Videos"],["audio","🎵 Audio"],["files","📁 Documents"],["chat","💬 Chat"],["profile","👤 Profile"]];
+  if (me.role === "admin") tabs.push(["admin","👑 Admin"]);
+  $("nav").innerHTML = tabs.map(t => `<button data-t="${t[0]}">${t[1]}</button>`).join("");
+  $("nav").onclick = e => e.target.dataset.t && go(e.target.dataset.t);
+  show("app"); go("videos");
+}
 
-        async function fetchUsersDb() {
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (res.ok) {
-                    const data = await res.json();
-                    usersSha = data.sha;
-                    CLIENT_DB = JSON.parse(atou(data.content));
-                }
-            } catch(e) {}
-        }
+// ---------- Views ----------
+function go(t) {
+  if (chan) { sb.removeChannel(chan); chan = null; }
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  ({ videos: fileView, audio: fileView, files: fileView, chat: chatView, profile: profileView, admin: adminView })[t](t);
+}
 
-        async function saveUsersDb() {
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/users.json`;
-            try {
-                const resGet = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (resGet.ok) {
-                    const dataGet = await resGet.json();
-                    usersSha = dataGet.sha;
-                }
-            } catch(e) {}
+async function fileView(cat) {
+  const v = $("view"); v.innerHTML = "<p class='mut'>Loading…</p>";
+  const { data, error } = await sb.from("files").select("*").eq("category", cat).order("created_at", { ascending: false });
+  if (error) return v.textContent = "Could not load files.";
+  v.innerHTML = data.length ? `<div class="wrap"><table><tr><th>Name</th><th></th></tr>${data.map(f =>
+    `<tr><td>${esc(f.name)}</td><td><button data-p="${esc(f.path)}" data-n="${esc(f.name)}">Download</button></td></tr>`).join("")}</table></div>`
+    : "<p class='mut'>No items yet.</p>";
+  v.onclick = async e => {
+    const p = e.target.dataset && e.target.dataset.p; if (!p) return;
+    const { data: s, error } = await sb.storage.from("vault").createSignedUrl(p, 60, { download: e.target.dataset.n });
+    error ? alert("Download failed.") : window.open(s.signedUrl, "_blank", "noopener");
+  };
+}
 
-            const putRes = await fetch(url, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Update users database", content: utoa(JSON.stringify(CLIENT_DB, null, 2)), sha: usersSha })
-            });
-            if (putRes.ok) {
-                const dataPut = await putRes.json();
-                usersSha = dataPut.content.sha;
-            }
-        }
+async function chatView() {
+  $("view").innerHTML = `<h2>Community Chat</h2><div id="chat"></div>
+    <div class="row" style="margin-top:.6rem"><input id="c-in" maxlength="500" placeholder="Type a message…"><button id="c-send">Send</button></div>`;
+  const add = m => {
+    const d = document.createElement("div"); d.className = "m" + (m.user_id === me.id ? " me" : "");
+    const b = document.createElement("b"); b.textContent = m.username || "user";
+    d.append(b, document.createTextNode(m.body));   // textContent only: no script injection
+    $("chat").append(d); $("chat").scrollTop = 1e9;
+  };
+  const { data } = await sb.from("messages").select("*").order("created_at", { ascending: false }).limit(50);
+  (data || []).reverse().forEach(add);
+  chan = sb.channel("chat").on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, p => add(p.new)).subscribe();
+  const send = async () => {
+    const t = $("c-in").value.trim(); if (!t) return; $("c-in").value = "";
+    const { error } = await sb.from("messages").insert({ body: t }); if (error) alert("Could not send.");
+  };
+  $("c-send").onclick = send; $("c-in").onkeydown = e => e.key === "Enter" && send();
+}
 
-        async function updateLiveDeviceStatus() {
-            if (currentUser && CLIENT_DB[currentUser]) {
-                let currentDev = getAndroidDeviceFingerprint();
-                CLIENT_DB[currentUser].currentActiveDevice = currentDev;
-                CLIENT_DB[currentUser].lastActiveTime = new Date().toLocaleString();
-                await saveUsersDb();
-            }
-        }
+function profileView() {
+  $("view").innerHTML = `<div class="card"><h2>My Profile</h2>
+    <label class="mut">Email</label><input value="${esc(me.email)}" readonly>
+    <label class="mut">Username</label><input id="p-user" value="${esc(me.username)}" maxlength="30">
+    <button id="p-save">Save</button>
+    <h3 style="margin-top:1.2rem">Change password</h3>
+    <input id="p-pass" type="password" placeholder="New password (min 10)" autocomplete="new-password">
+    <button class="s" id="p-pw">Update password</button></div>`;
+  $("p-save").onclick = async () => {
+    const u = $("p-user").value.trim(); if (u.length < 2) return alert("Username too short.");
+    const { error } = await sb.from("profiles").update({ username: u }).eq("id", me.id);
+    if (!error) { me.username = u; $("who").textContent = u + (me.role === "admin" ? " 👑" : ""); } alert(error ? "Failed." : "Saved.");
+  };
+  $("p-pw").onclick = async () => {
+    const p = $("p-pass").value; if (p.length < 10) return alert("Min 10 characters.");
+    const { error } = await sb.auth.updateUser({ password: p }); alert(error ? error.message : "Password updated."); $("p-pass").value = "";
+  };
+}
 
-        async function attemptLogin() {
-            await fetchUsersDb();
-            const user = document.getElementById("username-input").value.trim();
-            const pass = document.getElementById("password-input").value;
-            const err = document.getElementById("error-msg");
-
-            if (!CLIENT_DB[user] || CLIENT_DB[user].passHash !== pass) {
-                err.innerText = "Invalid credentials or username.";
-                return;
-            }
-
-            let currentDev = getAndroidDeviceFingerprint();
-            if (CLIENT_DB[user].role !== "admin" && CLIENT_DB[user].allowedDevices.length > 0 && !CLIENT_DB[user].allowedDevices.includes(currentDev)) {
-                err.innerText = "Device not bound! Please register this device first using the link below.";
-                return;
-            }
-
-            currentUser = user;
-            localStorage.setItem("enterprise_active_user", currentUser);
-            document.getElementById("login-screen").style.display = "none";
-            document.getElementById("user-display").innerText = "Logged in: " + currentUser;
-
-            if (CLIENT_DB[currentUser].role === "admin") {
-                document.getElementById("admin-menu").style.display = "flex";
-            }
-            await updateLiveDeviceStatus();
-            switchCategory('videos');
-        }
-
-        function logout() {
-            localStorage.removeItem("enterprise_active_user");
-            location.reload();
-        }
-
-        async function switchCategory(cat, el) {
-            if (el) {
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                el.classList.add('active');
-            }
-            const container = document.getElementById("dynamic-content");
-
-            if (cat === 'videos' || cat === 'audio' || cat === 'files') {
-                container.innerHTML = `<h2>📁 ${cat.toUpperCase()} Vault</h2><div class="table-responsive"><div id="file-table-view">Loading items...</div></div>`;
-                fetchVaultFiles(cat);
-            } else if (cat === 'chat') {
-                container.innerHTML = `<h2>💬 Global Community Chat</h2>
-                    <div style="display:flex; flex-direction:column; height:400px; border:1px solid var(--border-color); border-radius:14px; background:rgba(17,24,39,0.6); overflow:hidden;">
-                        <div id="chat-msgs" style="flex:1; padding:1rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.5rem;">Loading chat...</div>
-                        <div style="display:flex; padding:0.6rem; background:#111827;">
-                            <input type="text" id="chat-box-input" placeholder="Type message..." style="flex:1; padding:0.6rem; background:#030712; border:1px solid var(--border-color); color:white; border-radius:10px; outline:none;">
-                            <button onclick="sendChatMessage()" style="margin-left:0.5rem; padding:0.6rem 1.2rem; background:var(--accent-blue); color:white; border:none; border-radius:10px; cursor:pointer;">Send</button>
-                        </div>
-                    </div>`;
-                fetchChatMessages();
-            } else if (cat === 'admin') {
-                container.innerHTML = `<h2>👑 Admin Account & Device Management</h2>
-                    <div class="create-user-box">
-                        <h3>Create New Client Account</h3>
-                        <input type="text" id="new-user" placeholder="Username">
-                        <input type="password" id="new-pass" placeholder="Password">
-                        <button onclick="createNewAccount()" style="padding:0.6rem 1.2rem; background:var(--accent-green); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Create Account</button>
-                    </div>
-                    <div class="table-responsive"><div id="admin-table-view">Loading accounts registry...</div></div>`;
-                loadAdminRegistry();
-            }
-        }
-
-        async function fetchVaultFiles(categoryFilter) {
-            const view = document.getElementById("file-table-view");
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/links.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (res.ok) {
-                    const data = await res.json();
-                    let items = JSON.parse(atou(data.content));
-                    let html = `<table><thead><tr><th>Name</th><th>Action</th></tr></thead><tbody>`;
-                    let found = false;
-                    items.forEach(item => {
-                        let isVid = /\.(mp4|webm|mkv)$/i.test(item.name);
-                        let isAud = /\.(mp3|wav|aac)$/i.test(item.name);
-                        let match = (categoryFilter === 'videos' && isVid) || (categoryFilter === 'audio' && isAud) || (categoryFilter === 'files' && !isVid && !isAud);
-                        if (match) {
-                            found = true;
-                            html += `<tr><td>${item.name}</td><td><a href="${item.url}" target="_blank" download style="color:var(--accent-cyan); text-decoration:none; font-weight:bold;">Download ⬇️</a></td></tr>`;
-                        }
-                    });
-                    html += `</tbody></table>`;
-                    view.innerHTML = found ? html : `<p style="color:var(--text-muted);">No items found.</p>`;
-                }
-            } catch(e) { view.innerHTML = "Error loading files."; }
-        }
-
-        async function fetchChatMessages() {
-            const chatContainer = document.getElementById("chat-msgs");
-            if (!chatContainer) return;
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                if (res.ok) {
-                    const data = await res.json();
-                    let messages = JSON.parse(atou(data.content));
-                    chatContainer.innerHTML = messages.map(m => `<div style="background:${m.user === currentUser ? '#2563eb' : '#374151'}; padding:0.5rem 0.8rem; border-radius:8px; max-width:75%; align-self:${m.user === currentUser ? 'flex-end' : 'flex-start'};"><b style="font-size:0.7rem; display:block; opacity:0.8;">${m.user}</b>${m.text}</div>`).join('');
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
-            } catch(e) {}
-        }
-
-        async function sendChatMessage() {
-            const input = document.getElementById("chat-box-input");
-            if (!input.value.trim()) return;
-            const text = input.value; input.value = "";
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_VAULT_REPO}/contents/chat.json`;
-            try {
-                const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
-                let messages = [], sha = "";
-                if (res.ok) {
-                    const data = await res.json();
-                    sha = data.sha;
-                    messages = JSON.parse(atou(data.content));
-                }
-                messages.push({ user: currentUser, text: text });
-                await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Chat Update", content: utoa(JSON.stringify(messages, null, 2)), sha: sha || undefined })
-                });
-                fetchChatMessages();
-            } catch(e) {}
-        }
-
-        async function loadAdminRegistry() {
-            await fetchUsersDb();
-            let view = document.getElementById("admin-table-view");
-            let html = `<table><thead><tr><th>Username</th><th>Assigned Email</th><th>Live Active Device</th><th>Bound Devices Count</th><th>Action</th></tr></thead><tbody>`;
-            for (let [u, data] of Object.entries(CLIENT_DB)) {
-                let activeDev = data.currentActiveDevice ? `<span class="badge-device">📱 ${data.currentActiveDevice}</span>` : '<span style="color:var(--text-muted);">Offline</span>';
-                html += `<tr>
-                    <td><b>${u}</b> ${data.role === 'admin' ? '👑' : ''}</td>
-                    <td>${data.email || 'N/A'}</td>
-                    <td>${activeDev}<br><small style="color:var(--text-muted);">${data.lastActiveTime || ''}</small></td>
-                    <td>${(data.allowedDevices || []).length} device(s)</td>
-                    <td>
-                        ${data.role !== 'admin' ? `<button onclick="adminDelete('${u}')" style="background:var(--accent-red); color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Delete Account 🗑️</button>` : 'N/A'}
-                    </td>
-                </tr>`;
-            }
-            html += `</tbody></table>`;
-            view.innerHTML = html;
-        }
-
-        async function createNewAccount() {
-            let u = document.getElementById("new-user").value.trim();
-            let p = document.getElementById("new-pass").value;
-            if(!u || !p) return alert("Enter username and password!");
-            await fetchUsersDb();
-            if(CLIENT_DB[u]) return alert("Username already exists!");
-
-            CLIENT_DB[u] = {
-                passHash: p,
-                role: "client",
-                vip: false,
-                allowedDevices: [],
-                approved: true,
-                email: u + "@client.com",
-                adminMsg: "Admin created account",
-                currentActiveDevice: "Not Bound",
-                lastActiveTime: "Never"
-            };
-            await saveUsersDb();
-            alert(`Account ${u} created successfully!`);
-            loadAdminRegistry();
-        }
-
-        async function adminDelete(u) {
-            if(confirm(`Delete account ${u}?`)) {
-                delete CLIENT_DB[u];
-                await saveUsersDb();
-                loadAdminRegistry();
-            }
-        }
-    </script>
+async function adminView() {
+  const v = $("view");
+  v.innerHTML = `<h2>Admin</h2>
+    <div class="card" style="max-width:none;margin-bottom:1rem"><h3>Upload file</h3>
+      <div class="row"><input id="u-file" type="file"><select id="u-cat" style="width:auto"><option value="videos">Videos</option><option value="audio">Audio</option><option value="files">Documents</option></select><button id="u-go">Upload</button></div>
+      <div class="mut" id="u-st"></div></div>
+    <div class="card" style="max-width:none;margin-bottom:1rem"><h3>Accounts</h3><div class="wrap" id="acc">Loading…</div></div>
+    <div class="card" style="max-width:none"><h3>Files</h3><div class="wrap" id="fl">Loading…</div></div>`;
+  $("u-go").onclick = async () => {
+    const f = $("u-file").files[0]; if (!f) return;
+    const path = crypto.randomUUID() + "-" + f.name.replace(/[^\w.\-]/g, "_");
+    $("u-st").textContent = "Uploading…";
+    const up = await sb.storage.from("vault").upload(path, f);
+    if (up.error) return $("u-st").textContent = "Upload failed: " + up.error.message;
+    const ins = await sb.from("files").insert({ name: f.name, category: $("u-cat").value, path });
+    $("u-st").textContent = ins.error ? "Saved file but failed to record it." : "Uploaded ✔"; adminLists();
+  };
+  adminLists();
+}
+async function adminLists() {
+  const [pr, fl] = await Promise.all([sb.from("profiles").select("*").order("created_at"), sb.from("files").select("*").order("created_at", { ascending: false })]);
+  $("acc").innerHTML = `<table><tr><th>User</th><th>Role</th><th>Status</th><th></th></tr>${(pr.data || []).map(u => `<tr><td>${esc(u.username)}</td><td>${esc(u.role)}</td>
+    <td>${u.approved ? "Approved" : "Pending"}</td><td>${u.role === "admin" ? "" : `<button class="${u.approved ? "d" : "g"}" data-u="${u.id}" data-v="${!u.approved}">${u.approved ? "Revoke" : "Approve"}</button>`}</td></tr>`).join("")}</table>`;
+  $("fl").innerHTML = (fl.data || []).length ? `<table><tr><th>Name</th><th>Type</th><th></th></tr>${fl.data.map(f => `<tr><td>${esc(f.name)}</td><td>${esc(f.category)}</td><td><button class="d" data-f="${f.id}" data-p="${esc(f.path)}">Delete</button></td></tr>`).join("")}</table>` : "<span class='mut'>No files.</span>";
+  $("acc").onclick = async e => { const d = e.target.dataset; if (!d.u) return;
+    const { error } = await sb.rpc("admin_set_approved", { uid: d.u, val: d.v === "true" }); if (error) alert(error.message); adminLists(); };
+  $("fl").onclick = async e => { const d = e.target.dataset; if (!d.f || !confirm("Delete this file?")) return;
+    await sb.storage.from("vault").remove([d.p]); await sb.from("files").delete().eq("id", d.f); adminLists(); };
+}
+</script>
 </body>
 </html>
