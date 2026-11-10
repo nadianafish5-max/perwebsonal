@@ -57,6 +57,10 @@ tr.f:hover{background:var(--hv)}
 #mc{max-width:760px;max-height:92vh;overflow:auto}
 .pv{margin:.8rem 0;border-radius:12px;overflow:hidden;background:#000;min-height:60px;display:grid;place-items:center;color:#fff}
 .pv video,.pv img,.pv iframe{width:100%;max-height:60vh;border:0;display:block;object-fit:contain}.pv iframe{height:60vh}.pv audio{width:100%;margin:1rem}
+.msg{display:flex;gap:.5rem;align-items:flex-end;max-width:88%}.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.av.sm{width:30px;height:30px;font-size:.8rem;cursor:default;flex-shrink:0}.msg .m{max-width:100%;position:relative;padding-right:1.4rem}
+.mx{position:absolute;top:3px;right:7px;cursor:pointer;opacity:.45;font-size:.7rem}.mx:hover{opacity:1}
+.bdg.b-admin{background:#f59e0b;color:#111}.bdg.b-mod{background:#10b981;color:#fff}.bdg.b-vip{background:#8b5cf6;color:#fff}
 </style>
 </head>
 <body>
@@ -110,6 +114,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const ua = navigator.userAgent;
 const LABEL = (/Edg/.test(ua)?"Edge":/OPR/.test(ua)?"Opera":/Firefox/.test(ua)?"Firefox":/Chrome/.test(ua)?"Chrome":/Safari/.test(ua)?"Safari":"Browser") + " on " +
   (/Android/.test(ua)?"Android":/iPhone|iPad/.test(ua)?"iOS":/Windows/.test(ua)?"Windows":/Mac/.test(ua)?"macOS":/Linux/.test(ua)?"Linux":"Unknown") + " (" + screen.width + "x" + screen.height + ")";
+const isStaff = () => me && me.role !== "client";
 const when = t => new Date(t).toLocaleString();
 let me = null, poll = null, beat = null, signup = false, uid = null, cache = [];
 
@@ -167,9 +172,9 @@ async function boot(s) {
   log("login", LABEL);
   const ini = (me.username[0] || "?").toUpperCase();
   $("avb").textContent = ini; $("pm-av").textContent = ini; $("pm-n").textContent = me.username;
-  $("pm-r").textContent = me.role === "admin" ? "Admin" : me.vip ? "⭐ VIP" : "Client"; $("pm-e").textContent = me.email;
+  $("pm-r").textContent = me.role === "admin" ? "👑 Admin" : me.role === "moderator" ? "🛡️ Moderator" : me.vip ? "⭐ VIP" : "Client"; $("pm-e").textContent = me.email;
   const tabs = [["all","🏠 My Drive"],["videos","🎬 Videos"],["images","🖼️ Photos"],["audio","🎵 Audio"],["files","📄 Documents"],["chat","💬 Chat"]];
-  if (me.role === "admin") tabs.push(["admin","👑 Admin"]);
+  if (isStaff()) tabs.push(["admin", me.role === "admin" ? "👑 Admin" : "🛡️ Moderation"]);
   $("side").innerHTML = tabs.map(t => `<button class="nb" data-t="${t[0]}">${t[1]}</button>`).join("");
   show("app"); go("all");
 }
@@ -221,27 +226,27 @@ function embedOf(u) {
 }
 async function openFile(f) {
   if (!f) return;
-  const admin = me.role === "admin", canDl = f.category === "files" || admin || me.vip;
+  const admin = isStaff(), canDl = f.category === "files";
   $("modal").classList.remove("hide");
   $("mc").innerHTML = `<div class="row" style="justify-content:space-between"><h2 style="margin:0">${ICON[f.category]} ${esc(f.name)}</h2><button class="s" id="mx">✕</button></div>
     <div class="mu">${CATS[f.category]} · ${fsize(f.size) || "—"} · ${when(f.created_at)}${f.vip_only ? " · ⭐ VIP only" : ""}</div>
     <div class="pv" id="pv">Loading preview…</div>
     <p style="white-space:pre-wrap">${esc(f.description || "No description provided.")}</p>
-    <div class="row"><button id="dl">${canDl ? "⬇ Download" : "⭐ Download is for VIP"}</button>${admin ? `<button class="d" id="rmf">Delete</button>` : ""}</div>`;
+    <div class="row">${canDl ? `<button id="dl">⬇ Download</button>` : ""}${admin ? `<button class="d" id="rmf">Delete</button>` : ""}</div>`;
   $("mx").onclick = closeModal;
   const url = await fileUrl(f, 3600), pv = $("pv"); if (!pv) return; pv.textContent = "";
   const mk = (tag, set) => { const el = document.createElement(tag); set(el); el.src = url; pv.append(el); };
   const emb = f.ext_url && embedOf(f.ext_url);
-  if (emb) { const fr = document.createElement("iframe"); fr.src = emb.src; fr.allow = "autoplay; fullscreen; picture-in-picture"; fr.allowFullscreen = true; fr.referrerPolicy = "no-referrer"; fr.style.height = "min(56vw,60vh)"; pv.append(fr); }
+  if (emb) { const fr = document.createElement("iframe"); fr.src = emb.src; fr.allow = "autoplay; fullscreen; picture-in-picture"; fr.allowFullscreen = true; fr.referrerPolicy = "strict-origin-when-cross-origin"; fr.style.height = "min(56vw,60vh)"; pv.append(fr); }
   else if (!url) pv.textContent = "Preview unavailable.";
   else if (f.category === "videos") mk("video", v => { v.controls = true; v.playsInline = true; v.preload = "metadata"; if (!canDl) v.setAttribute("controlsList", "nodownload"); });
   else if (f.category === "audio") mk("audio", a => { a.controls = true; a.preload = "metadata"; });
   else if (f.category === "images") mk("img", i => { i.alt = f.name; });
   else if (/\.pdf$/i.test(f.path || f.ext_url || f.name)) mk("iframe", () => {});
   else pv.textContent = "No preview for this file type. Use Download.";
-  if (emb && emb.kind === "youtube") $("dl").classList.add("hide");
+  if (emb) { const o = document.createElement("button"); o.className = "s"; o.textContent = "↗ Open in new tab"; o.onclick = () => window.open(f.ext_url, "_blank", "noopener"); $("mc").lastElementChild.append(o); }
   log("view", f.name);
-  $("dl").onclick = async () => {
+  if ($("dl")) $("dl").onclick = async () => {
     if (!canDl) return alert("Downloads of media are available to VIP accounts. Streaming is free for everyone.");
     const u = await fileUrl(f, 60, f.name); if (u) { log("download", f.name); window.open(u, "_blank", "noopener"); }
   };
@@ -253,27 +258,36 @@ async function openFile(f) {
 }
 
 async function chatView() {
-  $("view").innerHTML = `<h2>💬 Chat</h2><div id="chat"></div><div class="row" style="margin-top:.7rem"><input id="c-in" maxlength="500" placeholder="Type a message…"><button id="c-send">Send</button></div>`;
-  let last = 0;
+  $("view").innerHTML = `<h2>💬 Chat</h2><div id="chat"></div><div class="mu" id="c-err" style="min-height:1.3em"></div>
+    <div class="row"><input id="c-in" maxlength="500" placeholder="Type a message…" autocomplete="off"><button id="c-send">Send</button></div>`;
+  let last = 0; const seen = new Set();
   const add = m => {
-    const d = document.createElement("div"); d.className = "m" + (m.user_id === me.id ? " me" : "");
-    const b = document.createElement("b"); b.textContent = m.username || "user";
+    if (seen.has(m.id)) return; seen.add(m.id);
+    const mine = m.user_id === me.id, d = document.createElement("div"); d.className = "msg" + (mine ? " me" : "");
+    const av = document.createElement("div"); av.className = "av sm"; av.textContent = (m.username || "?")[0].toUpperCase();
+    const bub = document.createElement("div"); bub.className = "m" + (mine ? " me" : "");
+    const hd = document.createElement("b"); hd.textContent = m.username;
+    const bd = m.role === "admin" ? ["👑 Admin", "b-admin"] : m.role === "moderator" ? ["🛡️ Mod", "b-mod"] : m.vip ? ["⭐ VIP", "b-vip"] : null;
+    if (bd) { const sp = document.createElement("span"); sp.className = "bdg " + bd[1]; sp.textContent = bd[0]; hd.append(" ", sp); }
+    const tx = document.createElement("div"); tx.textContent = m.body;
     const t = document.createElement("i"); t.textContent = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    d.append(b, document.createTextNode(m.body), t); $("chat").append(d);
+    bub.append(hd, tx, t);
+    if (isStaff()) { const x = document.createElement("span"); x.className = "mx"; x.textContent = "✕"; x.title = "Delete";
+      x.onclick = async () => { if (confirm("Delete this message?")) { await sb.rpc("chat_delete", { p_id: m.id }); d.remove(); } }; bub.append(x); }
+    d.append(av, bub); $("chat").append(d);
   };
-  const pull = async first => {
-    let q = sb.from("messages").select("*");
-    q = first ? q.order("id", { ascending: false }).limit(50) : q.gt("id", last).order("id").limit(100);
-    const { data } = await q; if (!data || !data.length) return;
-    (first ? data.reverse() : data).forEach(m => { if (m.id > last) { last = m.id; add(m); } });
-    $("chat").scrollTop = 1e9;
+  const pull = async () => {
+    const { data, error } = await sb.rpc("chat_list", { p_after: last });
+    if (error) { if ($("c-err")) $("c-err").textContent = "Chat error: " + error.message; return; }
+    if (!$("c-err")) return; $("c-err").textContent = "";
+    if (data && data.length) { data.forEach(m => { add(m); if (m.id > last) last = m.id; }); $("chat").scrollTop = 1e9; }
   };
-  await pull(true); poll = setInterval(() => pull(false), 3000);
+  await pull(); poll = setInterval(pull, 3000);
   const send = async () => {
     const t = $("c-in").value.trim(); if (!t) return;
-    const { error } = await sb.from("messages").insert({ body: t });
-    if (error) return alert("Could not send: " + error.message);
-    $("c-in").value = ""; pull(false);
+    const { error } = await sb.rpc("chat_send", { p_body: t });
+    if (error) return $("c-err").textContent = "Could not send: " + error.message;
+    $("c-in").value = ""; pull();
   };
   $("c-send").onclick = send; $("c-in").onkeydown = e => e.key === "Enter" && send();
 }
@@ -323,6 +337,7 @@ async function adminView() {
   $("view").onclick = async e => {
     const d = e.target.dataset; if (!d) return; let r;
     if (d.u) r = await sb.rpc("admin_set_approved", { uid: d.u, val: d.v === "true" });
+    else if (d.role) r = await sb.rpc("admin_set_role", { uid: d.role, new_role: d.v });
     else if (d.vip) r = await sb.rpc("admin_set_vip", { uid: d.vip, val: d.v === "true" });
     else if (d.dv) r = await sb.rpc("admin_set_device", { did: d.dv, val: d.v === "true" });
     else if (d.rm) { if (!confirm("Remove this device?")) return; r = await sb.rpc("admin_remove_device", { did: d.rm }); } else return;
@@ -332,11 +347,11 @@ async function adminView() {
 }
 async function refresh() {
   if (!$("acc")) return;
-  const [p, d, a] = await Promise.all([sb.from("profiles").select("*").order("created_at"),
+  const [p, d, a] = await Promise.all([sb.from("profiles").select("*").order("approved").order("created_at"),
     sb.from("devices").select("*").order("last_seen", { ascending: false }), sb.from("activity").select("*").order("id", { ascending: false }).limit(100)]);
   const name = Object.fromEntries((p.data || []).map(u => [u.id, u.username]));
   $("acc").innerHTML = `<table><tr><th>User</th><th>Role</th><th>Status</th><th></th></tr>${(p.data || []).map(u => `<tr><td>${esc(u.username)}</td><td>${esc(u.role)}${u.vip ? " ⭐" : ""}</td><td><span class="st ${u.approved ? "ok" : "no"}">${u.approved ? "Approved" : "Pending"}</span></td>
-    <td>${u.role === "admin" ? "" : `<button class="${u.approved ? "d" : "g"}" data-u="${u.id}" data-v="${!u.approved}">${u.approved ? "Revoke" : "Approve"}</button> <button class="s" data-vip="${u.id}" data-v="${!u.vip}">${u.vip ? "Remove VIP" : "Make VIP"}</button>`}</td></tr>`).join("")}</table>`;
+    <td>${(u.role === "admin" || (u.role === "moderator" && me.role !== "admin")) ? "" : `<button class="${u.approved ? "d" : "g"}" data-u="${u.id}" data-v="${!u.approved}">${u.approved ? "Revoke" : "Approve"}</button> <button class="s" data-vip="${u.id}" data-v="${!u.vip}">${u.vip ? "Remove VIP" : "Make VIP"}</button>${me.role === "admin" ? ` <button class="s" data-role="${u.id}" data-v="${u.role === "moderator" ? "client" : "moderator"}">${u.role === "moderator" ? "Remove mod" : "Make mod"}</button>` : ""}`}</td></tr>`).join("")}</table>`;
   $("dev").innerHTML = `<table><tr><th>User</th><th>Device</th><th>IP</th><th>Last seen</th><th>Status</th><th></th></tr>${(d.data || []).map(x => {
     const on = Date.now() - new Date(x.last_seen) < 120000;
     return `<tr><td>${esc(name[x.user_id])}</td><td>${esc(x.label)}</td><td>${esc(x.ip)}</td><td>${on ? "<span class='st ok'>● online</span>" : when(x.last_seen)}</td><td><span class="st ${x.approved ? "ok" : "no"}">${x.approved ? "Approved" : "Pending"}</span></td>
