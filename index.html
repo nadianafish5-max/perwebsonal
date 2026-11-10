@@ -89,7 +89,7 @@ $("a-go").onclick = async () => {
   if (signup) {
     if (password.length < 10) return say("Password must be at least 10 characters.");
     if (username.length < 2) return say("Choose a username (2+ characters).");
-    const { error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
+    const { error } = await sb.auth.signUp({ email, password, options: { data: { username }, emailRedirectTo: location.origin + location.pathname } });
     return error ? say(error.message) : say("Account created. Check your email if confirmation is required, then sign in.", true);
   }
   const { error } = await sb.auth.signInWithPassword({ email, password });
