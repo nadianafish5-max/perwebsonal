@@ -6,37 +6,56 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src https://*.supabase.co wss://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <title>Secure Client Vault</title>
 <style>
-:root{--bg:#0b1020;--card:#131a2e;--line:#26304d;--tx:#e8ecf6;--mut:#8f9bb8;--ac:#4f8cff;--ok:#22c55e;--bad:#ef4444}
+:root{--bg:#0a0f1f;--sf:rgba(20,28,50,.82);--ln:rgba(120,140,190,.2);--tx:#e9eefb;--mu:#93a0bf;--ac:#5b9bff;--ac2:#8b5cf6;--ok:#22c55e;--bad:#ef4444;--hv:rgba(120,150,255,.12);--bl1:rgba(91,155,255,.28);--bl2:rgba(139,92,246,.24);--bl3:rgba(20,184,166,.18)}
+[data-theme=light]{--bg:#f3f6fd;--sf:rgba(255,255,255,.86);--ln:rgba(60,80,130,.16);--tx:#1b2440;--mu:#5d6a8c;--ac:#2563eb;--hv:rgba(37,99,235,.09);--bl1:rgba(96,165,250,.38);--bl2:rgba(196,181,253,.4);--bl3:rgba(110,231,183,.32)}
 *{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 body{margin:0;background:var(--bg);color:var(--tx);min-height:100vh}
-.hide{display:none!important}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(600px 400px at 10% 5%,var(--bl1),transparent),radial-gradient(700px 500px at 95% 15%,var(--bl2),transparent),radial-gradient(600px 500px at 50% 110%,var(--bl3),transparent)}
+.hide{display:none!important}.mu{color:var(--mu);font-size:.85rem}
 .center{min-height:100vh;display:grid;place-items:center;padding:1rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.5rem;width:100%;max-width:400px}
-h1,h2,h3{margin:.2rem 0 .8rem}
-input,select{width:100%;padding:.7rem;margin:.3rem 0 .7rem;background:#0b1020;border:1px solid var(--line);border-radius:9px;color:var(--tx);font-size:.9rem}
-button{padding:.65rem 1rem;border:0;border-radius:9px;background:var(--ac);color:#fff;font-weight:600;cursor:pointer}
-button.s{background:#2a3555}button.d{background:var(--bad)}button.g{background:var(--ok)}
-.full{width:100%}.mut{color:var(--mut);font-size:.85rem}.lnk{color:var(--ac);cursor:pointer;font-size:.85rem;display:block;margin-top:.8rem;text-align:center}
+.card{background:var(--sf);backdrop-filter:blur(14px);border:1px solid var(--ln);border-radius:16px;padding:1.4rem;width:100%;max-width:410px;box-shadow:0 10px 40px rgba(0,0,0,.18)}
+.card.w{max-width:none;margin-bottom:1rem}
+h1,h2,h3{margin:.2rem 0 .7rem}
+input,select{width:100%;padding:.7rem .8rem;margin:.3rem 0 .7rem;background:transparent;border:1px solid var(--ln);border-radius:10px;color:var(--tx);font-size:.9rem;outline:none}
+input:focus{border-color:var(--ac)}option{color:#111}
+button{padding:.6rem 1rem;border:0;border-radius:999px;background:var(--ac);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem}
+button.s{background:var(--hv);color:var(--tx)}button.d{background:var(--bad)}button.g{background:var(--ok)}button.i{background:transparent;color:var(--tx);padding:.45rem .6rem;font-size:1.1rem}
+.full{width:100%}.lnk{color:var(--ac);cursor:pointer;font-size:.85rem;display:block;margin-top:.8rem;text-align:center}
 #msg{margin-top:.6rem;font-size:.85rem;min-height:1.2em}
-header{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1.2rem;border-bottom:1px solid var(--line);background:var(--card)}
-nav{display:flex;gap:.4rem;padding:.7rem 1.2rem;flex-wrap:wrap;border-bottom:1px solid var(--line)}
-nav button{background:transparent;color:var(--mut)}nav button.on{background:#1b2848;color:var(--ac)}
-main{max-width:900px;margin:1.2rem auto;padding:0 1rem}
-table{width:100%;border-collapse:collapse;font-size:.88rem}
-th,td{padding:.65rem;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mut);font-size:.75rem;text-transform:uppercase}
+/* app shell */
+#top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:1rem;padding:.6rem 1rem;background:var(--sf);backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+#top .logo{font-weight:700;font-size:1.1rem;min-width:150px}
+#q{max-width:560px;margin:0;flex:1;border-radius:999px;background:var(--hv);border-color:transparent}
+.sp{flex:1}
+.av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;display:grid;place-items:center;font-weight:700;cursor:pointer;padding:0}
+#pm{position:absolute;right:1rem;top:58px;width:320px;background:var(--sf);backdrop-filter:blur(18px);border:1px solid var(--ln);border-radius:16px;padding:1rem;box-shadow:0 18px 50px rgba(0,0,0,.35);z-index:9}
+#pm .hd{display:flex;gap:.8rem;align-items:center;padding-bottom:.8rem;border-bottom:1px solid var(--ln)}
+#pm .av{width:54px;height:54px;font-size:1.4rem;cursor:default}
+.bdg{font-size:.65rem;background:var(--hv);border-radius:5px;padding:2px 6px;margin-left:4px;vertical-align:middle}
+.mi{display:flex;gap:.7rem;align-items:center;padding:.65rem .5rem;border-radius:9px;cursor:pointer;font-size:.9rem}.mi:hover{background:var(--hv)}
+#shell{display:flex;min-height:calc(100vh - 59px)}
+#side{width:230px;padding:1rem .7rem;border-right:1px solid var(--ln);flex-shrink:0}
+#side .nb{display:flex;width:100%;text-align:left;gap:.7rem;background:transparent;color:var(--tx);border-radius:0 999px 999px 0;padding:.7rem 1rem;margin:2px 0;font-weight:500}
+#side .nb.on{background:var(--hv);color:var(--ac)}#side .nb:hover{background:var(--hv)}
+main{flex:1;padding:1.2rem 1.5rem;min-width:0}
 .wrap{overflow-x:auto}
-#chat{height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:.4rem;background:#0b1020;border:1px solid var(--line);border-radius:10px;padding:.8rem}
-.m{background:#1d2745;padding:.45rem .7rem;border-radius:8px;max-width:78%;word-break:break-word}.m.me{background:#27479b;align-self:flex-end}
-.m b{display:block;font-size:.7rem;opacity:.75}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{padding:.7rem .6rem;border-bottom:1px solid var(--ln);text-align:left;white-space:nowrap}th{color:var(--mu);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+tr.f:hover{background:var(--hv)}
+.st{padding:2px 8px;border-radius:999px;font-size:.72rem;background:var(--hv)}.st.ok{color:var(--ok)}.st.no{color:#f59e0b}
+#chat{height:min(60vh,460px);overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;background:var(--hv);border:1px solid var(--ln);border-radius:14px;padding:1rem}
+.m{background:var(--sf);border:1px solid var(--ln);padding:.5rem .8rem;border-radius:14px 14px 14px 4px;max-width:75%;word-break:break-word}
+.m.me{align-self:flex-end;background:var(--ac);color:#fff;border-color:transparent;border-radius:14px 14px 4px 14px}
+.m b{display:block;font-size:.7rem;opacity:.75}.m i{display:block;font-size:.62rem;opacity:.6;font-style:normal;text-align:right}
 .row{display:flex;gap:.5rem}.row input{margin:0}
+@media(max-width:800px){#shell{flex-direction:column}#side{width:auto;display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid var(--ln);padding:.4rem}#side .nb{width:auto;border-radius:999px;white-space:nowrap}#top .logo{min-width:0}#pm{width:calc(100vw - 2rem)}}
 </style>
 </head>
 <body>
 
-<!-- Auth -->
 <div id="auth" class="center hide"><div class="card">
   <h1>🔐 Client Vault</h1>
-  <p class="mut" id="auth-sub">Sign in to continue</p>
+  <p class="mu" id="auth-sub">Sign in to continue</p>
   <input id="a-user" class="hide" placeholder="Username" maxlength="30" autocomplete="username">
   <input id="a-email" type="email" placeholder="Email" autocomplete="email">
   <input id="a-pass" type="password" placeholder="Password (min 10 characters)" autocomplete="current-password">
@@ -46,42 +65,61 @@ th,td{padding:.65rem;border-bottom:1px solid var(--line);text-align:left}th{colo
   <div id="msg"></div>
 </div></div>
 
-<!-- Pending approval -->
 <div id="pending" class="center hide"><div class="card" style="text-align:center">
-  <h2>⏳ Awaiting approval</h2>
-  <p class="mut">Your account was created. The administrator must approve it before you can access the vault.</p>
-  <button class="s" onclick="sb.auth.signOut()">Sign out</button>
+  <h2 id="pd-t"></h2><p class="mu" id="pd-p"></p>
+  <button onclick="location.reload()">Check again</button> <button class="s" onclick="sb.auth.signOut()">Sign out</button>
 </div></div>
 
-<!-- App -->
 <div id="app" class="hide">
-  <header><b>🔐 Client Vault</b><span><span class="mut" id="who"></span> <button class="s" onclick="sb.auth.signOut()">Sign out</button></span></header>
-  <nav id="nav"></nav>
-  <main id="view"></main>
+  <div id="top">
+    <span class="logo">🔐 Client Vault</span>
+    <input id="q" placeholder="🔍 Search files" autocomplete="off">
+    <span class="sp"></span>
+    <button class="i" id="th" title="Light / dark">🌓</button>
+    <button class="av" id="avb"></button>
+  </div>
+  <div id="pm" class="hide">
+    <div class="hd"><div class="av" id="pm-av"></div><div><b id="pm-n"></b><span class="bdg" id="pm-r"></span><div class="mu" id="pm-e" style="word-break:break-all"></div></div></div>
+    <div style="padding-top:.5rem">
+      <div class="mi" data-t="profile">👤 My profile &amp; devices</div>
+      <div class="mi" id="pm-th">🌓 Switch light / dark</div>
+      <div class="mi" onclick="sb.auth.signOut()">🚪 Sign out</div>
+    </div>
+  </div>
+  <div id="shell"><div id="side"></div><main id="view"></main></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-// 1) Paste your values from Supabase -> Project Settings -> API. Use the "anon / public" key ONLY. Never the service_role key.
 const SUPABASE_URL = "https://ivsevllqlzgoopgxecup.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_5V2h-PYn7rjY_Ax186rZkw_8ZY4sfSw";
+const SUPABASE_ANON_KEY = "sb_publishable_5V2h-PYn7rjY_Ax186rZkw_8ZY4sfSw";   // sb_publishable_... (never the secret key)
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const DID = localStorage.vault_device || (localStorage.vault_device = crypto.randomUUID());
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { "x-device-id": DID } } });
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let me = null, chan = null, signup = false;
+const ua = navigator.userAgent;
+const LABEL = (/Edg/.test(ua)?"Edge":/OPR/.test(ua)?"Opera":/Firefox/.test(ua)?"Firefox":/Chrome/.test(ua)?"Chrome":/Safari/.test(ua)?"Safari":"Browser") + " on " +
+  (/Android/.test(ua)?"Android":/iPhone|iPad/.test(ua)?"iOS":/Windows/.test(ua)?"Windows":/Mac/.test(ua)?"macOS":/Linux/.test(ua)?"Linux":"Unknown") + " (" + screen.width + "x" + screen.height + ")";
+const when = t => new Date(t).toLocaleString();
+let me = null, poll = null, beat = null, signup = false, uid = null, cache = [];
+
+/* theme */
+function theme(t) { document.documentElement.dataset.theme = t; localStorage.vault_theme = t; }
+theme(localStorage.vault_theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+const flip = () => theme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+$("th").onclick = flip; $("pm-th").onclick = flip;
 
 function say(t, ok) { const m = $("msg"); m.textContent = t; m.style.color = ok ? "var(--ok)" : "var(--bad)"; }
 function show(id) { ["auth","pending","app"].forEach(x => $(x).classList.toggle("hide", x !== id)); }
+const log = (a, d) => sb.rpc("log_activity", { p_action: a, p_detail: d || null });
 
-// ---------- Auth ----------
+/* ---------- auth ---------- */
 $("a-toggle").onclick = () => {
-  signup = !signup;
-  $("a-user").classList.toggle("hide", !signup);
+  signup = !signup; $("a-user").classList.toggle("hide", !signup);
   $("a-go").textContent = signup ? "Request access" : "Sign in";
   $("a-toggle").textContent = signup ? "Already have an account? Sign in" : "No account? Request access";
-  $("auth-sub").textContent = signup ? "Create your account (admin approval required)" : "Sign in to continue";
-  $("a-pass").autocomplete = signup ? "new-password" : "current-password"; say("");
+  $("auth-sub").textContent = signup ? "Create your account (admin approval required)" : "Sign in to continue"; say("");
 };
 $("a-go").onclick = async () => {
   const email = $("a-email").value.trim(), password = $("a-pass").value, username = $("a-user").value.trim();
@@ -90,128 +128,153 @@ $("a-go").onclick = async () => {
     if (password.length < 10) return say("Password must be at least 10 characters.");
     if (username.length < 2) return say("Choose a username (2+ characters).");
     const { error } = await sb.auth.signUp({ email, password, options: { data: { username }, emailRedirectTo: location.origin + location.pathname } });
-    return error ? say(error.message) : say("Account created. Check your email if confirmation is required, then sign in.", true);
+    return error ? say(error.message) : say("Account created. Confirm your email, then sign in.", true);
   }
   const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) say("Invalid email or password.");
 };
 $("a-reset").onclick = async () => {
-  const email = $("a-email").value.trim();
-  if (!email) return say("Enter your email first.");
+  const email = $("a-email").value.trim(); if (!email) return say("Enter your email first.");
   await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
   say("If that email exists, a reset link was sent.", true);
 };
-
-sb.auth.onAuthStateChange((ev, session) => {
-  if (ev === "PASSWORD_RECOVERY") {
-    const p = prompt("Enter your new password (min 10 characters):");
-    if (p && p.length >= 10) sb.auth.updateUser({ password: p }).then(r => alert(r.error ? r.error.message : "Password updated."));
-  }
-  setTimeout(() => boot(session), 0);
+sb.auth.onAuthStateChange((ev, s) => {
+  if (ev === "TOKEN_REFRESHED") return;
+  if (ev === "PASSWORD_RECOVERY") { const p = prompt("New password (min 10 characters):"); if (p && p.length >= 10) sb.auth.updateUser({ password: p }).then(r => alert(r.error ? r.error.message : "Password updated.")); }
+  const id = s && s.user.id; if (ev !== "SIGNED_OUT" && id && id === uid && me) return;
+  uid = id || null; setTimeout(() => boot(s), 0);
 });
 
-async function boot(session) {
-  if (chan) { sb.removeChannel(chan); chan = null; }
-  if (!session) { me = null; return show("auth"); }
-  const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
-  me = data && { ...data, email: session.user.email };
-  if (!me) return show("auth");
-  if (!me.approved) return show("pending");
-  $("who").textContent = me.username + (me.role === "admin" ? " 👑" : "");
-  const tabs = [["videos","🎬 Videos"],["audio","🎵 Audio"],["files","📁 Documents"],["chat","💬 Chat"],["profile","👤 Profile"]];
+async function boot(s) {
+  clearInterval(poll); clearInterval(beat);
+  if (!s) { me = null; return show("auth"); }
+  const { data } = await sb.from("profiles").select("*").eq("id", s.user.id).single();
+  if (!data) return show("auth");
+  me = { ...data, email: s.user.email };
+  if (!me.approved) { $("pd-t").textContent = "⏳ Awaiting approval"; $("pd-p").textContent = "The administrator must approve your account first."; return show("pending"); }
+  const { data: st } = await sb.rpc("register_device", { p_device: DID, p_label: LABEL });
+  if (st !== "approved") { $("pd-t").textContent = "📱 New device detected"; $("pd-p").textContent = "This device (" + LABEL + ") must be approved by the administrator before you can sign in from it."; return show("pending"); }
+  beat = setInterval(() => sb.rpc("register_device", { p_device: DID, p_label: LABEL }), 60000);
+  log("login", LABEL);
+  const ini = (me.username[0] || "?").toUpperCase();
+  $("avb").textContent = ini; $("pm-av").textContent = ini; $("pm-n").textContent = me.username;
+  $("pm-r").textContent = me.role === "admin" ? "Admin" : "Client"; $("pm-e").textContent = me.email;
+  const tabs = [["all","🏠 My Drive"],["videos","🎬 Videos"],["audio","🎵 Audio"],["files","📄 Documents"],["chat","💬 Chat"]];
   if (me.role === "admin") tabs.push(["admin","👑 Admin"]);
-  $("nav").innerHTML = tabs.map(t => `<button data-t="${t[0]}">${t[1]}</button>`).join("");
-  $("nav").onclick = e => e.target.dataset.t && go(e.target.dataset.t);
-  show("app"); go("videos");
+  $("side").innerHTML = tabs.map(t => `<button class="nb" data-t="${t[0]}">${t[1]}</button>`).join("");
+  show("app"); go("all");
 }
+$("side").onclick = e => e.target.dataset.t && go(e.target.dataset.t);
+$("avb").onclick = e => { e.stopPropagation(); $("pm").classList.toggle("hide"); };
+$("pm").onclick = e => { const t = e.target.closest("[data-t]"); if (t) go(t.dataset.t); };
+document.addEventListener("click", e => { if (!$("pm").contains(e.target)) $("pm").classList.add("hide"); });
+$("q").oninput = () => { if (cache.length || $("view").dataset.v === "files") drawFiles(); };
 
-// ---------- Views ----------
+/* ---------- views ---------- */
 function go(t) {
-  if (chan) { sb.removeChannel(chan); chan = null; }
-  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
-  ({ videos: fileView, audio: fileView, files: fileView, chat: chatView, profile: profileView, admin: adminView })[t](t);
+  clearInterval(poll); $("pm").classList.add("hide"); $("q").value = "";
+  document.querySelectorAll("#side .nb").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  $("view").dataset.v = ["all","videos","audio","files"].includes(t) ? "files" : t;
+  ({ all: fileView, videos: fileView, audio: fileView, files: fileView, chat: chatView, profile: profileView, admin: adminView })[t](t);
 }
-
+const ICON = { videos: "🎬", audio: "🎵", files: "📄" };
 async function fileView(cat) {
-  const v = $("view"); v.innerHTML = "<p class='mut'>Loading…</p>";
-  const { data, error } = await sb.from("files").select("*").eq("category", cat).order("created_at", { ascending: false });
-  if (error) return v.textContent = "Could not load files.";
-  v.innerHTML = data.length ? `<div class="wrap"><table><tr><th>Name</th><th></th></tr>${data.map(f =>
-    `<tr><td>${esc(f.name)}</td><td><button data-p="${esc(f.path)}" data-n="${esc(f.name)}">Download</button></td></tr>`).join("")}</table></div>`
-    : "<p class='mut'>No items yet.</p>";
-  v.onclick = async e => {
-    const p = e.target.dataset && e.target.dataset.p; if (!p) return;
-    const { data: s, error } = await sb.storage.from("vault").createSignedUrl(p, 60, { download: e.target.dataset.n });
-    error ? alert("Download failed.") : window.open(s.signedUrl, "_blank", "noopener");
+  $("view").innerHTML = "<p class='mu'>Loading…</p>";
+  let q = sb.from("files").select("*").order("created_at", { ascending: false });
+  if (cat !== "all") q = q.eq("category", cat);
+  const { data, error } = await q; if (error) return $("view").textContent = "Could not load files.";
+  cache = data; drawFiles();
+}
+function drawFiles() {
+  const term = $("q").value.trim().toLowerCase(), list = cache.filter(f => f.name.toLowerCase().includes(term));
+  $("view").innerHTML = list.length ? `<div class="wrap"><table><tr><th>Name</th><th>Type</th><th>Added</th><th></th></tr>${list.map(f =>
+    `<tr class="f"><td>${ICON[f.category]} ${esc(f.name)}</td><td class="mu">${esc(f.category)}</td><td class="mu">${when(f.created_at)}</td>
+     <td><button data-p="${esc(f.path)}" data-n="${esc(f.name)}">Download</button> ${me.role === "admin" ? `<button class="d" data-f="${f.id}" data-p="${esc(f.path)}">Delete</button>` : ""}</td></tr>`).join("")}</table></div>` : "<p class='mu'>Nothing here yet.</p>";
+  $("view").onclick = async e => {
+    const d = e.target.dataset; if (!d || !d.p) return;
+    if (d.f) { if (!confirm("Delete this file?")) return; await sb.storage.from("vault").remove([d.p]); await sb.from("files").delete().eq("id", d.f); log("delete", d.p); return go($("side").querySelector(".on").dataset.t); }
+    const { data, error } = await sb.storage.from("vault").createSignedUrl(d.p, 60, { download: d.n });
+    if (error) return alert("Download failed."); log("download", d.n); window.open(data.signedUrl, "_blank", "noopener");
   };
 }
 
 async function chatView() {
-  $("view").innerHTML = `<h2>Community Chat</h2><div id="chat"></div>
-    <div class="row" style="margin-top:.6rem"><input id="c-in" maxlength="500" placeholder="Type a message…"><button id="c-send">Send</button></div>`;
+  $("view").innerHTML = `<h2>💬 Chat</h2><div id="chat"></div><div class="row" style="margin-top:.7rem"><input id="c-in" maxlength="500" placeholder="Type a message…"><button id="c-send">Send</button></div>`;
+  let last = 0;
   const add = m => {
     const d = document.createElement("div"); d.className = "m" + (m.user_id === me.id ? " me" : "");
     const b = document.createElement("b"); b.textContent = m.username || "user";
-    d.append(b, document.createTextNode(m.body));   // textContent only: no script injection
-    $("chat").append(d); $("chat").scrollTop = 1e9;
+    const t = document.createElement("i"); t.textContent = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    d.append(b, document.createTextNode(m.body), t); $("chat").append(d);
   };
-  const { data } = await sb.from("messages").select("*").order("created_at", { ascending: false }).limit(50);
-  (data || []).reverse().forEach(add);
-  chan = sb.channel("chat").on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, p => add(p.new)).subscribe();
+  const pull = async first => {
+    let q = sb.from("messages").select("*");
+    q = first ? q.order("id", { ascending: false }).limit(50) : q.gt("id", last).order("id").limit(100);
+    const { data } = await q; if (!data || !data.length) return;
+    (first ? data.reverse() : data).forEach(m => { if (m.id > last) { last = m.id; add(m); } });
+    $("chat").scrollTop = 1e9;
+  };
+  await pull(true); poll = setInterval(() => pull(false), 3000);
   const send = async () => {
-    const t = $("c-in").value.trim(); if (!t) return; $("c-in").value = "";
-    const { error } = await sb.from("messages").insert({ body: t }); if (error) alert("Could not send.");
+    const t = $("c-in").value.trim(); if (!t) return;
+    const { error } = await sb.from("messages").insert({ body: t });
+    if (error) return alert("Could not send: " + error.message);
+    $("c-in").value = ""; pull(false);
   };
   $("c-send").onclick = send; $("c-in").onkeydown = e => e.key === "Enter" && send();
 }
 
-function profileView() {
-  $("view").innerHTML = `<div class="card"><h2>My Profile</h2>
-    <label class="mut">Email</label><input value="${esc(me.email)}" readonly>
-    <label class="mut">Username</label><input id="p-user" value="${esc(me.username)}" maxlength="30">
-    <button id="p-save">Save</button>
-    <h3 style="margin-top:1.2rem">Change password</h3>
-    <input id="p-pass" type="password" placeholder="New password (min 10)" autocomplete="new-password">
-    <button class="s" id="p-pw">Update password</button></div>`;
-  $("p-save").onclick = async () => {
-    const u = $("p-user").value.trim(); if (u.length < 2) return alert("Username too short.");
-    const { error } = await sb.from("profiles").update({ username: u }).eq("id", me.id);
-    if (!error) { me.username = u; $("who").textContent = u + (me.role === "admin" ? " 👑" : ""); } alert(error ? "Failed." : "Saved.");
-  };
-  $("p-pw").onclick = async () => {
-    const p = $("p-pass").value; if (p.length < 10) return alert("Min 10 characters.");
-    const { error } = await sb.auth.updateUser({ password: p }); alert(error ? error.message : "Password updated."); $("p-pass").value = "";
-  };
+async function profileView() {
+  $("view").innerHTML = `<div class="card w" style="max-width:520px"><h2>My profile</h2>
+    <label class="mu">Email</label><input value="${esc(me.email)}" readonly>
+    <label class="mu">Username</label><input id="p-user" value="${esc(me.username)}" maxlength="30"><button id="p-save">Save</button>
+    <h3 style="margin-top:1.2rem">Change password</h3><input id="p-pass" type="password" placeholder="New password (min 10)" autocomplete="new-password"><button class="s" id="p-pw">Update password</button></div>
+    <div class="card w"><h3>My devices</h3><div class="wrap" id="md">Loading…</div></div>`;
+  $("p-save").onclick = async () => { const u = $("p-user").value.trim(); if (u.length < 2) return alert("Too short.");
+    const { error } = await sb.from("profiles").update({ username: u }).eq("id", me.id); if (!error) { me.username = u; $("pm-n").textContent = u; } alert(error ? "Failed." : "Saved."); };
+  $("p-pw").onclick = async () => { const p = $("p-pass").value; if (p.length < 10) return alert("Min 10 characters.");
+    const { error } = await sb.auth.updateUser({ password: p }); alert(error ? error.message : "Password updated."); $("p-pass").value = ""; };
+  const { data } = await sb.from("devices").select("*").eq("user_id", me.id).order("last_seen", { ascending: false });
+  $("md").innerHTML = `<table><tr><th>Device</th><th>Last active</th><th>Status</th></tr>${(data || []).map(d =>
+    `<tr><td>${esc(d.label)}${d.device_id === DID ? " <span class='bdg'>this device</span>" : ""}</td><td class="mu">${when(d.last_seen)}</td><td><span class="st ${d.approved ? "ok" : "no"}">${d.approved ? "Approved" : "Pending"}</span></td></tr>`).join("")}</table>`;
 }
 
 async function adminView() {
-  const v = $("view");
-  v.innerHTML = `<h2>Admin</h2>
-    <div class="card" style="max-width:none;margin-bottom:1rem"><h3>Upload file</h3>
-      <div class="row"><input id="u-file" type="file"><select id="u-cat" style="width:auto"><option value="videos">Videos</option><option value="audio">Audio</option><option value="files">Documents</option></select><button id="u-go">Upload</button></div>
-      <div class="mut" id="u-st"></div></div>
-    <div class="card" style="max-width:none;margin-bottom:1rem"><h3>Accounts</h3><div class="wrap" id="acc">Loading…</div></div>
-    <div class="card" style="max-width:none"><h3>Files</h3><div class="wrap" id="fl">Loading…</div></div>`;
+  $("view").innerHTML = `<h2>👑 Admin</h2>
+  <div class="card w"><h3>Upload file</h3><div class="row"><input id="u-file" type="file"><select id="u-cat" style="width:auto;margin:0"><option value="videos">Videos</option><option value="audio">Audio</option><option value="files">Documents</option></select><button id="u-go">Upload</button></div><div class="mu" id="u-st"></div></div>
+  <div class="card w"><h3>Accounts</h3><div class="wrap" id="acc"></div></div>
+  <div class="card w"><h3>Devices &amp; IP addresses</h3><div class="wrap" id="dev"></div></div>
+  <div class="card w"><h3>Recent activity</h3><div class="wrap" id="act"></div></div>`;
   $("u-go").onclick = async () => {
     const f = $("u-file").files[0]; if (!f) return;
-    const path = crypto.randomUUID() + "-" + f.name.replace(/[^\w.\-]/g, "_");
-    $("u-st").textContent = "Uploading…";
-    const up = await sb.storage.from("vault").upload(path, f);
-    if (up.error) return $("u-st").textContent = "Upload failed: " + up.error.message;
+    const path = crypto.randomUUID() + "-" + f.name.replace(/[^\w.\-]/g, "_"); $("u-st").textContent = "Uploading…";
+    const up = await sb.storage.from("vault").upload(path, f); if (up.error) return $("u-st").textContent = "Failed: " + up.error.message;
     const ins = await sb.from("files").insert({ name: f.name, category: $("u-cat").value, path });
-    $("u-st").textContent = ins.error ? "Saved file but failed to record it." : "Uploaded ✔"; adminLists();
+    $("u-st").textContent = ins.error ? "Uploaded but not recorded." : "Uploaded ✔"; log("upload", f.name);
   };
-  adminLists();
+  refresh();
+  $("view").onclick = async e => {
+    const d = e.target.dataset; if (!d) return; let r;
+    if (d.u) r = await sb.rpc("admin_set_approved", { uid: d.u, val: d.v === "true" });
+    else if (d.dv) r = await sb.rpc("admin_set_device", { did: d.dv, val: d.v === "true" });
+    else if (d.rm) { if (!confirm("Remove this device?")) return; r = await sb.rpc("admin_remove_device", { did: d.rm }); } else return;
+    if (r.error) alert(r.error.message); refresh();
+  };
+  poll = setInterval(refresh, 15000);
 }
-async function adminLists() {
-  const [pr, fl] = await Promise.all([sb.from("profiles").select("*").order("created_at"), sb.from("files").select("*").order("created_at", { ascending: false })]);
-  $("acc").innerHTML = `<table><tr><th>User</th><th>Role</th><th>Status</th><th></th></tr>${(pr.data || []).map(u => `<tr><td>${esc(u.username)}</td><td>${esc(u.role)}</td>
-    <td>${u.approved ? "Approved" : "Pending"}</td><td>${u.role === "admin" ? "" : `<button class="${u.approved ? "d" : "g"}" data-u="${u.id}" data-v="${!u.approved}">${u.approved ? "Revoke" : "Approve"}</button>`}</td></tr>`).join("")}</table>`;
-  $("fl").innerHTML = (fl.data || []).length ? `<table><tr><th>Name</th><th>Type</th><th></th></tr>${fl.data.map(f => `<tr><td>${esc(f.name)}</td><td>${esc(f.category)}</td><td><button class="d" data-f="${f.id}" data-p="${esc(f.path)}">Delete</button></td></tr>`).join("")}</table>` : "<span class='mut'>No files.</span>";
-  $("acc").onclick = async e => { const d = e.target.dataset; if (!d.u) return;
-    const { error } = await sb.rpc("admin_set_approved", { uid: d.u, val: d.v === "true" }); if (error) alert(error.message); adminLists(); };
-  $("fl").onclick = async e => { const d = e.target.dataset; if (!d.f || !confirm("Delete this file?")) return;
-    await sb.storage.from("vault").remove([d.p]); await sb.from("files").delete().eq("id", d.f); adminLists(); };
+async function refresh() {
+  if (!$("acc")) return;
+  const [p, d, a] = await Promise.all([sb.from("profiles").select("*").order("created_at"),
+    sb.from("devices").select("*").order("last_seen", { ascending: false }), sb.from("activity").select("*").order("id", { ascending: false }).limit(100)]);
+  const name = Object.fromEntries((p.data || []).map(u => [u.id, u.username]));
+  $("acc").innerHTML = `<table><tr><th>User</th><th>Role</th><th>Status</th><th></th></tr>${(p.data || []).map(u => `<tr><td>${esc(u.username)}</td><td>${esc(u.role)}</td><td><span class="st ${u.approved ? "ok" : "no"}">${u.approved ? "Approved" : "Pending"}</span></td>
+    <td>${u.role === "admin" ? "" : `<button class="${u.approved ? "d" : "g"}" data-u="${u.id}" data-v="${!u.approved}">${u.approved ? "Revoke" : "Approve"}</button>`}</td></tr>`).join("")}</table>`;
+  $("dev").innerHTML = `<table><tr><th>User</th><th>Device</th><th>IP</th><th>Last seen</th><th>Status</th><th></th></tr>${(d.data || []).map(x => {
+    const on = Date.now() - new Date(x.last_seen) < 120000;
+    return `<tr><td>${esc(name[x.user_id])}</td><td>${esc(x.label)}</td><td>${esc(x.ip)}</td><td>${on ? "<span class='st ok'>● online</span>" : when(x.last_seen)}</td><td><span class="st ${x.approved ? "ok" : "no"}">${x.approved ? "Approved" : "Pending"}</span></td>
+    <td><button class="${x.approved ? "s" : "g"}" data-dv="${x.id}" data-v="${!x.approved}">${x.approved ? "Block" : "Approve"}</button> <button class="d" data-rm="${x.id}">✕</button></td></tr>`; }).join("")}</table>`;
+  $("act").innerHTML = `<table><tr><th>Time</th><th>User</th><th>Action</th><th>Detail</th><th>IP</th></tr>${(a.data || []).map(x =>
+    `<tr><td class="mu">${when(x.created_at)}</td><td>${esc(x.username)}</td><td>${esc(x.action)}</td><td class="mu">${esc(x.detail)}</td><td>${esc(x.ip)}</td></tr>`).join("")}</table>`;
 }
 </script>
 </body>
