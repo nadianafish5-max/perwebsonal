@@ -61,6 +61,11 @@ tr.f:hover{background:var(--hv)}
 .av.sm{width:30px;height:30px;font-size:.8rem;cursor:default;flex-shrink:0}.msg .m{max-width:100%;position:relative;padding-right:1.4rem}
 .mx{position:absolute;top:3px;right:7px;cursor:pointer;opacity:.45;font-size:.7rem}.mx:hover{opacity:1}
 .bdg.b-admin{background:#f59e0b;color:#111}.bdg.b-mod{background:#10b981;color:#fff}.bdg.b-vip{background:#8b5cf6;color:#fff}
+#chat{height:calc(100vh - 270px);min-height:240px}
+.cimg{max-width:260px;max-height:260px;border-radius:10px;display:block;margin:.3rem 0;cursor:zoom-in;background:var(--hv)}
+#emo{display:flex;flex-wrap:wrap;gap:2px;background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:.4rem;margin:.4rem 0;max-height:130px;overflow:auto}
+#emo span{cursor:pointer;font-size:1.3rem;padding:2px 4px;border-radius:6px}#emo span:hover{background:var(--hv)}
+.seen{font-size:.62rem;opacity:.7;text-align:right;margin-top:1px}.seen.on{color:#7dd3fc;opacity:1}
 </style>
 </head>
 <body>
@@ -173,7 +178,7 @@ async function boot(s) {
   const ini = (me.username[0] || "?").toUpperCase();
   $("avb").textContent = ini; $("pm-av").textContent = ini; $("pm-n").textContent = me.username;
   $("pm-r").textContent = me.role === "admin" ? "👑 Admin" : me.role === "moderator" ? "🛡️ Moderator" : me.vip ? "⭐ VIP" : "Client"; $("pm-e").textContent = me.email;
-  const tabs = [["all","🏠 My Drive"],["videos","🎬 Videos"],["images","🖼️ Photos"],["audio","🎵 Audio"],["files","📄 Documents"],["chat","💬 Chat"]];
+  const tabs = [["all","🏠 My Drive"],["videos","🎬 Videos"],["images","🖼️ Photos"],["audio","🎵 Audio"],["files","📄 Documents"],["chat","💬 Chat"],["dm", me.role === "admin" ? "✉️ Private chats" : "✉️ Message admin"]];
   if (isStaff()) tabs.push(["admin", me.role === "admin" ? "👑 Admin" : "🛡️ Moderation"]);
   $("side").innerHTML = tabs.map(t => `<button class="nb" data-t="${t[0]}">${t[1]}</button>`).join("");
   show("app"); go("all");
@@ -189,7 +194,7 @@ function go(t, keepQ) {
   clearInterval(poll); $("pm").classList.add("hide"); if (!keepQ) $("q").value = "";
   document.querySelectorAll("#side .nb").forEach(b => b.classList.toggle("on", b.dataset.t === t));
   $("view").dataset.v = ["all","videos","images","audio","files"].includes(t) ? "files" : t;
-  ({ all: fileView, videos: fileView, images: fileView, audio: fileView, files: fileView, chat: chatView, profile: profileView, admin: adminView })[t](t);
+  ({ all: fileView, videos: fileView, images: fileView, audio: fileView, files: fileView, chat: () => chatPane(null, "💬 Community chat"), dm: dmView, profile: profileView, admin: adminView })[t](t);
 }
 const ICON = { videos: "🎬", images: "🖼️", audio: "🎵", files: "📄" };
 const CATS = { all: "My Drive", videos: "Videos", images: "Photos", audio: "Audio", files: "Documents" };
@@ -257,10 +262,18 @@ async function openFile(f) {
   };
 }
 
-async function chatView() {
-  $("view").innerHTML = `<h2>💬 Chat</h2><div id="chat"></div><div class="mu" id="c-err" style="min-height:1.3em"></div>
-    <div class="row"><input id="c-in" maxlength="500" placeholder="Type a message…" autocomplete="off"><button id="c-send">Send</button></div>`;
-  let last = 0; const seen = new Set();
+const chatUrls = {};
+const chatImg = path => chatUrls[path] || (chatUrls[path] = sb.storage.from("chat").createSignedUrl(path, 3600).then(r => r.data ? r.data.signedUrl : null));
+const EMOJIS = "😀 😁 😂 🤣 😊 😍 😘 😎 🤩 🥳 😢 😭 😡 😱 🤔 🙄 😴 🤗 🙏 👍 👎 👏 🙌 💪 🔥 ✨ 🎉 ❤️ 💔 💯 ✅ ❌ ⭐ 🎵 🎬 📷 📎 🌹 ☕ 🍕 🎁 🚀 💡 ⚡ 👀 🤝 😅 😉 🙂 😇 🥰 😋 😜 🤪 😏 😬 😮".split(" ");
+async function chatPane(thread, title, back) {
+  clearInterval(poll); $("view").onclick = null;
+  $("view").innerHTML = `<div class="row" style="align-items:center;margin-bottom:.6rem">${back ? '<button class="s" id="c-back">← Back</button>' : ""}<h2 style="margin:0">${esc(title)}</h2></div>
+    <div id="chat"></div><div class="mu" id="c-err" style="min-height:1.3em"></div><div id="emo" class="hide"></div>
+    <div class="row"><button class="s i" id="c-emo" title="Emoji">😊</button><button class="s i" id="c-att" title="Send a picture / GIF">📎</button>
+    <input id="c-in" maxlength="500" placeholder="Type a message… (paste a screenshot with Ctrl+V)" autocomplete="off"><button id="c-send">Send</button>
+    <input type="file" id="c-file" class="hide" accept="image/png,image/jpeg,image/gif,image/webp"></div>`;
+  if (back) $("c-back").onclick = back;
+  let last = 0, pend = null, marked = 0, seenRows = []; const mySeen = [], scope = thread || "public", seen = new Set(), canDel = m => thread ? me.role === "admin" : isStaff();
   const add = m => {
     if (seen.has(m.id)) return; seen.add(m.id);
     const mine = m.user_id === me.id, d = document.createElement("div"); d.className = "msg" + (mine ? " me" : "");
@@ -269,27 +282,73 @@ async function chatView() {
     const hd = document.createElement("b"); hd.textContent = m.username;
     const bd = m.role === "admin" ? ["👑 Admin", "b-admin"] : m.role === "moderator" ? ["🛡️ Mod", "b-mod"] : m.vip ? ["⭐ VIP", "b-vip"] : null;
     if (bd) { const sp = document.createElement("span"); sp.className = "bdg " + bd[1]; sp.textContent = bd[0]; hd.append(" ", sp); }
-    const tx = document.createElement("div"); tx.textContent = m.body;
-    const t = document.createElement("i"); t.textContent = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    bub.append(hd, tx, t);
-    if (isStaff()) { const x = document.createElement("span"); x.className = "mx"; x.textContent = "✕"; x.title = "Delete";
-      x.onclick = async () => { if (confirm("Delete this message?")) { await sb.rpc("chat_delete", { p_id: m.id }); d.remove(); } }; bub.append(x); }
+    bub.append(hd);
+    if (m.image_path) { const im = document.createElement("img"); im.className = "cimg"; im.alt = "picture"; chatImg(m.image_path).then(u => { if (u) im.src = u; }); im.onclick = () => im.src && window.open(im.src, "_blank", "noopener"); bub.append(im); }
+    if (m.body) { const tx = document.createElement("div"); tx.textContent = m.body; bub.append(tx); }
+    const t = document.createElement("i"); t.textContent = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); bub.append(t);
+    if (mine) { const sn = document.createElement("div"); sn.className = "seen"; bub.append(sn); mySeen.push([m.id, sn]); }
+    if (canDel(m)) { const x = document.createElement("span"); x.className = "mx"; x.textContent = "✕"; x.title = "Delete";
+      x.onclick = async () => { if (!confirm("Delete this message?")) return; if (m.image_path) await sb.storage.from("chat").remove([m.image_path]); await sb.rpc("chat_delete", { p_id: m.id }); d.remove(); }; bub.append(x); }
     d.append(av, bub); $("chat").append(d);
   };
   const pull = async () => {
-    const { data, error } = await sb.rpc("chat_list", { p_after: last });
-    if (error) { if ($("c-err")) $("c-err").textContent = "Chat error: " + error.message; return; }
-    if (!$("c-err")) return; $("c-err").textContent = "";
+    const { data, error } = await sb.rpc("chat_list", { p_after: last, p_thread: thread });
+    if (!$("c-err")) return;
+    if (error) return $("c-err").textContent = "Chat error: " + error.message;
     if (data && data.length) { data.forEach(m => { add(m); if (m.id > last) last = m.id; }); $("chat").scrollTop = 1e9; }
   };
-  await pull(); poll = setInterval(pull, 3000);
-  const send = async () => {
-    const t = $("c-in").value.trim(); if (!t) return;
-    const { error } = await sb.rpc("chat_send", { p_body: t });
-    if (error) return $("c-err").textContent = "Could not send: " + error.message;
-    $("c-in").value = ""; pull();
+  const markRead = () => { if (last > marked && document.visibilityState === "visible") { marked = last; sb.rpc("chat_mark_read", { p_scope: scope, p_last: last }); } };
+  const paintSeen = () => {
+    const others = seenRows.filter(r => r.user_id !== me.id);
+    mySeen.forEach(([id, el]) => {
+      const n = others.filter(r => r.last_id >= id).map(r => r.username);
+      el.textContent = thread ? (n.length ? "✓✓ Seen" : "✓ Sent")
+        : (n.length ? "👁 Seen by " + n.slice(0, 3).join(", ") + (n.length > 3 ? " +" + (n.length - 3) : "") : "✓ Sent");
+      el.className = "seen" + (n.length ? " on" : ""); el.title = n.join(", ");
+    });
   };
-  $("c-send").onclick = send; $("c-in").onkeydown = e => e.key === "Enter" && send();
+  const refreshSeen = async () => { const { data } = await sb.rpc("chat_seen", { p_scope: scope }); if (data && $("chat")) { seenRows = data; paintSeen(); } };
+  const tick = async () => { await pull(); markRead(); await refreshSeen(); };
+  document.onvisibilitychange = markRead;
+  const setPend = f => {
+    const ok = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+    if (!f) { pend = null; $("c-err").textContent = ""; return; }
+    if (!ok.includes(f.type)) return $("c-err").textContent = "Only PNG, JPG, GIF or WebP pictures.";
+    if (f.size > 5 * 1024 * 1024) return $("c-err").textContent = "Picture is over 5 MB.";
+    pend = f; $("c-err").textContent = "📷 Ready to send: " + (f.name || "screenshot") + " (" + fsize(f.size) + ") — press Send. Click here to remove.";
+    $("c-err").style.cursor = "pointer"; $("c-err").onclick = () => setPend(null);
+  };
+  EMOJIS.forEach(e => { const sp = document.createElement("span"); sp.textContent = e; sp.onclick = () => { $("c-in").value += e; $("c-in").focus(); }; $("emo").append(sp); });
+  $("c-emo").onclick = () => $("emo").classList.toggle("hide");
+  $("c-att").onclick = () => $("c-file").click();
+  $("c-file").onchange = e => { setPend(e.target.files[0]); e.target.value = ""; };
+  $("c-in").addEventListener("paste", e => { const f = [...(e.clipboardData ? e.clipboardData.files : [])].find(x => x.type.startsWith("image/")); if (f) { e.preventDefault(); setPend(f); } });
+  const send = async () => {
+    const t = $("c-in").value.trim(); if (!t && !pend) return;
+    $("c-send").disabled = true; let img = null;
+    if (pend) {
+      img = me.id + "/" + crypto.randomUUID() + "." + ({ "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp" })[pend.type];
+      const up = await sb.storage.from("chat").upload(img, pend, { contentType: pend.type });
+      if (up.error) { $("c-send").disabled = false; return $("c-err").textContent = "Upload failed: " + up.error.message; }
+    }
+    const { error } = await sb.rpc("chat_send", { p_body: t, p_image: img, p_thread: thread });
+    $("c-send").disabled = false;
+    if (error) return $("c-err").textContent = "Could not send: " + error.message;
+    $("c-in").value = ""; pend = null; $("c-err").textContent = ""; $("emo").classList.add("hide"); tick(); $("c-in").focus();
+  };
+  $("c-send").onclick = send; $("c-in").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); send(); } };
+  await tick(); poll = setInterval(tick, 3000); $("c-in").focus();
+}
+async function dmView() {
+  clearInterval(poll);
+  if (me.role !== "admin") return chatPane(me.id, "✉️ Private chat with the admin");
+  $("view").innerHTML = "<h2>✉️ Private chats</h2><p class='mu'>Loading…</p>";
+  const [p, sm] = await Promise.all([sb.from("profiles").select("id,username,vip,role").neq("role", "admin").eq("approved", true), sb.rpc("dm_summary")]);
+  const info = Object.fromEntries((sm.data || []).map(x => [x.thread, x]));
+  const list = (p.data || []).sort((a, b) => ((info[b.id] || {}).last_at || "").localeCompare((info[a.id] || {}).last_at || ""));
+  $("view").innerHTML = "<h2>✉️ Private chats</h2>" + (list.length ? `<div class="card w">${list.map(u =>
+    `<div class="mi" data-dm="${u.id}" data-n="${esc(u.username)}"><div class="av sm">${esc(u.username[0].toUpperCase())}</div><div><b>${esc(u.username)}</b> ${u.vip ? "⭐" : ""}<div class="mu">${info[u.id] ? esc(info[u.id].last_body) : "No messages yet"}</div></div></div>`).join("")}</div>` : "<p class='mu'>No approved clients yet.</p>");
+  $("view").onclick = e => { const r = e.target.closest("[data-dm]"); if (r) chatPane(r.dataset.dm, "Chat with " + r.dataset.n, dmView); };
 }
 
 async function profileView() {
