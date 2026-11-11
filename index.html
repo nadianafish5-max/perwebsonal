@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0f1f"><meta name="mobile-web-app-capable" content="yes">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https:; media-src https: blob:; frame-src https://*.supabase.co https://drive.google.com https://www.youtube-nocookie.com; base-uri 'none'; form-action 'none'">
 <title>Secure Client Vault</title>
@@ -66,6 +66,27 @@ tr.f:hover{background:var(--hv)}
 #emo{display:flex;flex-wrap:wrap;gap:2px;background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:.4rem;margin:.4rem 0;max-height:130px;overflow:auto}
 #emo span{cursor:pointer;font-size:1.3rem;padding:2px 4px;border-radius:6px}#emo span:hover{background:var(--hv)}
 .seen{font-size:.62rem;opacity:.7;text-align:right;margin-top:1px}.seen.on{color:#7dd3fc;opacity:1}
+html{background:var(--bg)}*{-webkit-tap-highlight-color:transparent}
+:root{--dot:rgba(150,170,220,.13)}[data-theme=light]{--dot:rgba(40,60,120,.09)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:26px 26px}
+.ni{font-size:1.1rem}#chat{height:calc(100vh - 270px);height:calc(100dvh - 270px)}
+@media(max-width:800px){
+  html,body{overflow-x:hidden}
+  #top{padding:.5rem .7rem;gap:.5rem;padding-top:max(.5rem,env(safe-area-inset-top))}
+  #top .logo{font-size:0;min-width:0}#top .logo::before{content:"🔐";font-size:1.4rem}
+  input,select,textarea{font-size:16px}
+  #shell{display:block;min-height:0}
+  #side{position:fixed;left:0;right:0;bottom:0;z-index:8;width:auto;display:flex;gap:.15rem;overflow-x:auto;border:0;border-top:1px solid var(--ln);background:var(--bg);padding:.3rem .4rem calc(.3rem + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+  #side .nb{flex:0 0 auto;flex-direction:column;align-items:center;gap:1px;padding:.4rem .65rem;font-size:.68rem;border-radius:12px;margin:0;white-space:nowrap}
+  main{padding:.9rem .8rem 6rem}
+  *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  #top,#pm,.card{background:var(--bg)}
+  #chat{height:calc(100vh - 310px);height:calc(100dvh - 310px);min-height:200px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:.6rem}.fc{padding:.8rem}
+  table{font-size:.8rem}th,td{padding:.55rem .4rem}
+  #pm{left:.5rem;right:.5rem;width:auto}#modal{padding:.3rem}#mc{max-height:96vh;max-height:96dvh}
+  .msg{max-width:94%}.cimg{max-width:68vw}button{min-height:38px}
+}
 </style>
 </head>
 <body>
@@ -178,12 +199,12 @@ async function boot(s) {
   const ini = (me.username[0] || "?").toUpperCase();
   $("avb").textContent = ini; $("pm-av").textContent = ini; $("pm-n").textContent = me.username;
   $("pm-r").textContent = me.role === "admin" ? "👑 Admin" : me.role === "moderator" ? "🛡️ Moderator" : me.vip ? "⭐ VIP" : "Client"; $("pm-e").textContent = me.email;
-  const tabs = [["all","🏠 My Drive"],["videos","🎬 Videos"],["images","🖼️ Photos"],["audio","🎵 Audio"],["files","📄 Documents"],["chat","💬 Chat"],["dm", me.role === "admin" ? "✉️ Private chats" : "✉️ Message admin"]];
+  const tabs = [["all","🕒 Recent"],["videos","🎬 Videos"],["images","🖼️ Photos"],["audio","🎵 Audio"],["files","📄 Documents"],["games","🎮 Games"],["chat","💬 Chat"],["dm", me.role === "admin" ? "✉️ Private chats" : "✉️ Message admin"]];
   if (isStaff()) tabs.push(["admin", me.role === "admin" ? "👑 Admin" : "🛡️ Moderation"]);
-  $("side").innerHTML = tabs.map(t => `<button class="nb" data-t="${t[0]}">${t[1]}</button>`).join("");
+  $("side").innerHTML = tabs.map(t => `<button class="nb" data-t="${t[0]}"><span class="ni">${t[1].split(" ")[0]}</span><span>${t[1].split(" ").slice(1).join(" ")}</span></button>`).join("");
   show("app"); go("all");
 }
-$("side").onclick = e => e.target.dataset.t && go(e.target.dataset.t);
+$("side").onclick = e => { const b = e.target.closest("[data-t]"); if (b) go(b.dataset.t); };
 $("avb").onclick = e => { e.stopPropagation(); $("pm").classList.toggle("hide"); };
 $("pm").onclick = e => { const t = e.target.closest("[data-t]"); if (t) go(t.dataset.t); };
 document.addEventListener("click", e => { if (!$("pm").contains(e.target)) $("pm").classList.add("hide"); });
@@ -193,11 +214,11 @@ $("q").oninput = () => { if (!me) return; if ($("view").dataset.v === "files") d
 function go(t, keepQ) {
   clearInterval(poll); $("pm").classList.add("hide"); if (!keepQ) $("q").value = "";
   document.querySelectorAll("#side .nb").forEach(b => b.classList.toggle("on", b.dataset.t === t));
-  $("view").dataset.v = ["all","videos","images","audio","files"].includes(t) ? "files" : t;
-  ({ all: fileView, videos: fileView, images: fileView, audio: fileView, files: fileView, chat: () => chatPane(null, "💬 Community chat"), dm: dmView, profile: profileView, admin: adminView })[t](t);
+  $("view").dataset.v = ["all","videos","images","audio","files","games"].includes(t) ? "files" : t;
+  ({ all: fileView, videos: fileView, images: fileView, games: fileView, audio: fileView, files: fileView, chat: () => chatPane(null, "💬 Community chat"), dm: dmView, profile: profileView, admin: adminView })[t](t);
 }
-const ICON = { videos: "🎬", images: "🖼️", audio: "🎵", files: "📄" };
-const CATS = { all: "My Drive", videos: "Videos", images: "Photos", audio: "Audio", files: "Documents" };
+const ICON = { videos: "🎬", images: "🖼️", audio: "🎵", files: "📄", games: "🎮" };
+const CATS = { all: "Recent", videos: "Videos", images: "Photos", audio: "Audio", files: "Documents", games: "Games" };
 const fsize = b => !b ? "" : b > 1e9 ? (b / 1e9).toFixed(1) + " GB" : b > 1e6 ? (b / 1e6).toFixed(1) + " MB" : Math.ceil(b / 1e3) + " KB";
 let cur = "all";
 async function loadFiles() { const { data } = await sb.from("files").select("*").order("created_at", { ascending: false }).limit(1000); cache = data || []; }
@@ -209,7 +230,7 @@ function drawFiles() {
   if ($("view").dataset.v !== "files") return;
   $("view").onclick = e => { const c = e.target.closest("[data-id]"); if (c) openFile(cache.find(f => f.id === c.dataset.id)); };
   const term = $("q").value.trim().toLowerCase();
-  const list = cache.filter(f => term ? (f.name + " " + (f.description || "") + " " + f.category).toLowerCase().includes(term) : cur === "all" || f.category === cur);
+  const list = cache.filter(f => term ? (f.name + " " + (f.description || "") + " " + f.category).toLowerCase().includes(term) : cur === "all" || f.category === cur).slice(0, term || cur !== "all" ? 1000 : 40);
   $("view").innerHTML = `<h2>${term ? "Search results for “" + esc(term) + "”" : CATS[cur]} <span class="mu">(${list.length})</span></h2>` + (list.length ? `<div class="grid">${list.map(f => {
     const nw = Date.now() - new Date(f.created_at) < 864e5;
     return `<div class="fc" data-id="${f.id}"><div class="ic">${ICON[f.category]}</div><b>${esc(f.name)}</b><div class="mu ds">${esc(f.description || "No description")}</div>
@@ -231,7 +252,7 @@ function embedOf(u) {
 }
 async function openFile(f) {
   if (!f) return;
-  const admin = isStaff(), canDl = f.category === "files";
+  const admin = isStaff(), canDl = ["files", "games"].includes(f.category);
   $("modal").classList.remove("hide");
   $("mc").innerHTML = `<div class="row" style="justify-content:space-between"><h2 style="margin:0">${ICON[f.category]} ${esc(f.name)}</h2><button class="s" id="mx">✕</button></div>
     <div class="mu">${CATS[f.category]} · ${fsize(f.size) || "—"} · ${when(f.created_at)}${f.vip_only ? " · ⭐ VIP only" : ""}</div>
@@ -262,6 +283,18 @@ async function openFile(f) {
   };
 }
 
+async function prepImage(f) {
+  const t = f.type || ({ png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp" })[(f.name || "").split(".").pop().toLowerCase()] || "";
+  const keep = x => x.type === t ? x : new Blob([x], { type: t });
+  if (t === "image/gif") return f.size <= 5e6 ? keep(f) : null;
+  if (["image/png", "image/jpeg", "image/webp"].includes(t) && f.size <= 1.5e6) return keep(f);
+  try {
+    const bm = await createImageBitmap(f), k = Math.min(1, 1600 / Math.max(bm.width, bm.height));
+    const c = document.createElement("canvas"); c.width = Math.round(bm.width * k); c.height = Math.round(bm.height * k);
+    c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height);
+    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.85)); return b && b.size <= 5e6 ? b : null;
+  } catch (e) { return null; }
+}
 const chatUrls = {};
 const chatImg = path => chatUrls[path] || (chatUrls[path] = sb.storage.from("chat").createSignedUrl(path, 3600).then(r => r.data ? r.data.signedUrl : null));
 const EMOJIS = "😀 😁 😂 🤣 😊 😍 😘 😎 🤩 🥳 😢 😭 😡 😱 🤔 🙄 😴 🤗 🙏 👍 👎 👏 🙌 💪 🔥 ✨ 🎉 ❤️ 💔 💯 ✅ ❌ ⭐ 🎵 🎬 📷 📎 🌹 ☕ 🍕 🎁 🚀 💡 ⚡ 👀 🤝 😅 😉 🙂 😇 🥰 😋 😜 🤪 😏 😬 😮".split(" ");
@@ -271,7 +304,7 @@ async function chatPane(thread, title, back) {
     <div id="chat"></div><div class="mu" id="c-err" style="min-height:1.3em"></div><div id="emo" class="hide"></div>
     <div class="row"><button class="s i" id="c-emo" title="Emoji">😊</button><button class="s i" id="c-att" title="Send a picture / GIF">📎</button>
     <input id="c-in" maxlength="500" placeholder="Type a message… (paste a screenshot with Ctrl+V)" autocomplete="off"><button id="c-send">Send</button>
-    <input type="file" id="c-file" class="hide" accept="image/png,image/jpeg,image/gif,image/webp"></div>`;
+    <input type="file" id="c-file" class="hide" accept="image/*"></div>`;
   if (back) $("c-back").onclick = back;
   let last = 0, pend = null, marked = 0, seenRows = []; const mySeen = [], scope = thread || "public", seen = new Set(), canDel = m => thread ? me.role === "admin" : isStaff();
   const add = m => {
@@ -310,12 +343,12 @@ async function chatPane(thread, title, back) {
   const refreshSeen = async () => { const { data } = await sb.rpc("chat_seen", { p_scope: scope }); if (data && $("chat")) { seenRows = data; paintSeen(); } };
   const tick = async () => { await pull(); markRead(); await refreshSeen(); };
   document.onvisibilitychange = markRead;
-  const setPend = f => {
-    const ok = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+  const setPend = async f => {
     if (!f) { pend = null; $("c-err").textContent = ""; return; }
-    if (!ok.includes(f.type)) return $("c-err").textContent = "Only PNG, JPG, GIF or WebP pictures.";
-    if (f.size > 5 * 1024 * 1024) return $("c-err").textContent = "Picture is over 5 MB.";
-    pend = f; $("c-err").textContent = "📷 Ready to send: " + (f.name || "screenshot") + " (" + fsize(f.size) + ") — press Send. Click here to remove.";
+    $("c-err").textContent = "Preparing picture…";
+    const b = await prepImage(f);
+    if (!b) return $("c-err").textContent = "Could not use that picture. Try PNG, JPG, GIF (under 5 MB) or WebP.";
+    pend = b; $("c-err").textContent = "📷 Picture ready (" + fsize(b.size) + "): press Send. Tap here to remove.";
     $("c-err").style.cursor = "pointer"; $("c-err").onclick = () => setPend(null);
   };
   EMOJIS.forEach(e => { const sp = document.createElement("span"); sp.textContent = e; sp.onclick = () => { $("c-in").value += e; $("c-in").focus(); }; $("emo").append(sp); });
@@ -371,7 +404,7 @@ async function adminView() {
   $("view").innerHTML = `<h2>👑 Admin</h2>
   <div class="card w"><h3>Publish content (visible to everyone instantly)</h3>
     <input id="u-title" placeholder="Title" maxlength="120"><input id="u-desc" placeholder="Description: what is this file and who is it for?" maxlength="500">
-    <div class="row"><select id="u-cat"><option value="videos">Video</option><option value="images">Photo</option><option value="audio">Audio / MP3</option><option value="files">Document</option></select>
+    <div class="row"><select id="u-cat"><option value="videos">Video</option><option value="images">Photo</option><option value="audio">Audio / MP3</option><option value="files">Document</option><option value="games">Game</option></select>
     <label class="mu" style="white-space:nowrap"><input id="u-vip" type="checkbox" style="width:auto;margin:0 4px 0 0">VIP only</label></div>
     <input id="u-file" type="file" style="margin-top:.7rem"><input id="u-url" placeholder="…or paste a link: Backblaze B2, Google Drive or YouTube (for big files)">
     <button id="u-go">Publish</button><div class="mu" id="u-st" style="margin-top:.5rem"></div></div>
