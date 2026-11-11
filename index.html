@@ -243,6 +243,10 @@ async function fileUrl(f, secs, dl) {
 function closeModal() { $("modal").classList.add("hide"); $("mc").innerHTML = ""; }
 $("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+function hostOf(u) {
+  try { const h = new URL(u).hostname.replace(/^www\./, ""), m = { "mediafire.com": "MediaFire", "mega.nz": "Mega", "mega.io": "Mega", "terabox.com": "Terabox", "1024terabox.com": "Terabox", "teraboxapp.com": "Terabox", "terabox.app": "Terabox" };
+    return m[h] || (h.endsWith(".mediafire.com") ? "MediaFire" : null); } catch (e) { return null; }
+}
 function embedOf(u) {
   let m = u.match(/^https:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/);
   if (m) return { kind: "youtube", src: "https://www.youtube-nocookie.com/embed/" + m[1] + "?rel=0" };
@@ -262,15 +266,16 @@ async function openFile(f) {
   $("mx").onclick = closeModal;
   const url = await fileUrl(f, 3600), pv = $("pv"); if (!pv) return; pv.textContent = "";
   const mk = (tag, set) => { const el = document.createElement(tag); set(el); el.src = url; pv.append(el); };
-  const emb = f.ext_url && embedOf(f.ext_url);
-  if (emb) { const fr = document.createElement("iframe"); fr.src = emb.src; fr.allow = "autoplay; fullscreen; picture-in-picture"; fr.allowFullscreen = true; fr.referrerPolicy = "strict-origin-when-cross-origin"; fr.style.height = "min(56vw,60vh)"; pv.append(fr); }
+  const emb = f.ext_url && embedOf(f.ext_url), host = f.ext_url && hostOf(f.ext_url);
+  if (host) pv.textContent = "☁️ Hosted on " + host + ". It opens on their site and can't play inside this page.";
+  else if (emb) { const fr = document.createElement("iframe"); fr.src = emb.src; fr.allow = "autoplay; fullscreen; picture-in-picture"; fr.allowFullscreen = true; fr.referrerPolicy = "strict-origin-when-cross-origin"; fr.style.height = "min(56vw,60vh)"; pv.append(fr); }
   else if (!url) pv.textContent = "Preview unavailable.";
   else if (f.category === "videos") mk("video", v => { v.controls = true; v.playsInline = true; v.preload = "metadata"; if (!canDl) v.setAttribute("controlsList", "nodownload"); });
   else if (f.category === "audio") mk("audio", a => { a.controls = true; a.preload = "metadata"; });
   else if (f.category === "images") mk("img", i => { i.alt = f.name; });
   else if (/\.pdf$/i.test(f.path || f.ext_url || f.name)) mk("iframe", () => {});
   else pv.textContent = "No preview for this file type. Use Download.";
-  if (emb) { const o = document.createElement("button"); o.className = "s"; o.textContent = "↗ Open in new tab"; o.onclick = () => window.open(f.ext_url, "_blank", "noopener"); $("mc").lastElementChild.append(o); }
+  if (emb || host) { const o = document.createElement("button"); o.className = "s"; o.textContent = "↗ Open in new tab"; o.onclick = () => window.open(f.ext_url, "_blank", "noopener"); $("mc").lastElementChild.append(o); }
   log("view", f.name);
   if ($("dl")) $("dl").onclick = async () => {
     if (!canDl) return alert("Downloads of media are available to VIP accounts. Streaming is free for everyone.");
